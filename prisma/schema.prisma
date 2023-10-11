@@ -13,7 +13,7 @@ datasource db {
 
 // Define the `User` table in the database
 model User {
-  id    Int     @default(autoincrement()) @id
+  id    Int     @id @default(autoincrement())
   name  String?
   email String  @unique
   posts Post[]
@@ -21,10 +21,10 @@ model User {
 
 // Define the `Post` table in the database
 model Post {
-  id        Int      @default(autoincrement()) @id
+  id        Int      @id @default(autoincrement())
   published Boolean? @default(false)
   title     String
   content   String?
   author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+  authorId  Int?     @map("author_id")
 }
