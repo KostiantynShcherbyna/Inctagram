@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import {AuthController} from "./auth-copy/auth/api/auth.controller.sql";
+import {AuthController} from "./features/auth-main/auth/api/auth.controller.sql";
 
 @Module({
   imports: [],
