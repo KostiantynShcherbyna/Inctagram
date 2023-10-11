@@ -1,10 +1,10 @@
-import { CommandHandler, ICommandHandler } from "@nestjs/cqrs"
-import { Contract } from "../../../../../infrastructure/utils/contract"
-import { ErrorEnums } from "../../../../../infrastructure/utils/error-enums"
-import { generateHashManager } from "../../../../../infrastructure/services/generate-hash.service"
-import { UsersRepositoryOrm } from "../../../repository/typeorm/users.repository.orm"
-import { InjectDataSource } from "@nestjs/typeorm"
-import { DataSource } from "typeorm"
+import {CommandHandler, ICommandHandler} from "@nestjs/cqrs"
+import {UsersRepositoryOrm} from "../../../repository/typeorm/users.repository.orm"
+import {InjectDataSource} from "@nestjs/typeorm"
+import {DataSource} from "typeorm"
+import {ErrorEnums} from "../../../../infrastructure/utils/error-enums";
+import {Contract} from "../../../../infrastructure/utils/contract";
+import {generateHashManager} from "../../../../infrastructure/services/generate-hash.service";
 
 
 export class CreateUserSqlCommand {

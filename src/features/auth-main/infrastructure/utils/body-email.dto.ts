@@ -1,5 +1,5 @@
 import { IsEmail, IsString, Matches } from 'class-validator';
-import { EMAIL_REGISTRATION_REGEX } from 'src/infrastructure/utils/constants';
+import {EMAIL_REGISTRATION_REGEX} from "./constants";
 
 export class BodyEmailInputModel {
   @IsString()

@@ -2,20 +2,20 @@ import { Injectable, UnauthorizedException } from "@nestjs/common"
 import { PassportStrategy } from "@nestjs/passport"
 import { Strategy } from "passport-local"
 import { StrategyNames } from "../utils/constants"
-import { UsersRepository } from "../../features/sa/repository/mongoose/users.repository"
 import { ErrorEnums } from "../utils/error-enums"
+import {UsersRepositoryOrm} from "../../sa/repository/typeorm/users.repository.orm";
 
 
 @Injectable()
 export class LoginLocalStrategy extends PassportStrategy(Strategy, StrategyNames.loginLocalStrategy) {
   constructor(
-    protected usersRepository: UsersRepository,
+    protected usersRepository: UsersRepositoryOrm,
   ) {
     super({ usernameField: "loginOrEmail" })
   }
 
   async validate(loginOrEmail: string, password: string): Promise<any> {
-    const user = await this.usersRepository.findUserLoginOrEmail({
+    const user = await this.usersRepository.findUserByLoginOrEmail({
       login: loginOrEmail,
       email: loginOrEmail
     })

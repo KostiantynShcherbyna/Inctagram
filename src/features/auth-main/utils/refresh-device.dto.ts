@@ -1,9 +1,8 @@
-import { DevicesDocument } from "src/features/devices/application/entites/mongoose/devices.schema"
 
 export type RefreshDeviceDto = {
     deviceIp: string
     userAgent: string
-    device: DevicesDocument,
+    device: unknown,
     accessJwtSecret: string,
     refreshJwtSecret: string,
 }

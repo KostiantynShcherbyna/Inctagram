@@ -1,17 +1,11 @@
-import { Injectable } from "@nestjs/common"
-import { InjectModel } from "@nestjs/mongoose"
-import {
-  Users,
-  UsersDocument,
-  UsersModel
-} from "../../application/entities/mongoose/users.schema"
-import { DataSource, QueryRunner } from "typeorm"
-import { InjectDataSource } from "@nestjs/typeorm"
-import { AccountEntity } from "../../application/entities/sql/account.entity"
-import { EmailConfirmationEntity } from "../../application/entities/sql/email-confirmation.entity"
-import { BanInfoEntity } from "../../application/entities/sql/ban-info.entity"
-import { SentConfirmationCodeDateEntity } from "../../application/entities/sql/sent-confirmation-code-date.entity"
-import { DeviceEntity } from "../../../devices/application/entites/sql/device.entity"
+import {Injectable} from "@nestjs/common"
+import {DataSource, QueryRunner} from "typeorm"
+import {InjectDataSource} from "@nestjs/typeorm"
+import {AccountEntity} from "../../application/entities/sql/account.entity"
+import {EmailConfirmationEntity} from "../../application/entities/sql/email-confirmation.entity"
+import {BanInfoEntity} from "../../application/entities/sql/ban-info.entity"
+import {SentConfirmationCodeDateEntity} from "../../application/entities/sql/sent-confirmation-code-date.entity"
+import {DeviceEntity} from "../../../devices/application/entites/sql/device.entity"
 
 interface ICreateConfirmationCodeDto {
   userId: string,

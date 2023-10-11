@@ -1,14 +1,10 @@
-import { CommandHandler } from "@nestjs/cqrs"
-import { InjectModel } from "@nestjs/mongoose/dist/common"
-import { Users, UsersModel } from "../../entities/mongoose/users.schema"
-import { UsersRepository } from "../../../repository/mongoose/users.repository"
-import { Contract } from "../../../../../infrastructure/utils/contract"
-import { ErrorEnums } from "../../../../../infrastructure/utils/error-enums"
-import { UsersRepositoryOrm } from "../../../repository/typeorm/users.repository.orm"
-import { InjectDataSource } from "@nestjs/typeorm"
-import { DataSource } from "typeorm"
-import { BlogsRepositoryOrm } from "../../../../blogs/repository/typeorm/blogs.repository.orm"
-import { PostsRepositoryOrm } from "../../../../posts/repository/typeorm/posts.repository.orm"
+import {CommandHandler} from "@nestjs/cqrs"
+
+import {UsersRepositoryOrm} from "../../../repository/typeorm/users.repository.orm"
+import {InjectDataSource} from "@nestjs/typeorm"
+import {DataSource} from "typeorm"
+import {Contract} from "../../../../infrastructure/utils/contract";
+import {ErrorEnums} from "../../../../infrastructure/utils/error-enums";
 
 
 export class DeleteUserCommandSql {

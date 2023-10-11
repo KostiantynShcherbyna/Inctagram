@@ -1,6 +1,5 @@
-import { Prop } from "@nestjs/mongoose"
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
-import { AccountEntity } from "../../../../sa/application/entities/sql/account.entity"
+import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm"
+import {AccountEntity} from "../../../../sa/application/entities/sql/account.entity"
 
 @Entity()
 export class DeviceEntity {

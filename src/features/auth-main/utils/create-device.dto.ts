@@ -1,4 +1,3 @@
-import { DevicesModel } from "src/features/devices/application/entites/mongoose/devices.schema"
 
 export interface CreateDeviceDto {
   deviceIp: string
@@ -6,5 +5,5 @@ export interface CreateDeviceDto {
   userId: string
   accessJwtSecret: string
   refreshJwtSecret: string
-  DevicesModel: DevicesModel
+  DevicesModel: unknown
 }

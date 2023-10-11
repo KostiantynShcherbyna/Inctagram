@@ -5,7 +5,7 @@ export const emailService = {
   async sendEmail(emailBody: BodyEmailInputModel) {
 
 
-    let transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       service: emailBody.service,
       auth: {
         user: emailBody.user,

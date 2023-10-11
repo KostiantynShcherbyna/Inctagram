@@ -1,21 +1,16 @@
 import { Injectable } from "@nestjs/common"
 import { DataSource, SelectQueryBuilder } from "typeorm"
 import { InjectDataSource } from "@nestjs/typeorm"
-import { QueryUserSAInputModel } from "../../api/models/input/users/get-users.query.input-model"
-import {
-  BanStatus,
-  PAGE_NUMBER_DEFAULT,
-  PAGE_SIZE_DEFAULT,
-  SEARCH_EMAIL_TERM_DEFAULT,
-  SEARCH_LOGIN_TERM_DEFAULT,
-  SORT_BY_DEFAULT_SQL,
-  SortDirection,
-  SortDirectionOrm,
-} from "../../../../infrastructure/utils/constants"
 import { AccountEntity } from "../../application/entities/sql/account.entity"
 import { BanInfoEntity } from "../../application/entities/sql/ban-info.entity"
 import { EmailConfirmationEntity } from "../../application/entities/sql/email-confirmation.entity"
-import { PostLikeEntity } from "../../../posts/application/entites/typeorm/post-like.entity"
+import {
+  BanStatus,
+  PAGE_NUMBER_DEFAULT, PAGE_SIZE_DEFAULT,
+  SEARCH_EMAIL_TERM_DEFAULT,
+  SEARCH_LOGIN_TERM_DEFAULT, SORT_BY_DEFAULT_SQL, SortDirection, SortDirectionOrm
+} from "../../../infrastructure/utils/constants";
+import {QueryUserSAInputModel} from "../../models/input/users/get-users.query.input-model";
 
 @Injectable()
 export class UsersQueryRepositoryOrm {
