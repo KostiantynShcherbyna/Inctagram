@@ -60,7 +60,7 @@ export class PostController {
             },
         });
     }
-    
+
     @Put('publish/:id')
     async publishPost(@Param('id') id: string): Promise<PostModel> {
         return this.postService.updatePost({
