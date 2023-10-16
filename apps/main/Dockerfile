@@ -28,6 +28,7 @@ RUN yarn install
 COPY --chown=node . .
 
 RUN yarn build:${SERVICE}
+RUN yarn build:production
 
 # Bind to all network interfaces so that it can be mapped to the host OS
 

@@ -1,22 +1,25 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { Test, TestingModule } from '@nestjs/testing'
+import { UserController } from './features/users/api/user.controller'
+import { UserService } from './features/users/app/user.service'
+import { PostController } from './features/posts/api/post.controller'
+import { PostService } from './features/posts/app/post.service'
+import { PrismaService } from './prisma.service'
 
-describe('AppController', () => {
-  let appController: AppController;
+describe('PostController', () => {
+	let postController: PostController
 
-  beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
-      controllers: [AppController],
-      providers: [AppService],
-    }).compile();
+	beforeEach(async () => {
+		const app: TestingModule = await Test.createTestingModule({
+			controllers: [PostController],
+			providers: [PostService, PrismaService]
+		}).compile()
 
-    appController = app.get<AppController>(AppController);
-  });
+		postController = app.get<PostController>(PostController)
+	})
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
-    });
-  });
-});
+	describe('root', () => {
+		it('should return "Hello World!"', async () => {
+			expect(await postController.getPublishedPosts()).toBeDefined()
+		})
+	})
+})
