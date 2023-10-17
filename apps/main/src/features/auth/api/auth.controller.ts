@@ -11,13 +11,12 @@ import {
 import { CommandBus } from '@nestjs/cqrs'
 import { outputMessageException } from '../../../../../infrastructure/utils/output-message-exception'
 import { ErrorMessageEnums } from '../../../../../infrastructure/utils/error-message-enums'
-import { RegistrationBodyInputModel } from '../utils/models/registration.body.input-model'
+import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
 import { RegistrationSqlCommand } from '../app/use-cases/registration.use-case'
-import { EmailConfirmationResendBodyInputModel } from '../utils/models/email-confirmation-resend.body.input-model'
-import {
-	EmailConfirmationResendCommand,
-	EmailConfirmationResendUseCase
-} from '../app/use-cases/email-confirmation-resend.use-case'
+import { EmailConfirmationResendBodyInputModel } from '../utils/models/input/email-confirmation-resend.body.input-model'
+import { EmailConfirmationResendCommand } from '../app/use-cases/email-confirmation-resend.use-case'
+import { ConfirmationBodyInputModel } from '../utils/models/input/confirmation.body.input-model'
+import { EmailConfirmationCommand } from '../app/use-cases/email-confirmation.use-case'
 
 @Controller('auth')
 export class AuthController {
@@ -47,6 +46,32 @@ export class AuthController {
 			throw new ServiceUnavailableException()
 	}
 
+	@Post('registration-confirmation')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	async confirmation(@Body() bodyConfirmation: ConfirmationBodyInputModel) {
+		const confirmationContract = await this.commandBus.execute(
+			new EmailConfirmationCommand(bodyConfirmation.code)
+		)
+
+		if (confirmationContract.error === ErrorMessageEnums.USER_NOT_FOUND)
+			throw new BadRequestException(
+				outputMessageException(ErrorMessageEnums.USER_NOT_FOUND, 'code')
+			)
+		if (confirmationContract.error === ErrorMessageEnums.USER_EMAIL_CONFIRMED)
+			throw new BadRequestException(
+				outputMessageException(ErrorMessageEnums.USER_EMAIL_CONFIRMED, 'code')
+			)
+		if (
+			confirmationContract.error === ErrorMessageEnums.CONFIRMATION_CODE_EXPIRED
+		)
+			throw new BadRequestException(
+				outputMessageException(
+					ErrorMessageEnums.CONFIRMATION_CODE_EXPIRED,
+					'code'
+				)
+			)
+	}
+
 	@Post('email-confirmation-resend')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async emailConfirmationResend(
@@ -71,6 +96,5 @@ export class AuthController {
 			throw new InternalServerErrorException()
 		if (confirmationResendContract.error === ErrorMessageEnums.EMAIL_NOT_SENT)
 			throw new InternalServerErrorException()
-		return
 	}
 }

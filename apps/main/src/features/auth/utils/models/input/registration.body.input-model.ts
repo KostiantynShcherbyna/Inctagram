@@ -7,8 +7,8 @@ import {
 	LOGIN_REGEX,
 	PASSWORD_MAX_LENGTH,
 	PASSWORD_MIN_LENGTH
-} from '../../../../../../infrastructure/utils/constants'
-import { trimTransformer } from '../../../../../../infrastructure/utils/trim-transformer'
+} from '../../../../../../../infrastructure/utils/constants'
+import { trimTransformer } from '../../../../../../../infrastructure/utils/trim-transformer'
 
 export class RegistrationBodyInputModel {
 	@Transform(({ value }) => trimTransformer(value, 'login'))
