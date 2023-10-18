@@ -2,16 +2,16 @@ import {
 	BadRequestException,
 	Body,
 	Controller,
+	Headers,
 	HttpCode,
 	HttpStatus,
 	InternalServerErrorException,
 	Ip,
 	Post,
-	Headers,
-	ServiceUnavailableException,
-	UseGuards,
 	Res,
-	UnauthorizedException
+	ServiceUnavailableException,
+	UnauthorizedException,
+	UseGuards
 } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 import { Response } from 'express'
@@ -25,12 +25,15 @@ import { ConfirmationBodyInputModel } from '../utils/models/input/confirmation.b
 import { EmailConfirmationCommand } from '../app/use-cases/email-confirmation.use-case'
 import { LoginBodyInputModel } from '../utils/models/input/login.body.input-model'
 import { LoginCommand } from '../app/use-cases/login.use-case'
-import { AuthGuard } from '@nestjs/passport'
-import { StrategyNames } from '../../../../../infrastructure/utils/constants'
-import { RefreshGuard } from '../../../../../infrastructure/utils/guards/refresh.guard'
-import { DeviceSession } from '../../../../../infrastructure/utils/decorators/device-session.decorator'
+import { RefreshGuard } from '../../../../../infrastructure/guards/refresh.guard'
+import { DeviceSession } from '../../../../../infrastructure/decorators/device-session.decorator'
 import { DeviceSessionHeaderInputModel } from '../utils/models/input/device-session.header.input-model'
 import { LogoutCommand } from '../app/use-cases/logout.use-case'
+import { RefreshTokenCommand } from '../app/use-cases/refresh-token.use-case'
+import { PasswordRecoveryBodyInputModel } from '../utils/models/input/password-recovery.body.input-model'
+import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-case'
+import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
+import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
 
 @Controller('auth')
 export class AuthController {
@@ -111,7 +114,7 @@ export class AuthController {
 	}
 
 	@Post('login')
-	@UseGuards(AuthGuard(StrategyNames.loginLocalStrategy))
+	// @UseGuards(AuthGuard(StrategyNames.loginLocalStrategy))
 	@HttpCode(HttpStatus.OK)
 	async login(
 		@Headers('user-agent') userAgent: string,
@@ -160,6 +163,85 @@ export class AuthController {
 			throw new UnauthorizedException()
 		if (logoutContract.error === ErrorMessageEnums.TOKEN_NOT_VERIFY)
 			throw new UnauthorizedException()
+	}
+
+	@Post('password-recovery')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	async passwordRecovery(
+		@Body() bodyPasswordRecovery: PasswordRecoveryBodyInputModel
+	) {
+		const isRecoveryContract = await this.commandBus.execute(
+			new PasswordRecoveryCommand(bodyPasswordRecovery.email)
+		)
+		if (isRecoveryContract.error === ErrorMessageEnums.EMAIL_NOT_SENT)
+			throw new InternalServerErrorException()
+		if (isRecoveryContract.error === ErrorMessageEnums.RECOVERY_CODE_NOT_DELETE)
+			throw new InternalServerErrorException()
+	}
+
+	@Post('new-password')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	async newPassword(@Body() bodyNewPassword: NewPasswordBodyInputModel) {
+		const newPasswordContract = await this.commandBus.execute(
+			new NewPasswordCommand(
+				bodyNewPassword.newPassword,
+				bodyNewPassword.recoveryCode
+			)
+		)
+		if (newPasswordContract.error === ErrorMessageEnums.TOKEN_NOT_VERIFY)
+			throw new BadRequestException(
+				outputMessageException(
+					ErrorMessageEnums.TOKEN_NOT_VERIFY,
+					'recoveryCode'
+				)
+			)
+		if (newPasswordContract.error === ErrorMessageEnums.RECOVERY_CODE_NOT_FOUND)
+			throw new BadRequestException(
+				outputMessageException(
+					ErrorMessageEnums.RECOVERY_CODE_NOT_FOUND,
+					'recoveryCode'
+				)
+			)
+		if (newPasswordContract.error === ErrorMessageEnums.RECOVERY_CODE_INVALID)
+			throw new BadRequestException(
+				outputMessageException(
+					ErrorMessageEnums.RECOVERY_CODE_INVALID,
+					'recoveryCode'
+				)
+			)
+		if (newPasswordContract.error === ErrorMessageEnums.USER_NOT_FOUND)
+			throw new BadRequestException(
+				outputMessageException(
+					ErrorMessageEnums.RECOVERY_CODE_INVALID,
+					'recoveryCode'
+				)
+			)
 		return
+	}
+
+	@UseGuards(RefreshGuard)
+	@Post('refresh-token')
+	@HttpCode(HttpStatus.OK)
+	async refreshToken(
+		@DeviceSession() deviceSession: DeviceSessionHeaderInputModel,
+		@Headers('user-agent') userAgent: string,
+		@Ip() ip: string,
+		@Res({ passthrough: true }) res: Response
+	) {
+		const refreshTokenContract = await this.commandBus.execute(
+			new RefreshTokenCommand(deviceSession, ip, userAgent)
+		)
+		if (refreshTokenContract.error === ErrorMessageEnums.USER_NOT_FOUND)
+			throw new UnauthorizedException()
+		if (refreshTokenContract.error === ErrorMessageEnums.DEVICE_NOT_FOUND)
+			throw new UnauthorizedException()
+		if (refreshTokenContract.error === ErrorMessageEnums.TOKEN_NOT_VERIFY)
+			throw new UnauthorizedException()
+
+		res.cookie('refreshToken', refreshTokenContract.data?.refreshToken, {
+			httpOnly: true,
+			secure: true
+		})
+		return refreshTokenContract.data?.accessJwt
 	}
 }

@@ -7,16 +7,26 @@ import { PrismaService } from './prisma.service'
 import { AuthController } from './features/auth/api/auth.controller'
 import { RegistrationUseCase } from './features/auth/app/use-cases/registration.use-case'
 import { CommandBus } from '@nestjs/cqrs'
+import { TokensService } from '../../infrastructure/services/tokens.service'
+import { JwtService } from '@nestjs/jwt'
+import { ConfigService } from '@nestjs/config'
+import { RefreshTokenUseCase } from './features/auth/app/use-cases/refresh-token.use-case'
+
+const controllers = [PostController, UserController, AuthController]
+const services = [
+	JwtService,
+	ConfigService,
+	TokensService,
+	CommandBus,
+	PrismaService,
+	PostService,
+	UserService
+]
+const usecases = [RegistrationUseCase, RefreshTokenUseCase]
 
 @Module({
 	imports: [],
-	controllers: [PostController, UserController, AuthController],
-	providers: [
-		CommandBus,
-		PrismaService,
-		PostService,
-		UserService,
-		RegistrationUseCase
-	]
+	controllers: [...controllers],
+	providers: [...services, ...usecases]
 })
 export class AppModule {}
