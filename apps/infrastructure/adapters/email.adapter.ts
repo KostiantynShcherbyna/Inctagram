@@ -1,7 +1,8 @@
 import { emailService } from '../services/email.service'
+import { User } from '@prisma/client'
 
 export class EmailAdapter {
-	async sendConfirmationCode(user: any) {
+	async sendConfirmationCode(user: User) {
 		const domain = `https://somesite.com`
 
 		const emailDTO = {
@@ -10,16 +11,12 @@ export class EmailAdapter {
 			pass: 'lkzebhjjcjymsvqc',
 			from: 'Kostyan <kstntn.xxx@gmail.com>',
 
-			email: user.accountData?.email || user.email,
+			email: user.email || user.email,
 			subject: 'registration confirmation',
 			message: `<h1>Thank for your registration</h1>
             <p>To finish registration please follow the link below:
-            <a href='${domain}/confirm-email?code=${
-				user.emailConfirmation?.confirmationCode || user.confirmationCode
-			}'>
-            complete registration with code</a> ${
-							user.emailConfirmation?.confirmationCode || user.confirmationCode
-						}
+            <a href='${domain}/confirm-email?code=${user.confirmationCode}'>
+            complete registration with code </a>${user.confirmationCode}
             </p>`
 		}
 		await emailService.sendEmail(emailDTO)
