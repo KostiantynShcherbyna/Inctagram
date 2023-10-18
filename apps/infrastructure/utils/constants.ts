@@ -5,6 +5,8 @@ export const LOGIN_MIN_LENGTH = 3
 export const PASSWORD_MAX_LENGTH = 20
 export const PASSWORD_MIN_LENGTH = 6
 
+export const EMAIL_CONFIRMATION_CODE_EXP_TIME = '300s'
+
 export enum StrategyNames {
 	loginLocalStrategy = 'login-local-strategy'
 }

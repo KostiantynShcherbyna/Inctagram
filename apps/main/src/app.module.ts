@@ -11,9 +11,12 @@ import { TokensService } from '../../infrastructure/services/tokens.service'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { RefreshTokenUseCase } from './features/auth/app/use-cases/refresh-token.use-case'
+import { PrismaClient } from '@prisma/client'
+import { UserEntity } from '../../../prisma/domain/user.entity'
 
 const controllers = [PostController, UserController, AuthController]
 const services = [
+	PrismaClient,
 	JwtService,
 	ConfigService,
 	TokensService,

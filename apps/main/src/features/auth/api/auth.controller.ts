@@ -18,7 +18,7 @@ import { Response } from 'express'
 import { outputMessageException } from '../../../../../infrastructure/utils/output-message-exception'
 import { ErrorMessageEnums } from '../../../../../infrastructure/utils/error-message-enums'
 import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
-import { RegistrationSqlCommand } from '../app/use-cases/registration.use-case'
+import { RegistrationCommand } from '../app/use-cases/registration.use-case'
 import { EmailConfirmationResendBodyInputModel } from '../utils/models/input/email-confirmation-resend.body.input-model'
 import { EmailConfirmationResendCommand } from '../app/use-cases/email-confirmation-resend.use-case'
 import { ConfirmationBodyInputModel } from '../utils/models/input/confirmation.body.input-model'
@@ -43,7 +43,7 @@ export class AuthController {
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async registration(@Body() bodyRegistration: RegistrationBodyInputModel) {
 		const registrationContract = await this.commandBus.execute(
-			new RegistrationSqlCommand(
+			new RegistrationCommand(
 				bodyRegistration.login,
 				bodyRegistration.email,
 				bodyRegistration.password
