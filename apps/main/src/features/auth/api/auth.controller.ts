@@ -65,7 +65,9 @@ export class AuthController {
 
 	@Post('registration-confirmation')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	async confirmation(@Body() bodyConfirmation: ConfirmationBodyInputModel) {
+	async emailConfirmation(
+		@Body() bodyConfirmation: ConfirmationBodyInputModel
+	) {
 		const confirmationContract = await this.commandBus.execute(
 			new EmailConfirmationCommand(bodyConfirmation.code)
 		)
@@ -216,32 +218,5 @@ export class AuthController {
 					'recoveryCode'
 				)
 			)
-		return
-	}
-
-	@UseGuards(RefreshGuard)
-	@Post('refresh-token')
-	@HttpCode(HttpStatus.OK)
-	async refreshToken(
-		@DeviceSession() deviceSession: DeviceSessionHeaderInputModel,
-		@Headers('user-agent') userAgent: string,
-		@Ip() ip: string,
-		@Res({ passthrough: true }) res: Response
-	) {
-		const refreshTokenContract = await this.commandBus.execute(
-			new RefreshTokenCommand(deviceSession, ip, userAgent)
-		)
-		if (refreshTokenContract.error === ErrorMessageEnums.USER_NOT_FOUND)
-			throw new UnauthorizedException()
-		if (refreshTokenContract.error === ErrorMessageEnums.DEVICE_NOT_FOUND)
-			throw new UnauthorizedException()
-		if (refreshTokenContract.error === ErrorMessageEnums.TOKEN_NOT_VERIFY)
-			throw new UnauthorizedException()
-
-		res.cookie('refreshToken', refreshTokenContract.data?.refreshToken, {
-			httpOnly: true,
-			secure: true
-		})
-		return refreshTokenContract.data?.accessJwt
 	}
 }
