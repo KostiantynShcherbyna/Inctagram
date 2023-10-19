@@ -1,4 +1,4 @@
-export enum ErrorMessageEnums {
+export enum ErrorMessageEnum {
 
 	FAIL_LOGIC = `Fail logic`,
 	EMAIL_NOT_SENT = `Email not sent`,

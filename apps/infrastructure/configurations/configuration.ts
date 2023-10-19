@@ -1,5 +1,6 @@
 export const configuration = () => {
 	return {
+		PORT: Number(process.env.PORT) || 3001,
 		DATABASE_URL:
 			process.env.DATABASE_URL ||
 			'postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public',

@@ -16,7 +16,7 @@ model User {
   username         String
   passwordHash     String   @map("password_hash")
   createdAt        DateTime @default(now()) @map("created_at")
-  confirmationCode String   @map("confirmation_code")
+  confirmationCode String   @unique @map("confirmation_code")
   isConfirmed      Boolean  @default(false) @map("is_confirmed")
   posts            Post[]
 }

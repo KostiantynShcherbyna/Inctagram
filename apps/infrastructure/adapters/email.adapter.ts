@@ -3,23 +3,20 @@ import { User } from '@prisma/client'
 
 export class EmailAdapter {
 	async sendConfirmationCode(user: User) {
-		const domain = `https://somesite.com`
-
-		const emailDTO = {
+		const domain = `https://visualvoyage.ru`
+		await emailService.sendEmail({
 			service: 'gmail',
 			user: 'kstntn.xxx@gmail.com',
 			pass: 'lkzebhjjcjymsvqc',
-			from: 'Kostyan <kstntn.xxx@gmail.com>',
-
-			email: user.email || user.email,
+			from: 'inctagram <kstntn.xxx@gmail.com>',
+			email: user.email,
 			subject: 'registration confirmation',
 			message: `<h1>Thank for your registration</h1>
             <p>To finish registration please follow the link below:
             <a href='${domain}/confirm-email?code=${user.confirmationCode}'>
             complete registration with code </a>${user.confirmationCode}
             </p>`
-		}
-		await emailService.sendEmail(emailDTO)
+		})
 	}
 
 	async sendPasswordRecovery(email: string, passwordRecoveryToken: string) {
@@ -31,7 +28,7 @@ export class EmailAdapter {
 			service: 'gmail',
 			user: 'kstntn.xxx@gmail.com',
 			pass: 'lkzebhjjcjymsvqc',
-			from: 'Kostyan <kstntn.xxx@gmail.com>',
+			from: 'inctagram <kstntn.xxx@gmail.com>',
 
 			email: email,
 			subject: 'recovery password',

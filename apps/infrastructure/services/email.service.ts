@@ -18,7 +18,6 @@ export const emailService = {
 				subject: emailBody.subject,
 				html: emailBody.message
 			})
-
 			return true
 		} catch (err) {
 			console.log(`email-adapter-sendEmail - ` + err)

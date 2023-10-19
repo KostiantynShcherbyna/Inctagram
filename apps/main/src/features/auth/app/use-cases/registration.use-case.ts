@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { UsersRepository } from '../../../users/repo/users.repository'
-import { ErrorMessageEnums } from '../../../../../../infrastructure/utils/error-message-enums'
+import { ErrorMessageEnum } from '../../../../../../infrastructure/utils/error-message-enum'
 import { PrismaClient } from '@prisma/client'
 import { ResponseContract } from '../../../../../../infrastructure/utils/response-contract'
 import { generateHashService } from '../../../../../../infrastructure/services/generate-hash.service'
@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config'
 import { ConfigType } from '../../../../../../infrastructure/configurations/configuration'
 import { TokensService } from '../../../../../../infrastructure/services/tokens.service'
 import { EMAIL_CONFIRMATION_CODE_EXP_TIME } from '../../../../../../infrastructure/utils/constants'
+import { UserEntity } from '../../../../../../../prisma/domain/user.entity'
 
 export class RegistrationCommand {
 	constructor(
@@ -36,27 +37,21 @@ export class RegistrationUseCase
 			command.email
 		)
 		if (user?.username === command.login)
-			return new ResponseContract(null, ErrorMessageEnums.USER_LOGIN_EXIST)
+			return new ResponseContract(null, ErrorMessageEnum.USER_LOGIN_EXIST)
 		if (user?.email === command.email)
-			return new ResponseContract(null, ErrorMessageEnums.USER_EMAIL_EXIST)
+			return new ResponseContract(null, ErrorMessageEnum.USER_EMAIL_EXIST)
 
-		const passwordHash = await generateHashService(command.password)
-		const confirmationCodeSecret = this.configService.get(
-			'EMAIL_CONFIRMATION_CODE_SECRET',
-			{ infer: true }
-		)
-		const confirmationCode = await this.tokensService.createToken(
-			{ login: command.login, email: command.email },
-			confirmationCodeSecret,
-			EMAIL_CONFIRMATION_CODE_EXP_TIME
-		)
+		const userInstance = new UserEntity(this.prisma.user)
 
-		const newUser = await this.usersRepository.createUser({
+		const userDto = {
 			username: command.login,
 			email: command.email,
-			passwordHash: passwordHash,
-			confirmationCode: confirmationCode
-		})
+			password: command.password,
+			configService: this.configService,
+			tokensService: this.tokensService
+		}
+
+		const newUser = await this.usersRepository.createUser(userInstance, userDto)
 
 		await this.emailAdapter.sendConfirmationCode(newUser)
 

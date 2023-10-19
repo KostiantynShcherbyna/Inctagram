@@ -16,7 +16,7 @@ import {
 import { CommandBus } from '@nestjs/cqrs'
 import { Response } from 'express'
 import { outputMessageException } from '../../../../../infrastructure/utils/output-message-exception'
-import { ErrorMessageEnums } from '../../../../../infrastructure/utils/error-message-enums'
+import { ErrorMessageEnum } from '../../../../../infrastructure/utils/error-message-enum'
 import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
 import { RegistrationCommand } from '../app/use-cases/registration.use-case'
 import { EmailConfirmationResendBodyInputModel } from '../utils/models/input/email-confirmation-resend.body.input-model'
@@ -49,17 +49,17 @@ export class AuthController {
 				bodyRegistration.password
 			)
 		)
-		if (registrationContract.error === ErrorMessageEnums.USER_EMAIL_EXIST)
+		if (registrationContract.error === ErrorMessageEnum.USER_EMAIL_EXIST)
 			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnums.USER_EMAIL_EXIST, 'email')
+				outputMessageException(ErrorMessageEnum.USER_EMAIL_EXIST, 'email')
 			)
-		if (registrationContract.error === ErrorMessageEnums.USER_LOGIN_EXIST)
+		if (registrationContract.error === ErrorMessageEnum.USER_LOGIN_EXIST)
 			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnums.USER_LOGIN_EXIST, 'login')
+				outputMessageException(ErrorMessageEnum.USER_LOGIN_EXIST, 'login')
 			)
-		if (registrationContract.error === ErrorMessageEnums.USER_NOT_DELETED)
+		if (registrationContract.error === ErrorMessageEnum.USER_NOT_DELETED)
 			throw new ServiceUnavailableException()
-		if (registrationContract.error === ErrorMessageEnums.EMAIL_NOT_SENT)
+		if (registrationContract.error === ErrorMessageEnum.EMAIL_NOT_SENT)
 			throw new ServiceUnavailableException()
 	}
 
@@ -71,20 +71,20 @@ export class AuthController {
 		const confirmationContract = await this.commandBus.execute(
 			new EmailConfirmationCommand(bodyConfirmation.code)
 		)
-		if (confirmationContract.error === ErrorMessageEnums.USER_NOT_FOUND)
+		if (confirmationContract.error === ErrorMessageEnum.USER_NOT_FOUND)
 			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnums.USER_NOT_FOUND, 'code')
+				outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'code')
 			)
-		if (confirmationContract.error === ErrorMessageEnums.USER_EMAIL_CONFIRMED)
+		if (confirmationContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED)
 			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnums.USER_EMAIL_CONFIRMED, 'code')
+				outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'code')
 			)
 		if (
-			confirmationContract.error === ErrorMessageEnums.CONFIRMATION_CODE_EXPIRED
+			confirmationContract.error === ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED
 		)
 			throw new BadRequestException(
 				outputMessageException(
-					ErrorMessageEnums.CONFIRMATION_CODE_EXPIRED,
+					ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED,
 					'code'
 				)
 			)
@@ -98,20 +98,20 @@ export class AuthController {
 		const confirmationResendContract = await this.commandBus.execute(
 			new EmailConfirmationResendCommand(bodyConfirmationResend.email)
 		)
-		if (confirmationResendContract.error === ErrorMessageEnums.USER_NOT_FOUND)
+		if (confirmationResendContract.error === ErrorMessageEnum.USER_NOT_FOUND)
 			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnums.USER_NOT_FOUND, 'email')
+				outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'email')
 			)
 		if (
 			confirmationResendContract.error ===
-			ErrorMessageEnums.USER_EMAIL_CONFIRMED
+			ErrorMessageEnum.USER_EMAIL_CONFIRMED
 		)
 			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnums.USER_EMAIL_CONFIRMED, 'email')
+				outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'email')
 			)
-		if (confirmationResendContract.error === ErrorMessageEnums.USER_NOT_DELETED)
+		if (confirmationResendContract.error === ErrorMessageEnum.USER_NOT_DELETED)
 			throw new InternalServerErrorException()
-		if (confirmationResendContract.error === ErrorMessageEnums.EMAIL_NOT_SENT)
+		if (confirmationResendContract.error === ErrorMessageEnum.EMAIL_NOT_SENT)
 			throw new InternalServerErrorException()
 	}
 
@@ -127,13 +127,13 @@ export class AuthController {
 		const loginContract = await this.commandBus.execute(
 			new LoginCommand(bodyAuth, ip, userAgent)
 		)
-		if (loginContract.error === ErrorMessageEnums.USER_NOT_FOUND)
+		if (loginContract.error === ErrorMessageEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
-		if (loginContract.error === ErrorMessageEnums.USER_IS_BANNED)
+		if (loginContract.error === ErrorMessageEnum.USER_IS_BANNED)
 			throw new UnauthorizedException()
-		if (loginContract.error === ErrorMessageEnums.USER_EMAIL_NOT_CONFIRMED)
+		if (loginContract.error === ErrorMessageEnum.USER_EMAIL_NOT_CONFIRMED)
 			throw new UnauthorizedException()
-		if (loginContract.error === ErrorMessageEnums.PASSWORD_NOT_COMPARED)
+		if (loginContract.error === ErrorMessageEnum.PASSWORD_NOT_COMPARED)
 			throw new UnauthorizedException()
 
 		res.cookie('refreshToken', loginContract.data?.refreshToken, {
@@ -157,13 +157,13 @@ export class AuthController {
 				deviceSession.userId
 			)
 		)
-		if (logoutContract.error === ErrorMessageEnums.USER_NOT_FOUND)
+		if (logoutContract.error === ErrorMessageEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
-		if (logoutContract.error === ErrorMessageEnums.DEVICE_NOT_FOUND)
+		if (logoutContract.error === ErrorMessageEnum.DEVICE_NOT_FOUND)
 			throw new UnauthorizedException()
-		if (logoutContract.error === ErrorMessageEnums.DEVICE_NOT_DELETE)
+		if (logoutContract.error === ErrorMessageEnum.DEVICE_NOT_DELETE)
 			throw new UnauthorizedException()
-		if (logoutContract.error === ErrorMessageEnums.TOKEN_NOT_VERIFY)
+		if (logoutContract.error === ErrorMessageEnum.TOKEN_NOT_VERIFY)
 			throw new UnauthorizedException()
 	}
 
@@ -175,9 +175,9 @@ export class AuthController {
 		const isRecoveryContract = await this.commandBus.execute(
 			new PasswordRecoveryCommand(bodyPasswordRecovery.email)
 		)
-		if (isRecoveryContract.error === ErrorMessageEnums.EMAIL_NOT_SENT)
+		if (isRecoveryContract.error === ErrorMessageEnum.EMAIL_NOT_SENT)
 			throw new InternalServerErrorException()
-		if (isRecoveryContract.error === ErrorMessageEnums.RECOVERY_CODE_NOT_DELETE)
+		if (isRecoveryContract.error === ErrorMessageEnum.RECOVERY_CODE_NOT_DELETE)
 			throw new InternalServerErrorException()
 	}
 
@@ -190,31 +190,31 @@ export class AuthController {
 				bodyNewPassword.recoveryCode
 			)
 		)
-		if (newPasswordContract.error === ErrorMessageEnums.TOKEN_NOT_VERIFY)
+		if (newPasswordContract.error === ErrorMessageEnum.TOKEN_NOT_VERIFY)
 			throw new BadRequestException(
 				outputMessageException(
-					ErrorMessageEnums.TOKEN_NOT_VERIFY,
+					ErrorMessageEnum.TOKEN_NOT_VERIFY,
 					'recoveryCode'
 				)
 			)
-		if (newPasswordContract.error === ErrorMessageEnums.RECOVERY_CODE_NOT_FOUND)
+		if (newPasswordContract.error === ErrorMessageEnum.RECOVERY_CODE_NOT_FOUND)
 			throw new BadRequestException(
 				outputMessageException(
-					ErrorMessageEnums.RECOVERY_CODE_NOT_FOUND,
+					ErrorMessageEnum.RECOVERY_CODE_NOT_FOUND,
 					'recoveryCode'
 				)
 			)
-		if (newPasswordContract.error === ErrorMessageEnums.RECOVERY_CODE_INVALID)
+		if (newPasswordContract.error === ErrorMessageEnum.RECOVERY_CODE_INVALID)
 			throw new BadRequestException(
 				outputMessageException(
-					ErrorMessageEnums.RECOVERY_CODE_INVALID,
+					ErrorMessageEnum.RECOVERY_CODE_INVALID,
 					'recoveryCode'
 				)
 			)
-		if (newPasswordContract.error === ErrorMessageEnums.USER_NOT_FOUND)
+		if (newPasswordContract.error === ErrorMessageEnum.USER_NOT_FOUND)
 			throw new BadRequestException(
 				outputMessageException(
-					ErrorMessageEnums.RECOVERY_CODE_INVALID,
+					ErrorMessageEnum.RECOVERY_CODE_INVALID,
 					'recoveryCode'
 				)
 			)

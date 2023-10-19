@@ -18,8 +18,25 @@ export class UsersRepository {
 		})
 	}
 
-	async createUser(newUserDTO: ICreateUser): Promise<User> {
-		const userEntity = new UserEntity(this.prisma.user)
-		return userEntity.createUser(newUserDTO)
+	async findUserByConfirmationCode(
+		confirmationCode: string
+	): Promise<User | null> {
+		return this.prisma.user.findUnique({
+			where: { confirmationCode }
+		})
+	}
+
+	async createUser(
+		userEntity: UserEntity,
+		userDTO: ICreateUser
+	): Promise<User> {
+		return userEntity.createUser(userDTO)
+	}
+
+	async updateConfirmation(user: User): Promise<User> {
+		return this.prisma.user.update({
+			where: { id: user.id },
+			data: { confirmationCode: user.confirmationCode, isConfirmed: true }
+		})
 	}
 }
