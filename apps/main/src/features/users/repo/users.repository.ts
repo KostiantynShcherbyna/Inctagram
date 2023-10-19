@@ -21,8 +21,16 @@ export class UsersRepository {
 	async findUserByConfirmationCode(
 		confirmationCode: string
 	): Promise<User | null> {
+		return this.prisma.user.findFirst({
+			where: {
+				confirmationCodes: { has: confirmationCode }
+			}
+		})
+	}
+
+	async findUserByEmail(email: string): Promise<User | null> {
 		return this.prisma.user.findUnique({
-			where: { confirmationCode }
+			where: { email }
 		})
 	}
 
@@ -33,10 +41,20 @@ export class UsersRepository {
 		return userEntity.createUser(userDTO)
 	}
 
-	async updateConfirmation(user: User): Promise<User> {
+	async addConfirmationCode(
+		id: string,
+		confirmationCode: string
+	): Promise<User> {
 		return this.prisma.user.update({
-			where: { id: user.id },
-			data: { confirmationCode: user.confirmationCode, isConfirmed: true }
+			where: { id },
+			data: { confirmationCodes: { push: confirmationCode } }
+		})
+	}
+
+	async updateConfirmation(id: string, isConfirmed: boolean): Promise<User> {
+		return this.prisma.user.update({
+			where: { id },
+			data: { isConfirmed }
 		})
 	}
 }

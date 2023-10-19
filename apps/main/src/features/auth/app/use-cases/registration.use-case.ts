@@ -3,12 +3,10 @@ import { UsersRepository } from '../../../users/repo/users.repository'
 import { ErrorMessageEnum } from '../../../../../../infrastructure/utils/error-message-enum'
 import { PrismaClient } from '@prisma/client'
 import { ResponseContract } from '../../../../../../infrastructure/utils/response-contract'
-import { generateHashService } from '../../../../../../infrastructure/services/generate-hash.service'
 import { EmailAdapter } from '../../../../../../infrastructure/adapters/email.adapter'
 import { ConfigService } from '@nestjs/config'
 import { ConfigType } from '../../../../../../infrastructure/configurations/configuration'
 import { TokensService } from '../../../../../../infrastructure/services/tokens.service'
-import { EMAIL_CONFIRMATION_CODE_EXP_TIME } from '../../../../../../infrastructure/utils/constants'
 import { UserEntity } from '../../../../../../../prisma/domain/user.entity'
 
 export class RegistrationCommand {
@@ -26,9 +24,9 @@ export class RegistrationUseCase
 	constructor(
 		protected prisma: PrismaClient,
 		protected configService: ConfigService<ConfigType, true>,
+		protected tokensService: TokensService,
 		protected usersRepository: UsersRepository,
-		protected emailAdapter: EmailAdapter,
-		protected tokensService: TokensService
+		protected emailAdapter: EmailAdapter
 	) {}
 
 	async execute(command: RegistrationCommand) {
@@ -53,7 +51,7 @@ export class RegistrationUseCase
 
 		const newUser = await this.usersRepository.createUser(userInstance, userDto)
 
-		await this.emailAdapter.sendConfirmationCode(newUser)
+		this.emailAdapter.sendConfirmationCode(newUser)
 
 		return new ResponseContract(true, null)
 	}

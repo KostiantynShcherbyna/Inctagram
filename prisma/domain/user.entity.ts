@@ -1,10 +1,9 @@
 import { PrismaClient, User } from '@prisma/client'
-import { Injectable } from '@nestjs/common'
 import { generateHashService } from '../../apps/infrastructure/services/generate-hash.service'
-import { EMAIL_CONFIRMATION_CODE_EXP_TIME } from '../../apps/infrastructure/utils/constants'
 import { ConfigService } from '@nestjs/config'
 import { ConfigType } from '../../apps/infrastructure/configurations/configuration'
 import { TokensService } from '../../apps/infrastructure/services/tokens.service'
+import { ExpiresTime } from '../../apps/infrastructure/utils/constants'
 
 export interface ICreateUser {
 	username: string
@@ -15,16 +14,13 @@ export interface ICreateUser {
 }
 
 export class UserEntity {
-	constructor(private readonly prisma: PrismaClient['user']) {}
+	constructor(private readonly prisma: PrismaClient['user']) {
+	}
 
-	async createUser({
-		username,
-		email,
-		password,
-		configService,
-		tokensService
-	}: ICreateUser): Promise<User> {
+	async createUser({ username, email, password, configService, tokensService }: ICreateUser)
+		: Promise<User> {
 		const passwordHash = await generateHashService(password)
+
 		const confirmationCodeSecret = configService.get(
 			'EMAIL_CONFIRMATION_CODE_SECRET',
 			{ infer: true }
@@ -32,7 +28,7 @@ export class UserEntity {
 		const confirmationCode = await tokensService.createToken(
 			{ username, email },
 			confirmationCodeSecret,
-			EMAIL_CONFIRMATION_CODE_EXP_TIME
+			ExpiresTime.EMAIL_CONFIRMATION_CODE_EXP_TIME
 		)
 
 		return this.prisma.create({
@@ -40,18 +36,8 @@ export class UserEntity {
 				username,
 				email,
 				passwordHash,
-				confirmationCode
+				confirmationCodes: [confirmationCode]
 			}
 		})
 	}
-
-	// async updateConfirmationCode(
-	// 	id: string,
-	// 	confirmationCode: string
-	// ): Promise<User> {
-	// 	return this.prisma.update({
-	// 		where: { id },
-	// 		data: { confirmationCode }
-	// 	})
-	// }
 }

@@ -11,10 +11,14 @@ export class EmailAdapter {
 			from: 'inctagram <kstntn.xxx@gmail.com>',
 			email: user.email,
 			subject: 'registration confirmation',
-			message: `<h1>Thank for your registration</h1>
+			message: `<h1>Thanks for your registration</h1>
             <p>To finish registration please follow the link below:
-            <a href='${domain}/confirm-email?code=${user.confirmationCode}'>
-            complete registration with code </a>${user.confirmationCode}
+            <a href='${domain}/confirm-email?code=${
+				user.confirmationCodes[user.confirmationCodes.length - 1]
+			}'>
+            complete registration with code </a>${
+							user.confirmationCodes[user.confirmationCodes.length - 1]
+						}
             </p>`
 		})
 	}
@@ -32,7 +36,7 @@ export class EmailAdapter {
 
 			email: email,
 			subject: 'recovery password',
-			message: `<h1>Thank for your registration</h1>
+			message: `<h1>Thanks for your registration</h1>
             <p>To finish registration please follow the link below:
             <a href='${domain}/password-recovery?recoveryCode=${passwordRecoveryToken}'>${passwordRecoveryToken}</a> 
             </p>`

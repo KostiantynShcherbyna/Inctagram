@@ -3,7 +3,8 @@ import { JwtService } from '@nestjs/jwt'
 
 @Injectable()
 export class TokensService {
-	constructor(private jwtService: JwtService) {}
+	constructor(private jwtService: JwtService) {
+	}
 
 	async createToken(
 		newTokenPayload: any,
