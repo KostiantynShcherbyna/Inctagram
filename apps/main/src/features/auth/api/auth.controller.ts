@@ -2,9 +2,11 @@ import {
 	BadRequestException,
 	Body,
 	Controller,
+	Get,
 	Headers,
 	HttpCode,
-	HttpStatus, Injectable,
+	HttpStatus,
+	Injectable,
 	InternalServerErrorException,
 	Ip,
 	Post,
@@ -32,11 +34,11 @@ import { PasswordRecoveryBodyInputModel } from '../utils/models/input/password-r
 import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-case'
 import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
 import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
+
 @Injectable()
 @Controller('auth')
 export class AuthController {
-	constructor(protected commandBus: CommandBus) {
-	}
+	constructor(protected commandBus: CommandBus) {}
 
 	@Post('registration')
 	@HttpCode(HttpStatus.NO_CONTENT)
@@ -102,8 +104,7 @@ export class AuthController {
 				outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'email')
 			)
 		if (
-			confirmationResendContract.error ===
-			ErrorMessageEnum.USER_EMAIL_CONFIRMED
+			confirmationResendContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED
 		)
 			throw new BadRequestException(
 				outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'email')
@@ -217,5 +218,15 @@ export class AuthController {
 					'recoveryCode'
 				)
 			)
+	}
+
+	@Get('google/login')
+	async handleLogin() {
+		return { msg: 'Google Auth' }
+	}
+
+	@Get('google/redirect')
+	async handleRedirect() {
+		return { msg: 'Ok' }
 	}
 }
