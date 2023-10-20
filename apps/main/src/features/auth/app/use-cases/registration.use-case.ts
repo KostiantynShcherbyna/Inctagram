@@ -14,20 +14,20 @@ export class RegistrationCommand {
 		public login: string,
 		public email: string,
 		public password: string
-	) {}
+	) {
+	}
 }
 
 @CommandHandler(RegistrationCommand)
-export class RegistrationUseCase
-	implements ICommandHandler<RegistrationCommand>
-{
+export class RegistrationUseCase implements ICommandHandler<RegistrationCommand> {
 	constructor(
 		protected prisma: PrismaClient,
 		protected configService: ConfigService<ConfigType, true>,
 		protected tokensService: TokensService,
 		protected usersRepository: UsersRepository,
 		protected emailAdapter: EmailAdapter
-	) {}
+	) {
+	}
 
 	async execute(command: RegistrationCommand) {
 		const user = await this.usersRepository.findUserByUserNameOrEmail(

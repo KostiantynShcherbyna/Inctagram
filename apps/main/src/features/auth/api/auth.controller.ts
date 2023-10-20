@@ -4,7 +4,7 @@ import {
 	Controller,
 	Headers,
 	HttpCode,
-	HttpStatus,
+	HttpStatus, Injectable,
 	InternalServerErrorException,
 	Ip,
 	Post,
@@ -17,7 +17,6 @@ import { CommandBus } from '@nestjs/cqrs'
 import { Response } from 'express'
 import { outputMessageException } from '../../../../../infrastructure/utils/output-message-exception'
 import { ErrorMessageEnum } from '../../../../../infrastructure/utils/error-message-enum'
-import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
 import { RegistrationCommand } from '../app/use-cases/registration.use-case'
 import { EmailConfirmationResendBodyInputModel } from '../utils/models/input/email-confirmation-resend.body.input-model'
 import { EmailConfirmationResendCommand } from '../app/use-cases/email-confirmation-resend.use-case'
@@ -29,19 +28,19 @@ import { RefreshGuard } from '../../../../../infrastructure/guards/refresh.guard
 import { DeviceSession } from '../../../../../infrastructure/decorators/device-session.decorator'
 import { DeviceSessionHeaderInputModel } from '../utils/models/input/device-session.header.input-model'
 import { LogoutCommand } from '../app/use-cases/logout.use-case'
-import { RefreshTokenCommand } from '../app/use-cases/refresh-token.use-case'
 import { PasswordRecoveryBodyInputModel } from '../utils/models/input/password-recovery.body.input-model'
 import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-case'
 import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
 import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
-
+@Injectable()
 @Controller('auth')
 export class AuthController {
-	constructor(protected commandBus: CommandBus) {}
+	constructor(protected commandBus: CommandBus) {
+	}
 
 	@Post('registration')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	async registration(@Body() bodyRegistration: RegistrationBodyInputModel) {
+	async registration(@Body() bodyRegistration: any) {
 		const registrationContract = await this.commandBus.execute(
 			new RegistrationCommand(
 				bodyRegistration.login,
