@@ -13,7 +13,7 @@ import { AuthController } from './features/auth/api/auth.controller'
 import { RefreshTokenUseCase } from './features/auth/app/use-cases/refresh-token.use-case'
 import { RegistrationUseCase } from './features/auth/app/use-cases/registration.use-case'
 import { UsersRepository } from './features/users/repo/users.repository'
-import { GoogleStrategy } from './features/auth/utils/google.strategy'
+import { GoogleStrategy } from './features/auth/utils/strategies/google.strategy'
 import { PassportModule } from '@nestjs/passport'
 
 const services = [

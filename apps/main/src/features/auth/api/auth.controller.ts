@@ -34,6 +34,7 @@ import { PasswordRecoveryBodyInputModel } from '../utils/models/input/password-r
 import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-case'
 import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
 import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
+import { GoogleAuthGuard } from '../utils/guards/google-auth.guard'
 
 @Injectable()
 @Controller('auth')
@@ -221,11 +222,13 @@ export class AuthController {
 	}
 
 	@Get('google/login')
+	@UseGuards(GoogleAuthGuard)
 	async handleLogin() {
 		return { msg: 'Google Auth' }
 	}
 
 	@Get('google/redirect')
+	@UseGuards(GoogleAuthGuard)
 	async handleRedirect() {
 		return { msg: 'Ok' }
 	}
