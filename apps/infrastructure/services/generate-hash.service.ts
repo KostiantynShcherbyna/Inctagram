@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 
 export const generateHashService = async (dto: string) => {
-	// const salt = await bcrypt.genSalt()
-	return bcrypt.hash(dto, 10)
+	const salt = await bcrypt.genSalt(10)
+	return bcrypt.hash(dto, salt)
 }
