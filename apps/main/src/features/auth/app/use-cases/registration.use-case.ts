@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { UsersRepository } from '../../../users/repo/users.repository'
 import { ErrorMessageEnum } from '../../../../../../infrastructure/utils/error-message-enum'
 import { PrismaClient } from '@prisma/client'
 import { ResponseContract } from '../../../../../../infrastructure/utils/response-contract'
@@ -8,6 +7,7 @@ import { ConfigService } from '@nestjs/config'
 import { ConfigType } from '../../../../../../infrastructure/configurations/configuration'
 import { TokensService } from '../../../../../../infrastructure/services/tokens.service'
 import { UserEntity } from '../../../../../../../prisma/domain/user.entity'
+import { UsersRepository } from '../../../users/repo/users.repository'
 
 export class RegistrationCommand {
 	constructor(
