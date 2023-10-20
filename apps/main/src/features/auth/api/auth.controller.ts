@@ -4,7 +4,8 @@ import {
 	Controller,
 	Headers,
 	HttpCode,
-	HttpStatus, Injectable,
+	HttpStatus,
+	Injectable,
 	InternalServerErrorException,
 	Ip,
 	Post,
@@ -32,6 +33,7 @@ import { PasswordRecoveryBodyInputModel } from '../utils/models/input/password-r
 import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-case'
 import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
 import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
+
 @Injectable()
 @Controller('auth')
 export class AuthController {
@@ -68,25 +70,16 @@ export class AuthController {
 		@Body() bodyConfirmation: ConfirmationBodyInputModel
 	) {
 		const confirmationContract = await this.commandBus.execute(
-			new EmailConfirmationCommand(bodyConfirmation.code)
-		)
-		if (confirmationContract.error === ErrorMessageEnum.USER_NOT_FOUND)
-			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'code')
-			)
-		if (confirmationContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED)
-			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'code')
-			)
-		if (
-			confirmationContract.error === ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED
-		)
-			throw new BadRequestException(
-				outputMessageException(
-					ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED,
-					'code'
-				)
-			)
+			new EmailConfirmationCommand(bodyConfirmation.code))
+
+		if (confirmationContract.error === ErrorMessageEnum.USER_NOT_FOUND) throw new BadRequestException(
+			outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'code'))
+		if (confirmationContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED) throw new BadRequestException(
+			outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'code'))
+		if (confirmationContract.error === ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED) throw new BadRequestException(
+			outputMessageException(ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED, 'code'))
+		if (confirmationContract.error === ErrorMessageEnum.TOKEN_NOT_VERIFY) throw new BadRequestException(
+			outputMessageException(ErrorMessageEnum.TOKEN_NOT_VERIFY, 'code'))
 	}
 
 	@Post('email-confirmation-resend')

@@ -3,7 +3,7 @@ import { generateHashService } from '../../apps/infrastructure/services/generate
 import { ConfigService } from '@nestjs/config'
 import { ConfigType } from '../../apps/infrastructure/configurations/configuration'
 import { TokensService } from '../../apps/infrastructure/services/tokens.service'
-import { ExpiresTime } from '../../apps/infrastructure/utils/constants'
+import { ExpiresTime, Secrets } from '../../apps/infrastructure/utils/constants'
 
 export interface ICreateUser {
 	username: string
@@ -22,7 +22,7 @@ export class UserEntity {
 		const passwordHash = await generateHashService(password)
 
 		const confirmationCodeSecret = configService.get(
-			'EMAIL_CONFIRMATION_CODE_SECRET',
+			Secrets.EMAIL_CONFIRMATION_CODE_SECRET,
 			{ infer: true }
 		)
 		const confirmationCode = await tokensService.createToken(

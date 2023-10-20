@@ -3,7 +3,7 @@ import { PostController } from './features/posts/api/post.controller'
 import { PostService } from './features/posts/app/post.service'
 import { UserService } from './features/users/app/user.service'
 import { PrismaService } from './prisma.service'
-import { CommandBus, CqrsModule } from '@nestjs/cqrs'
+import { CqrsModule } from '@nestjs/cqrs'
 import { TokensService } from '../../infrastructure/services/tokens.service'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigModule, ConfigService } from '@nestjs/config'
@@ -13,6 +13,7 @@ import { AuthController } from './features/auth/api/auth.controller'
 import { RefreshTokenUseCase } from './features/auth/app/use-cases/refresh-token.use-case'
 import { RegistrationUseCase } from './features/auth/app/use-cases/registration.use-case'
 import { UsersRepository } from './features/users/repo/users.repository'
+import { EmailConfirmationUseCase } from './features/auth/app/use-cases/email-confirmation.use-case'
 
 const services = [
 	PrismaClient,
@@ -25,13 +26,13 @@ const services = [
 	EmailAdapter
 ]
 const controllers = [PostController, AuthController]
-const usecases = [RegistrationUseCase, RefreshTokenUseCase]
+const usecases = [RegistrationUseCase, EmailConfirmationUseCase, RefreshTokenUseCase]
 const repository = [UsersRepository]
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
-		CqrsModule,
+		CqrsModule
 	],
 	controllers: [...controllers],
 	providers: [...services, ...usecases, ...repository]
