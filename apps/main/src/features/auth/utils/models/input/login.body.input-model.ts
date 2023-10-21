@@ -1,6 +1,6 @@
 import { Transform, TransformFnParams } from 'class-transformer'
 import { IsNotEmpty, IsString } from 'class-validator'
-import { trimTransformer } from '../../../../../../../infrastructure/utils/trim-transformer'
+import { trimTransformer } from '../../../../../infrastructure/utils/trim-transformer'
 
 export class LoginBodyInputModel {
 	@Transform(({ value }) => trimTransformer(value, 'loginOrEmail'))
