@@ -14,8 +14,7 @@ export class NewPasswordCommand {
 }
 
 @CommandHandler(NewPasswordCommand)
-export class NewPasswordUseCase
-	implements ICommandHandler<NewPasswordCommand> {
+export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand> {
 	constructor(
 		protected configService: ConfigService<ConfigType, true>,
 		protected tokensService: TokensService,

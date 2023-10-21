@@ -34,10 +34,10 @@ export class RefreshTokenUseCase
 			return new ResponseContract(null, ErrorMessageEnum.USER_NOT_FOUND)
 
 		const device = await this.usersRepository
-			.findDeviceById(command.deviceSession.id)
+			.findDeviceById(command.deviceSession.deviceId)
 		if (device === null)
 			return new ResponseContract(null, ErrorMessageEnum.DEVICE_NOT_FOUND)
-		if (command.deviceSession.iat !== device.lastActiveDate)
+		if (command.deviceSession.lastActiveDate !== device.lastActiveDate)
 			return new ResponseContract(null, ErrorMessageEnum.TOKEN_NOT_VERIFY)
 
 		const accessJwtSecret = this.configService
