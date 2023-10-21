@@ -30,6 +30,7 @@ export class UserEntity {
 			confirmationCodeSecret,
 			ExpiresTime.EMAIL_CONFIRMATION_CODE_EXP_TIME
 		)
+		console.log('confirmationCode', confirmationCode)
 
 		return this.prisma.create({
 			data: {

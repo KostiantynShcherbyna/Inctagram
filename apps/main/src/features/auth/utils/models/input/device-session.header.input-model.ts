@@ -11,11 +11,11 @@ export class DeviceSessionHeaderInputModel {
 
 	@IsString()
 	@IsNotEmpty()
-	lastActiveDate: string
+	lastActiveDate: Date
 
 	@IsString()
 	@IsNotEmpty()
-	deviceId: string
+	id: string
 
 	@IsString()
 	@IsNotEmpty()

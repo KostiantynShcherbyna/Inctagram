@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaClient, User } from '@prisma/client'
-import {
-	ICreateUser,
-	UserEntity
-} from '../../../../../../prisma/domain/user.entity'
+import { Device, PasswordRecoveryCode, PrismaClient, User } from '@prisma/client'
+import { ICreateUser, UserEntity } from '../../../../../../prisma/domain/user.entity'
+
+interface ICreatePasswordRecoveryCode {
+	email: string
+	recoveryCode: string
+	active: boolean
+}
 
 @Injectable()
 export class UsersRepository {
-	constructor(protected prisma: PrismaClient) {}
+	constructor(protected prisma: PrismaClient) {
+	}
 
 	async findUserByUserNameOrEmail(
 		username: string,
@@ -63,4 +67,46 @@ export class UsersRepository {
 			data: { isConfirmed }
 		})
 	}
+
+	async findActivePasswordRecoveryCodeByEmail(email: string): Promise<PasswordRecoveryCode> {
+		return this.prisma.passwordRecoveryCode.findUnique({
+			where: { email, active: true }
+		})
+	}
+
+	async updatePasswordHash(id: string, passwordHash: string): Promise<User> {
+		return this.prisma.user.update({
+			where: { id },
+			data: { passwordHash }
+		})
+	}
+
+	async createPasswordRecoveryCode({ email, recoveryCode, active }: ICreatePasswordRecoveryCode)
+		: Promise<PasswordRecoveryCode> {
+		return this.prisma.passwordRecoveryCode.create({
+			data: { email, recoveryCode, active }
+		})
+	}
+
+	async deactivatePasswordRecoveryCode(id: string): Promise<PasswordRecoveryCode> {
+		return this.prisma.passwordRecoveryCode.update({
+			where: { id },
+			data: { active: false }
+		})
+	}
+
+	async findDeviceById(id: string): Promise<Device> {
+		return this.prisma.device.findUnique({
+			where: { id }
+		})
+	}
+
+	async updateActiveDate(id: string, lastActiveDate: Date): Promise<Device> {
+		return this.prisma.device.update({
+			where: { id },
+			data: { lastActiveDate }
+		})
+	}
+
+
 }
