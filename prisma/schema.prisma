@@ -1,18 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_NEON")
 }
 
 model User {
-  email             String   @unique
-  createdAt         DateTime @default(now()) @map("created_at")
-  isConfirmed       Boolean  @default(false) @map("is_confirmed")
-  passwordHash      String?   @map("password_hash")
   id                String   @id @default(uuid()) @map("user_id")
+  email             String   @unique
   username          String
-  confirmationCodes String[] @default([]) @unique @map("confirmation_codes")
+  passwordHash      String   @map("password_hash")
+  createdAt         DateTime @default(now()) @map("created_at")
+  confirmationCodes String[] @unique @map("confirmation_codes")
+  isConfirmed       Boolean  @default(false) @map("is_confirmed")
+
+  posts  Post[]
+  device Device[]
+}
+
+model Device {
+  id             String @id @default(uuid()) @map("device_id")
+  userId         String @map("user_id")
+  ip             String
+  title          String
+  lastActiveDate String @map("last_activedate")
+  expireAt       String @map("expire_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean? @default(false)
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  String?
 }

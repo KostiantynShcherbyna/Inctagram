@@ -37,8 +37,7 @@ import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
 @Injectable()
 @Controller('auth')
 export class AuthController {
-	constructor(protected commandBus: CommandBus) {
-	}
+	constructor(protected commandBus: CommandBus) {}
 
 	@Post('registration')
 	@HttpCode(HttpStatus.NO_CONTENT)
@@ -70,16 +69,30 @@ export class AuthController {
 		@Body() bodyConfirmation: ConfirmationBodyInputModel
 	) {
 		const confirmationContract = await this.commandBus.execute(
-			new EmailConfirmationCommand(bodyConfirmation.code))
+			new EmailConfirmationCommand(bodyConfirmation.code)
+		)
 
-		if (confirmationContract.error === ErrorMessageEnum.USER_NOT_FOUND) throw new BadRequestException(
-			outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'code'))
-		if (confirmationContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED) throw new BadRequestException(
-			outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'code'))
-		if (confirmationContract.error === ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED) throw new BadRequestException(
-			outputMessageException(ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED, 'code'))
-		if (confirmationContract.error === ErrorMessageEnum.TOKEN_NOT_VERIFY) throw new BadRequestException(
-			outputMessageException(ErrorMessageEnum.TOKEN_NOT_VERIFY, 'code'))
+		if (confirmationContract.error === ErrorMessageEnum.USER_NOT_FOUND)
+			throw new BadRequestException(
+				outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'code')
+			)
+		if (confirmationContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED)
+			throw new BadRequestException(
+				outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'code')
+			)
+		if (
+			confirmationContract.error === ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED
+		)
+			throw new BadRequestException(
+				outputMessageException(
+					ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED,
+					'code'
+				)
+			)
+		if (confirmationContract.error === ErrorMessageEnum.TOKEN_NOT_VERIFY)
+			throw new BadRequestException(
+				outputMessageException(ErrorMessageEnum.TOKEN_NOT_VERIFY, 'code')
+			)
 	}
 
 	@Post('email-confirmation-resend')
@@ -95,8 +108,7 @@ export class AuthController {
 				outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'email')
 			)
 		if (
-			confirmationResendContract.error ===
-			ErrorMessageEnum.USER_EMAIL_CONFIRMED
+			confirmationResendContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED
 		)
 			throw new BadRequestException(
 				outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'email')
