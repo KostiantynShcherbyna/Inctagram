@@ -12,7 +12,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 	constructor(
 		@Inject('AUTH_SERVICE') private readonly authService: AuthService
 	) {
-		console.log(process.env.GOOGLE_OAUTH_REDIRECT_URL)
 		super({
 			clientID: process.env.GOOGLE_CLIENT_ID,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -30,5 +29,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 			email: profile.emails[0].value,
 			displayName: profile.displayName
 		})
+
+		if (user) {
+			return user
+		}
 	}
 }

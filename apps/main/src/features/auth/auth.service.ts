@@ -6,7 +6,6 @@ export class AuthService {
 	constructor(private readonly userRepository: UsersRepository) {}
 
 	async validateUser(details: any) {
-		console.log(details)
 		const user = await this.userRepository.findUserByEmail(details.email)
 
 		if (user) return user
