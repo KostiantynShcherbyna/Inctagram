@@ -5,14 +5,17 @@ export interface ICreateGoogleUser {
 	email: string
 }
 
-export class GoogleUserEntity {
+export class UserEntity {
 	constructor(private readonly prisma: PrismaClient['googleUser']) {}
 
-	async createUser({ name, email }: ICreateGoogleUser): Promise<GoogleUser> {
+	async createGoogleUser({
+		name,
+		email
+	}: ICreateGoogleUser): Promise<GoogleUser> {
 		return this.prisma.create({
 			data: {
-				email,
-				name
+				name,
+				email
 			}
 		})
 	}

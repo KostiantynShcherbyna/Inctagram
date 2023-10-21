@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaClient, User } from '@prisma/client'
+import { UserDetails } from '../../auth/user-details.type'
 import {
 	ICreateUser,
 	UserEntity
 } from '../../../../../../prisma/domain/user.entity'
-import { UserDetails } from '../../auth/user-details.type'
 
 @Injectable()
 export class UsersRepository {
