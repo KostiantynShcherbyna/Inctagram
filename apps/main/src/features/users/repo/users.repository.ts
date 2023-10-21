@@ -39,6 +39,12 @@ export class UsersRepository {
 		return result[0]
 	}
 
+	async findUserById(id: string): Promise<User | null> {
+		return this.prisma.user.findUnique({
+			where: { id }
+		})
+	}
+
 	async createUser(
 		userEntity: UserEntity,
 		userDTO: ICreateUser
