@@ -5,10 +5,7 @@ import { User } from '@prisma/client'
 
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
-	constructor(
-		//@Inject('AUTH_SERVICE') private readonly authService: AuthService
-		private readonly usersRepository: UsersRepository
-	) {
+	constructor(private readonly usersRepository: UsersRepository) {
 		super()
 	}
 

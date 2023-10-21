@@ -2,14 +2,14 @@ import { Transform } from 'class-transformer'
 import { IsNotEmpty, IsString } from 'class-validator'
 import { trimTransformer } from '../../../../../../../infrastructure/utils/trim-transformer'
 
-export class LoginBodyInputModel {
-	@Transform(({ value }) => trimTransformer(value, 'loginOrEmail'))
+export class OAuthLoginBodyInputModel {
+	@Transform(({ value }) => trimTransformer(value, 'email'))
 	@IsNotEmpty()
 	@IsString()
-	loginOrEmail: string
+	email: string
 
-	@Transform(({ value }) => trimTransformer(value, 'password'))
+	@Transform(({ value }) => trimTransformer(value, 'username'))
 	@IsNotEmpty()
 	@IsString()
-	password: string
+	username: string
 }
