@@ -10,13 +10,14 @@ import {
 	InternalServerErrorException,
 	Ip,
 	Post,
+	Req,
 	Res,
 	ServiceUnavailableException,
 	UnauthorizedException,
 	UseGuards
 } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import { outputMessageException } from '../../../../../infrastructure/utils/output-message-exception'
 import { ErrorMessageEnum } from '../../../../../infrastructure/utils/error-message-enum'
 import { RegistrationCommand } from '../app/use-cases/registration.use-case'
@@ -231,5 +232,15 @@ export class AuthController {
 	@UseGuards(GoogleAuthGuard)
 	async handleRedirect() {
 		return { msg: 'Ok' }
+	}
+
+	@Get('status')
+	user(@Req() request: Request) {
+		console.log(request.user)
+		if (request.user) {
+			return { msg: 'Authenticated' }
+		} else {
+			return { msg: 'Not Authenticated' }
+		}
 	}
 }

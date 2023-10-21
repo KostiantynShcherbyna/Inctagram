@@ -11,24 +11,8 @@ model User {
   email             String   @unique
   createdAt         DateTime @default(now()) @map("created_at")
   isConfirmed       Boolean  @default(false) @map("is_confirmed")
-  passwordHash      String   @map("password_hash")
+  passwordHash      String?   @map("password_hash")
   id                String   @id @default(uuid()) @map("user_id")
   username          String
-  confirmationCodes String[] @unique @map("confirmation_codes")
-  posts             Post[]
-}
-
-model GoogleUser {
-  id    Int    @id @default(autoincrement())
-  email String
-  name  String
-}
-
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean? @default(false)
-  authorId  String?
-  author    User?    @relation(fields: [authorId], references: [id])
+  confirmationCodes String[] @default([]) @unique @map("confirmation_codes")
 }

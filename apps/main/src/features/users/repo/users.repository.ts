@@ -59,13 +59,20 @@ export class UsersRepository {
 		})
 	}
 
-	async createGoogleUser(details: UserDetails) {
+	async createUserFromOAuth(details: UserDetails) {
 		console.log(details)
-		return await this.prisma.googleUser.create({
+		return await this.prisma.user.create({
 			data: {
 				email: details.email,
-				name: details.displayName
+				username: details.displayName,
+				passwordHash: 'none'
 			}
+		})
+	}
+
+	async findGoogleUserByEmail(email: string) {
+		return await this.prisma.googleUser.findMany({
+			where: { email }
 		})
 	}
 }
