@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common'
-import { PostController } from './features/posts/api/post.controller'
-import { PostService } from './features/posts/app/post.service'
 import { UserService } from './features/users/app/user.service'
 import { PrismaService } from './prisma.service'
 import { CqrsModule } from '@nestjs/cqrs'
@@ -24,11 +22,10 @@ const services = [
 	ConfigService,
 	TokensService,
 	PrismaService,
-	PostService,
 	UserService,
 	EmailAdapter
 ]
-const controllers = [PostController, AuthController]
+const controllers = [AuthController]
 const useCases = [RegistrationUseCase, RefreshTokenUseCase]
 const repository = [UsersRepository]
 const strategies = [GoogleStrategy]

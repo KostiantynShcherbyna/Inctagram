@@ -29,9 +29,11 @@ export class UsersRepository {
 		})
 	}
 
-	async findUserByEmail(email: string): Promise<User | null> {
-		return this.prisma.user.findUnique({
-			where: { email }
+	async findUserByEmail(email: string): Promise<any> {
+		return await this.prisma.user.findMany({
+			where: {
+				email: email
+			}
 		})
 	}
 
@@ -67,12 +69,6 @@ export class UsersRepository {
 				username: details.displayName,
 				passwordHash: 'none'
 			}
-		})
-	}
-
-	async findGoogleUserByEmail(email: string) {
-		return await this.prisma.googleUser.findMany({
-			where: { email }
 		})
 	}
 }

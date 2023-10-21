@@ -9,7 +9,7 @@ export class AuthService {
 	async validateUser(details: UserDetails) {
 		console.log('AuthService', details)
 
-		const user = await this.userRepository.findGoogleUserByEmail(details.email)
+		const user = await this.userRepository.findUserByEmail(details.email)
 		console.log('user in AuthService', user)
 		if (user) return user
 

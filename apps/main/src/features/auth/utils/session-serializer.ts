@@ -1,7 +1,7 @@
 import { PassportSerializer } from '@nestjs/passport'
 import { Injectable } from '@nestjs/common'
-import { GoogleUser } from '@prisma/client'
 import { UsersRepository } from '../../users/repo/users.repository'
+import { User } from '@prisma/client'
 
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
@@ -13,7 +13,7 @@ export class SessionSerializer extends PassportSerializer {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	serializeUser(user: GoogleUser, done: Function): any {
+	serializeUser(user: User, done: Function): any {
 		console.log('Serialized User')
 		done(null, user)
 	}
