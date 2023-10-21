@@ -1,11 +1,11 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { UsersRepository } from '../../../users/repo/users.repository'
-import { ResponseContract } from '../../../../../../infrastructure/utils/response-contract'
-import { ErrorMessageEnum } from '../../../../../../infrastructure/utils/error-message-enum'
-import { TokensService } from '../../../../../../infrastructure/services/tokens.service'
-import { Secrets } from '../../../../../../infrastructure/utils/constants'
+import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
+import { ErrorMessageEnum } from '../../../../infrastructure/utils/error-message-enum'
+import { TokensService } from '../../../../infrastructure/services/tokens.service'
+import { Secrets } from '../../../../infrastructure/utils/constants'
 import { ConfigService } from '@nestjs/config'
-import { ConfigType } from '../../../../../../infrastructure/configurations/configuration'
+import { ConfigType } from '../../../../infrastructure/configurations/configuration'
 
 export class EmailConfirmationCommand {
 	constructor(public code: string) {
