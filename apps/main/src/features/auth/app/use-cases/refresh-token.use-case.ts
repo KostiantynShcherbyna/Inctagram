@@ -34,7 +34,7 @@ export class RefreshTokenUseCase
 			return new ResponseContract(null, ErrorMessageEnum.USER_NOT_FOUND)
 
 		const device = await this.usersRepository
-			.findDeviceById(command.deviceSession.deviceId)
+			.findDeviceById(command.deviceSession.id)
 		if (device === null)
 			return new ResponseContract(null, ErrorMessageEnum.DEVICE_NOT_FOUND)
 		if (command.deviceSession.lastActiveDate !== device.lastActiveDate)
