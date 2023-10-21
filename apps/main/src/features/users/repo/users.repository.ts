@@ -4,6 +4,7 @@ import {
 	ICreateUser,
 	UserEntity
 } from '../../../../../../prisma/domain/user.entity'
+import { UserDetails } from '../../auth/user-details.type'
 
 @Injectable()
 export class UsersRepository {
@@ -55,6 +56,15 @@ export class UsersRepository {
 		return this.prisma.user.update({
 			where: { id },
 			data: { isConfirmed }
+		})
+	}
+
+	async createGoogleUser(details: UserDetails) {
+		return await this.prisma.googleUser.create({
+			data: {
+				email: details.email,
+				name: details.displayName
+			}
 		})
 	}
 }

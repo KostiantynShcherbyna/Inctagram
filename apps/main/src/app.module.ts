@@ -15,6 +15,7 @@ import { RegistrationUseCase } from './features/auth/app/use-cases/registration.
 import { UsersRepository } from './features/users/repo/users.repository'
 import { GoogleStrategy } from './features/auth/utils/strategies/google.strategy'
 import { PassportModule } from '@nestjs/passport'
+import { AuthService } from './features/auth/auth.service'
 
 const services = [
 	PrismaClient,
@@ -35,9 +36,18 @@ const strategies = [GoogleStrategy]
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
 		CqrsModule,
-		PassportModule
+		PassportModule.register({ session: true })
 	],
 	controllers: [...controllers],
-	providers: [...services, ...useCases, ...repository, ...strategies]
+	providers: [
+		...services,
+		...useCases,
+		...repository,
+		...strategies,
+		{
+			provide: 'AUTH_SERVICE',
+			useClass: AuthService
+		}
+	]
 })
 export class AppModule {}
