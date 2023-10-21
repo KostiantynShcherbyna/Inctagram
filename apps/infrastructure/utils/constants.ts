@@ -1,0 +1,24 @@
+export const EMAIL_REGISTRATION_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+export const LOGIN_REGEX = /^[a-zA-Z0-9_-]*$/
+export const LOGIN_MAX_LENGTH = 10
+export const LOGIN_MIN_LENGTH = 3
+export const PASSWORD_MAX_LENGTH = 20
+export const PASSWORD_MIN_LENGTH = 6
+
+export enum ExpiresTime {
+	EMAIL_CONFIRMATION_CODE_EXP_TIME = '300s',
+	ACCESS_EXPIRES_TIME = '100000000000s',
+	REFRESH_EXPIRES_TIME = '20000000000s',
+	PASSWORD_HASH_EXPIRES_TIME = '5m',
+}
+
+export enum StrategyNames {
+	loginLocalStrategy = 'login-local-strategy'
+}
+
+export enum Secrets {
+	ACCESS_JWT_SECRET = 'ACCESS_JWT_SECRET',
+	REFRESH_JWT_SECRET = 'REFRESH_JWT_SECRET',
+	PASSWORD_RECOVERY_CODE_SECRET = 'PASSWORD_RECOVERY_CODE_SECRET',
+	EMAIL_CONFIRMATION_CODE_SECRET = 'EMAIL_CONFIRMATION_CODE_SECRET'
+}
