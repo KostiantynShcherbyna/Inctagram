@@ -33,6 +33,7 @@ import { PasswordRecoveryBodyInputModel } from '../utils/models/input/password-r
 import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-case'
 import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
 import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
+import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
 
 @Injectable()
 @Controller('auth')
@@ -42,7 +43,7 @@ export class AuthController {
 
 	@Post('registration')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	async registration(@Body() bodyRegistration: any) {
+	async registration(@Body() bodyRegistration: RegistrationBodyInputModel) {
 		const registrationContract = await this.commandBus.execute(
 			new RegistrationCommand(
 				bodyRegistration.login,
