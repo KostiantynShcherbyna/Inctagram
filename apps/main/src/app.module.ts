@@ -14,6 +14,7 @@ import { RefreshTokenUseCase } from './features/auth/app/use-cases/refresh-token
 import { RegistrationUseCase } from './features/auth/app/use-cases/registration.use-case'
 import { UsersRepository } from './features/users/repo/users.repository'
 import { EmailConfirmationUseCase } from './features/auth/app/use-cases/email-confirmation.use-case'
+import { DevicesRepository } from './features/users/repo/devices.repository'
 
 const services = [
 	PrismaClient,
@@ -26,16 +27,16 @@ const services = [
 	EmailAdapter
 ]
 const controllers = [PostController, AuthController]
-const usecases = [RegistrationUseCase, EmailConfirmationUseCase, RefreshTokenUseCase]
-const repository = [UsersRepository]
+const usecases = [
+	RegistrationUseCase,
+	EmailConfirmationUseCase,
+	RefreshTokenUseCase
+]
+const repository = [UsersRepository, DevicesRepository]
 
 @Module({
-	imports: [
-		ConfigModule.forRoot({ isGlobal: true }),
-		CqrsModule
-	],
+	imports: [ConfigModule.forRoot({ isGlobal: true }), CqrsModule],
 	controllers: [...controllers],
 	providers: [...services, ...usecases, ...repository]
 })
-export class AppModule {
-}
+export class AppModule {}
