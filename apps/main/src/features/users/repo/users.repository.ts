@@ -60,6 +60,7 @@ export class UsersRepository {
 	}
 
 	async createGoogleUser(details: UserDetails) {
+		console.log(details)
 		return await this.prisma.googleUser.create({
 			data: {
 				email: details.email,

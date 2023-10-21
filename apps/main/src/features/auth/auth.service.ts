@@ -10,11 +10,11 @@ export class AuthService {
 		console.log('AuthService', details)
 
 		const user = await this.userRepository.findUserByEmail(details.email)
-		console.log('user', user)
+		console.log('user in AuthService', user)
 		if (user) return user
 
 		const newUser = await this.userRepository.createGoogleUser(details)
-
+		console.log('newUser', newUser)
 		return newUser || null
 	}
 }
