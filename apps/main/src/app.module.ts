@@ -16,6 +16,7 @@ import { UsersRepository } from './features/users/repo/users.repository'
 import { GoogleStrategy } from './features/auth/utils/strategies/google.strategy'
 import { PassportModule } from '@nestjs/passport'
 import { AuthService } from './features/auth/auth.service'
+import { SessionSerializer } from './features/auth/utils/session-serializer'
 
 const services = [
 	PrismaClient,
@@ -44,6 +45,7 @@ const strategies = [GoogleStrategy]
 		...useCases,
 		...repository,
 		...strategies,
+		SessionSerializer,
 		{
 			provide: 'AUTH_SERVICE',
 			useClass: AuthService

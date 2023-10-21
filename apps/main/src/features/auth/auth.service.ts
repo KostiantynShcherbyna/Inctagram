@@ -13,6 +13,8 @@ export class AuthService {
 		console.log('user', user)
 		if (user) return user
 
-		return await this.userRepository.createGoogleUser(details)
+		const newUser = await this.userRepository.createGoogleUser(details)
+
+		return newUser || null
 	}
 }
