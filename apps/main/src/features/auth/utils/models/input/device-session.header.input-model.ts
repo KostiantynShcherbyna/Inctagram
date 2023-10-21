@@ -15,12 +15,12 @@ export class DeviceSessionHeaderInputModel {
 	@ApiProperty()
 	@IsString()
 	@IsNotEmpty()
-	lastActiveDate: string
+	lastActiveDate: Date
 
 	@ApiProperty()
 	@IsString()
 	@IsNotEmpty()
-	deviceId: string
+	id: string
 
 	@ApiProperty()
 	@IsString()

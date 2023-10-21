@@ -38,14 +38,27 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 			return new ResponseContract(null, ErrorMessageEnum.USER_NOT_FOUND)
 
 		if (user.isConfirmed === false)
-			return new ResponseContract(null, ErrorMessageEnum.USER_EMAIL_NOT_CONFIRMED)
+			return new ResponseContract(
+				null,
+				ErrorMessageEnum.USER_EMAIL_NOT_CONFIRMED
+			)
 
-		if ((await compareHashService(user.passwordHash, command.loginBody.password)) === false)
+		if (
+			(await compareHashService(
+				user.passwordHash,
+				command.loginBody.password
+			)) === false
+		)
 			return new ResponseContract(null, ErrorMessageEnum.PASSWORD_NOT_COMPARED)
 		// ↑↑↑
 
-		const accessJwtSecret = this.configService.get(Secrets.ACCESS_JWT_SECRET, { infer: true })
-		const refreshJwtSecret = this.configService.get(Secrets.REFRESH_JWT_SECRET, { infer: true })
+		const accessJwtSecret = this.configService.get(Secrets.ACCESS_JWT_SECRET, {
+			infer: true
+		})
+		const refreshJwtSecret = this.configService.get(
+			Secrets.REFRESH_JWT_SECRET,
+			{ infer: true }
+		)
 
 		const issueAt = new Date(Date.now())
 
@@ -67,11 +80,7 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 			ExpiresTime.REFRESH_EXPIRES_TIME
 		)
 
-
-
 		return new ResponseContract(
-			{ accessJwt: { accessToken }, refreshToken },
-			null
-		)
+			{ accessJwt: { accessToken }, refreshToken }, null)
 	}
 }

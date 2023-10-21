@@ -42,8 +42,6 @@ export class EmailConfirmationUseCase
 
 		if (confirmationCodeDto === null)
 			return new ResponseContract(null, ErrorMessageEnum.TOKEN_NOT_VERIFY)
-		if (confirmationCodeDto.exp < new Date(Date.now()))
-			return new ResponseContract(null, ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED)
 
 		const updateResult = await this.usersRepository.updateConfirmation(user.id, true)
 

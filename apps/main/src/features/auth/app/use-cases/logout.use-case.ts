@@ -9,7 +9,7 @@ export class LogoutCommand {
 		public deviceId: string,
 		public expireAt: Date,
 		public ip: string,
-		public lastActiveDate: string,
+		public lastActiveDate: Date,
 		public title: string,
 		public userId: string
 	) {}
@@ -33,7 +33,7 @@ export class LogoutUseCase implements ICommandHandler<LogoutCommand> {
 		if (command.lastActiveDate !== device.lastActiveDate)
 			return new ResponseContract(null, ErrorMessageEnum.TOKEN_NOT_VERIFY)
 
-		const deleteResult = await this.devicesRepository.deleteDevice(
+		const deleteResult = await this.devicesRepository.deleteDeviceById(
 			command.deviceId
 		)
 		if (deleteResult === null)

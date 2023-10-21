@@ -42,7 +42,8 @@ import { UserDetails } from '../../../types/user-details.type'
 @Injectable()
 @Controller('auth')
 export class AuthController {
-	constructor(protected commandBus: CommandBus) {}
+	constructor(protected commandBus: CommandBus) {
+	}
 
 	@Post('registration')
 	@HttpCode(HttpStatus.NO_CONTENT)
@@ -84,15 +85,6 @@ export class AuthController {
 		if (confirmationContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED)
 			throw new BadRequestException(
 				outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'code')
-			)
-		if (
-			confirmationContract.error === ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED
-		)
-			throw new BadRequestException(
-				outputMessageException(
-					ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED,
-					'code'
-				)
 			)
 		if (confirmationContract.error === ErrorMessageEnum.TOKEN_NOT_VERIFY)
 			throw new BadRequestException(
@@ -158,13 +150,12 @@ export class AuthController {
 	async logout(@DeviceSession() deviceSession: DeviceSessionHeaderInputModel) {
 		const logoutContract = await this.commandBus.execute(
 			new LogoutCommand(
-				deviceSession.deviceId,
+				deviceSession.id,
 				deviceSession.expireAt,
 				deviceSession.ip,
 				deviceSession.lastActiveDate,
 				deviceSession.title,
-				deviceSession.userId
-			)
+				deviceSession.userId)
 		)
 		if (logoutContract.error === ErrorMessageEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
