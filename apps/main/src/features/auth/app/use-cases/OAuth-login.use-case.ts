@@ -1,14 +1,12 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { randomUUID } from 'crypto'
-import { ResponseContract } from '../../../../../../infrastructure/utils/response-contract'
-import { ConfigType } from '../../../../../../infrastructure/configurations/configuration'
 import { ConfigService } from '@nestjs/config'
-import { TokensService } from '../../../../../../infrastructure/services/tokens.service'
-import {
-	ExpiresTime,
-	Secrets
-} from '../../../../../../infrastructure/utils/constants'
+
 import { OAuthLoginBodyInputModel } from '../../utils/models/input/OAuth-login.input-model'
+import { TokensService } from '../../../../infrastructure/services/tokens.service'
+import { ConfigType } from '../../../../infrastructure/configurations/configuration'
+import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
+import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
 
 export class OAutLoginCommand {
 	constructor(public loginBody: OAuthLoginBodyInputModel) {}

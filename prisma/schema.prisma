@@ -43,12 +43,3 @@ model PasswordRecoveryCode {
 
   user User @relation(fields: [email], references: [email])
 }
-
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean? @default(false)
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  String?
-}
