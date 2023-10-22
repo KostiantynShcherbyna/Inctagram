@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Device, PasswordRecoveryCode, PrismaClient, User } from '@prisma/client'
 import { ICreateUser, UserEntity } from '../../../../../../prisma/domain/user.entity'
+import { UserDetails } from '../../../types/user-details.type'
 
 interface ICreatePasswordRecoveryCode {
 	email: string
@@ -119,6 +120,17 @@ export class UsersRepository {
 		return this.prisma.device.update({
 			where: { id },
 			data: { lastActiveDate }
+		})
+	}
+
+	async createUserFromOAuth(details: UserDetails) {
+		return this.prisma.user.create({
+			data: {
+				email: details.email,
+				username: details.displayName,
+				passwordHash: 'none',
+				isConfirmed: true
+			}
 		})
 	}
 
