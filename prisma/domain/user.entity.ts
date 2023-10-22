@@ -14,11 +14,15 @@ export interface ICreateUser {
 }
 
 export class UserEntity {
-	constructor(private readonly prisma: PrismaClient['user']) {
-	}
+	constructor(private readonly prisma: PrismaClient['user']) {}
 
-	async createUser({ username, email, password, configService, tokensService }: ICreateUser)
-		: Promise<User> {
+	async createUser({
+		username,
+		email,
+		password,
+		configService,
+		tokensService
+	}: ICreateUser): Promise<User> {
 		const passwordHash = await generateHashService(password)
 
 		const confirmationCodeSecret = configService.get(
