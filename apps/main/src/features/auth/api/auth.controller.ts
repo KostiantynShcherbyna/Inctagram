@@ -33,14 +33,17 @@ import { PasswordRecoveryBodyInputModel } from '../utils/models/input/password-r
 import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-case'
 import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
 import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
+import { ApiOperation } from '@nestjs/swagger'
 
 @Injectable()
 @Controller('auth')
 export class AuthController {
-	constructor(protected commandBus: CommandBus) {
-	}
+	constructor(protected commandBus: CommandBus) {}
 
 	@Post('registration')
+	@ApiOperation({
+		summary: 'Регистрация'
+	})
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async registration(@Body() bodyRegistration: any) {
 		const registrationContract = await this.commandBus.execute(
@@ -65,24 +68,44 @@ export class AuthController {
 	}
 
 	@Post('registration-confirmation')
+	@ApiOperation({
+		summary: 'Подтверждение регистрации'
+	})
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async emailConfirmation(
 		@Body() bodyConfirmation: ConfirmationBodyInputModel
 	) {
 		const confirmationContract = await this.commandBus.execute(
-			new EmailConfirmationCommand(bodyConfirmation.code))
+			new EmailConfirmationCommand(bodyConfirmation.code)
+		)
 
-		if (confirmationContract.error === ErrorMessageEnum.USER_NOT_FOUND) throw new BadRequestException(
-			outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'code'))
-		if (confirmationContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED) throw new BadRequestException(
-			outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'code'))
-		if (confirmationContract.error === ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED) throw new BadRequestException(
-			outputMessageException(ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED, 'code'))
-		if (confirmationContract.error === ErrorMessageEnum.TOKEN_NOT_VERIFY) throw new BadRequestException(
-			outputMessageException(ErrorMessageEnum.TOKEN_NOT_VERIFY, 'code'))
+		if (confirmationContract.error === ErrorMessageEnum.USER_NOT_FOUND)
+			throw new BadRequestException(
+				outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'code')
+			)
+		if (confirmationContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED)
+			throw new BadRequestException(
+				outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'code')
+			)
+		if (
+			confirmationContract.error === ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED
+		)
+			throw new BadRequestException(
+				outputMessageException(
+					ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED,
+					'code'
+				)
+			)
+		if (confirmationContract.error === ErrorMessageEnum.TOKEN_NOT_VERIFY)
+			throw new BadRequestException(
+				outputMessageException(ErrorMessageEnum.TOKEN_NOT_VERIFY, 'code')
+			)
 	}
 
 	@Post('email-confirmation-resend')
+	@ApiOperation({
+		summary: 'Повторная отправка письма с подтверждением'
+	})
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async emailConfirmationResend(
 		@Body() bodyConfirmationResend: EmailConfirmationResendBodyInputModel
@@ -95,8 +118,7 @@ export class AuthController {
 				outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'email')
 			)
 		if (
-			confirmationResendContract.error ===
-			ErrorMessageEnum.USER_EMAIL_CONFIRMED
+			confirmationResendContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED
 		)
 			throw new BadRequestException(
 				outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'email')
@@ -109,6 +131,9 @@ export class AuthController {
 
 	@Post('login')
 	// @UseGuards(AuthGuard(StrategyNames.loginLocalStrategy))
+	@ApiOperation({
+		summary: 'Вход в систему'
+	})
 	@HttpCode(HttpStatus.OK)
 	async login(
 		@Headers('user-agent') userAgent: string,
@@ -137,6 +162,9 @@ export class AuthController {
 
 	@UseGuards(RefreshGuard)
 	@Post('logout')
+	@ApiOperation({
+		summary: 'Выход из системы'
+	})
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async logout(@DeviceSession() deviceSession: DeviceSessionHeaderInputModel) {
 		const logoutContract = await this.commandBus.execute(
@@ -160,6 +188,9 @@ export class AuthController {
 	}
 
 	@Post('password-recovery')
+	@ApiOperation({
+		summary: 'Восстановление пароля'
+	})
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async passwordRecovery(
 		@Body() bodyPasswordRecovery: PasswordRecoveryBodyInputModel
@@ -174,6 +205,9 @@ export class AuthController {
 	}
 
 	@Post('new-password')
+	@ApiOperation({
+		summary: 'Изменение пароля'
+	})
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async newPassword(@Body() bodyNewPassword: NewPasswordBodyInputModel) {
 		const newPasswordContract = await this.commandBus.execute(
