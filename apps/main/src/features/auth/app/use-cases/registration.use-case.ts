@@ -19,7 +19,8 @@ export class RegistrationCommand {
 }
 
 @CommandHandler(RegistrationCommand)
-export class RegistrationUseCase implements ICommandHandler<RegistrationCommand> {
+export class RegistrationUseCase
+	implements ICommandHandler<RegistrationCommand> {
 	constructor(
 		protected prisma: PrismaClient,
 		protected configService: ConfigService<ConfigType, true>,
@@ -51,7 +52,7 @@ export class RegistrationUseCase implements ICommandHandler<RegistrationCommand>
 
 		const newUser = await this.usersRepository.createUser(userInstance, userDto)
 
-		this.emailAdapter.sendConfirmationCode(newUser)
+		// this.emailAdapter.sendConfirmationCode(newUser)
 
 		return new ResponseContract(true, null)
 	}

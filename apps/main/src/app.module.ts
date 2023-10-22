@@ -15,6 +15,12 @@ import { RegistrationUseCase } from './features/auth/app/use-cases/registration.
 import { UsersRepository } from './features/users/repo/users.repository'
 import { EmailConfirmationUseCase } from './features/auth/app/use-cases/email-confirmation.use-case'
 import { DevicesRepository } from './features/users/repo/devices.repository'
+import { TestingController } from './infrastructure/utils/testing.controller'
+import { EmailConfirmationResendUseCase } from './features/auth/app/use-cases/email-confirmation-resend.use-case'
+import { LoginUseCase } from './features/auth/app/use-cases/login.use-case'
+import { LogoutUseCase } from './features/auth/app/use-cases/logout.use-case'
+import { NewPasswordUseCase } from './features/auth/app/use-cases/new-password.use-case'
+import { PasswordRecoveryUseCase } from './features/auth/app/use-cases/password-recovery.use-case'
 
 const services = [
 	PrismaClient,
@@ -26,11 +32,16 @@ const services = [
 	UserService,
 	EmailAdapter
 ]
-const controllers = [PostController, AuthController]
+const controllers = [PostController, AuthController, TestingController]
 const usecases = [
 	RegistrationUseCase,
 	EmailConfirmationUseCase,
-	RefreshTokenUseCase
+	RefreshTokenUseCase,
+	EmailConfirmationResendUseCase,
+	LoginUseCase,
+	LogoutUseCase,
+	NewPasswordUseCase,
+	PasswordRecoveryUseCase
 ]
 const repository = [UsersRepository, DevicesRepository]
 
@@ -39,4 +50,5 @@ const repository = [UsersRepository, DevicesRepository]
 	controllers: [...controllers],
 	providers: [...services, ...usecases, ...repository]
 })
-export class AppModule {}
+export class AppModule {
+}

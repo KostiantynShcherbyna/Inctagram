@@ -380,6 +380,11 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.51.0.tgz#6d419c240cfb2b66da37df230f7e7eef801c32fa"
   integrity sha512-HxjQ8Qn+4SI3/AFv6sOrDB+g6PpUTDwSJiQqOrnneEk8L71161srI9gjzzZvYVbzHiVg/BvcH95+cK/zfIt4pg==
 
+"@faker-js/faker@^8.2.0":
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/@faker-js/faker/-/faker-8.2.0.tgz#d4656d2cb485fe6ec4e7b340da9f16fac2c36c4a"
+  integrity sha512-VacmzZqVxdWdf9y64lDOMZNDMM/FQdtM9IsaOPKOm2suYwEatb8VkdHqOzXcDnZbk7YDE2BmsJmy/2Hmkn563g==
+
 "@humanwhocodes/config-array@^0.11.11":
   version "0.11.11"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.11.tgz#88a04c570dbbc7dd943e4712429c3df09bc32844"
@@ -923,10 +928,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/cookie-parser@^1.4.4":
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/@types/cookie-parser/-/cookie-parser-1.4.4.tgz#ca49273d838da2b08858e703943a71a460aa3af8"
-  integrity sha512-Var+aj5I6ZgIqsQ05N2V8q5OBrFfZXtIGWWDSrEYLIbMw758obagSwdGcLCjwh1Ga7M7+wj0SDIAaAC/WT7aaA==
+"@types/cookie-parser@^1.4.5":
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/@types/cookie-parser/-/cookie-parser-1.4.5.tgz#b1a2091c089e44e8d027ebb890b4ead4ef910b00"
+  integrity sha512-cbpH1NldYslPt7WRHXZFm+G7DTfUg57dQSCf1qrHwT8wtGX41JHLYf3Cieiqg7waPWjorVgcSSllZov+A1PJbg==
   dependencies:
     "@types/express" "*"
 
@@ -1048,6 +1053,13 @@
   version "18.15.11"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.15.11.tgz#b3b790f09cb1696cffcec605de025b088fa4225f"
   integrity sha512-E5Kwq2n4SbMzQOn6wnmBjuK9ouqlURrcZDVfbo9ftDDTFt3nk7ZKK4GMOzoYgnpQJKcxwQw+lGaBvvlMo0qN/Q==
+
+"@types/nodemailer@^6.4.13":
+  version "6.4.13"
+  resolved "https://registry.yarnpkg.com/@types/nodemailer/-/nodemailer-6.4.13.tgz#3b3b47a27d1a33631a16763eb2ecdbd567147296"
+  integrity sha512-889Vq/77eEpidCwh52sVWpbnqQmIwL8yVBekNbrztVEaWKOCRH3Eq6hjIJh1jwsGDEAJEH0RR+YhpH9mfELLKA==
+  dependencies:
+    "@types/node" "*"
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"

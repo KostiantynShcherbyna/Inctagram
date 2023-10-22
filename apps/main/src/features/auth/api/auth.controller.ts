@@ -88,7 +88,7 @@ export class AuthController {
 			)
 	}
 
-	@Post('email-confirmation-resend')
+	@Post('registration-confirmation-resend')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async emailConfirmationResend(
 		@Body() bodyConfirmationResend: EmailConfirmationResendBodyInputModel

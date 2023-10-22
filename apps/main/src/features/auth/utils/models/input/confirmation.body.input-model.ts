@@ -6,6 +6,5 @@ export class ConfirmationBodyInputModel {
   @Transform(({ value }) => trimTransformer(value, "code"))
   @IsString()
   @IsNotEmpty()
-  @IsUUID()
   code: string
 }
