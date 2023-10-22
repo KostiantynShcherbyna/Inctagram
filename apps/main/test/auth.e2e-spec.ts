@@ -41,8 +41,6 @@ describe
 		publicHelper = new PublicTestingHelper(server)
 		userRepository = app.get(UsersRepository)
 
-		// const dataSource = await app.resolve(DataSource)
-
 		await request(server).delete(`/testing/all-data`)
 	})
 
