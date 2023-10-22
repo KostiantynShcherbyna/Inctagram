@@ -52,7 +52,7 @@ export class RegistrationUseCase
 
 		const newUser = await this.usersRepository.createUser(userInstance, userDto)
 
-		this.emailAdapter.sendConfirmationCode(newUser)
+		// this.emailAdapter.sendConfirmationCode(newUser)
 
 		return new ResponseContract(true, null)
 	}

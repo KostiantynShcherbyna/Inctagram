@@ -27,10 +27,10 @@ export class PasswordRecoveryUseCase
 		const passwordRecoveryCodeSecret = this.configService
 			.get(Secrets.PASSWORD_RECOVERY_CODE_SECRET, { infer: true })
 
-		const passwordRecoveryCode = await this.usersRepository
+		const recoveryCode = await this.usersRepository
 			.findActivePasswordRecoveryCodeByEmail(command.email)
-		if (passwordRecoveryCode !== null) await this.usersRepository
-			.deactivatePasswordRecoveryCode(passwordRecoveryCode.id)
+		if (recoveryCode !== null) await this.usersRepository
+			.deactivatePasswordRecoveryCode(recoveryCode.id)
 
 		const newPasswordRecoveryCode = await this.tokensService
 			.createToken(
@@ -39,14 +39,14 @@ export class PasswordRecoveryUseCase
 				ExpiresTime.PASSWORD_HASH_EXPIRES_TIME
 			)
 
-		const newPasswordRecoveryCodeResult = await this.usersRepository
+		const newRecoveryCode = await this.usersRepository
 			.createPasswordRecoveryCode({
 				email: command.email,
 				recoveryCode: newPasswordRecoveryCode,
 				active: true
 			})
-		console.log('newPasswordRecoveryCode', newPasswordRecoveryCode)
-		this.emailAdapter.sendPasswordRecovery(newPasswordRecoveryCodeResult.email, newPasswordRecoveryCodeResult.recoveryCode)
+		console.log('newRecoveryCode', newRecoveryCode)
+		this.emailAdapter.sendPasswordRecovery(newRecoveryCode.email, newRecoveryCode.recoveryCode)
 
 		return new ResponseContract(true, null)
 	}

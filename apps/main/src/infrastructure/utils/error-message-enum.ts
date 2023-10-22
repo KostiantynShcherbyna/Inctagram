@@ -20,8 +20,8 @@ export enum ErrorMessageEnum {
 	USER_NOT_FOUND = `User not found`,
 	USER_NOT_BANNED = `User not banned`,
 	USER_NOT_DELETED = `User not deleted`,
-	USER_EMAIL_EXIST = `User with this email is already registered`,
-	USER_LOGIN_EXIST = `User with this login is already registered`,
+	USER_EMAIL_EXIST = `User email exist`,
+	USER_LOGIN_EXIST = `User login exist`,
 	USER_EMAIL_CONFIRMED = `User email is confirmed`,
 	USER_EMAIL_NOT_CONFIRMED = `User email not confirmed`,
 

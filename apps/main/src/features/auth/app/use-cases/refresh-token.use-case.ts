@@ -37,7 +37,7 @@ export class RefreshTokenUseCase
 			.findDeviceById(command.deviceSession.id)
 		if (device === null)
 			return new ResponseContract(null, ErrorMessageEnum.DEVICE_NOT_FOUND)
-		if (command.deviceSession.iat !== device.lastActiveDate)
+		if (command.deviceSession.lastActiveDate !== device.lastActiveDate)
 			return new ResponseContract(null, ErrorMessageEnum.TOKEN_NOT_VERIFY)
 
 		const accessJwtSecret = this.configService
