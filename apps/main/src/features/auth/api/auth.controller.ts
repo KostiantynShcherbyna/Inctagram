@@ -2,6 +2,7 @@ import {
 	BadRequestException,
 	Body,
 	Controller,
+	Get,
 	Headers,
 	HttpCode,
 	HttpStatus,
@@ -9,13 +10,14 @@ import {
 	InternalServerErrorException,
 	Ip,
 	Post,
+	Req,
 	Res,
 	ServiceUnavailableException,
 	UnauthorizedException,
 	UseGuards
 } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import { outputMessageException } from '../../../../../infrastructure/utils/output-message-exception'
 import { ErrorMessageEnum } from '../../../../../infrastructure/utils/error-message-enum'
 import { RegistrationCommand } from '../app/use-cases/registration.use-case'
@@ -33,7 +35,9 @@ import { PasswordRecoveryBodyInputModel } from '../utils/models/input/password-r
 import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-case'
 import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
 import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
-import { ApiOperation } from '@nestjs/swagger'
+import { GoogleAuthGuard } from '../utils/guards/google-auth.guard'
+import { OAutLoginCommand } from '../app/use-cases/OAuth-login.use-case'
+import { UserDetails } from '../../../types/user-details.type'
 
 @Injectable()
 @Controller('auth')
@@ -41,9 +45,6 @@ export class AuthController {
 	constructor(protected commandBus: CommandBus) {}
 
 	@Post('registration')
-	@ApiOperation({
-		summary: 'Регистрация'
-	})
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async registration(@Body() bodyRegistration: any) {
 		const registrationContract = await this.commandBus.execute(
@@ -68,9 +69,6 @@ export class AuthController {
 	}
 
 	@Post('registration-confirmation')
-	@ApiOperation({
-		summary: 'Подтверждение регистрации'
-	})
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async emailConfirmation(
 		@Body() bodyConfirmation: ConfirmationBodyInputModel
@@ -103,9 +101,6 @@ export class AuthController {
 	}
 
 	@Post('email-confirmation-resend')
-	@ApiOperation({
-		summary: 'Повторная отправка письма с подтверждением'
-	})
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async emailConfirmationResend(
 		@Body() bodyConfirmationResend: EmailConfirmationResendBodyInputModel
@@ -131,9 +126,6 @@ export class AuthController {
 
 	@Post('login')
 	// @UseGuards(AuthGuard(StrategyNames.loginLocalStrategy))
-	@ApiOperation({
-		summary: 'Вход в систему'
-	})
 	@HttpCode(HttpStatus.OK)
 	async login(
 		@Headers('user-agent') userAgent: string,
@@ -162,9 +154,6 @@ export class AuthController {
 
 	@UseGuards(RefreshGuard)
 	@Post('logout')
-	@ApiOperation({
-		summary: 'Выход из системы'
-	})
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async logout(@DeviceSession() deviceSession: DeviceSessionHeaderInputModel) {
 		const logoutContract = await this.commandBus.execute(
@@ -188,9 +177,6 @@ export class AuthController {
 	}
 
 	@Post('password-recovery')
-	@ApiOperation({
-		summary: 'Восстановление пароля'
-	})
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async passwordRecovery(
 		@Body() bodyPasswordRecovery: PasswordRecoveryBodyInputModel
@@ -205,9 +191,6 @@ export class AuthController {
 	}
 
 	@Post('new-password')
-	@ApiOperation({
-		summary: 'Изменение пароля'
-	})
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async newPassword(@Body() bodyNewPassword: NewPasswordBodyInputModel) {
 		const newPasswordContract = await this.commandBus.execute(
@@ -244,5 +227,50 @@ export class AuthController {
 					'recoveryCode'
 				)
 			)
+	}
+
+	@Get('google/login')
+	@UseGuards(GoogleAuthGuard)
+	async handleLogin() {
+		return { msg: 'Google Auth' }
+	}
+
+	@Get('google/redirect')
+	@UseGuards(GoogleAuthGuard)
+	async handleRedirect(
+		@Req() request: Request,
+		@Res({ passthrough: true }) res: Response
+	) {
+		const user: Partial<UserDetails> = request.user
+
+		const loginContract = await this.commandBus.execute(
+			new OAutLoginCommand({ email: user.email, username: user.displayName })
+		)
+
+		if (loginContract.error === ErrorMessageEnum.USER_NOT_FOUND)
+			throw new UnauthorizedException()
+		if (loginContract.error === ErrorMessageEnum.USER_IS_BANNED)
+			throw new UnauthorizedException()
+		if (loginContract.error === ErrorMessageEnum.USER_EMAIL_NOT_CONFIRMED)
+			throw new UnauthorizedException()
+		if (loginContract.error === ErrorMessageEnum.PASSWORD_NOT_COMPARED)
+			throw new UnauthorizedException()
+
+		res.cookie('refreshToken', loginContract.data?.refreshToken, {
+			httpOnly: true,
+			secure: true
+		})
+
+		return loginContract.data?.accessJwt
+	}
+
+	@Get('status')
+	user(@Req() request: Request) {
+		console.log(request.user)
+		if (request.user) {
+			return { msg: 'Authenticated' }
+		} else {
+			return { msg: 'Not Authenticated' }
+		}
 	}
 }
