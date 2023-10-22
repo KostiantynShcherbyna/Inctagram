@@ -92,7 +92,7 @@ export class AuthController {
 			)
 	}
 
-	@Post('registration-email-resending')
+	@Post('registration-confirmation-resend')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async emailConfirmationResend(
 		@Body() bodyConfirmationResend: EmailConfirmationResendBodyInputModel
@@ -151,9 +151,9 @@ export class AuthController {
 		const logoutContract = await this.commandBus.execute(
 			new LogoutCommand(
 				deviceSession.id,
-				deviceSession.exp,
+				deviceSession.expireAt,
 				deviceSession.ip,
-				deviceSession.iat,
+				deviceSession.lastActiveDate,
 				deviceSession.title,
 				deviceSession.userId)
 		)

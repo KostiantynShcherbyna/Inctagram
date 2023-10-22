@@ -39,25 +39,35 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 
 		if (user.isConfirmed === false)
 			return new ResponseContract(
-				null, ErrorMessageEnum.USER_EMAIL_NOT_CONFIRMED)
+				null,
+				ErrorMessageEnum.USER_EMAIL_NOT_CONFIRMED
+			)
 
-		if ((await compareHashService(
-			user.passwordHash, command.loginBody.password)) === false)
-			return new ResponseContract(
-				null, ErrorMessageEnum.PASSWORD_NOT_COMPARED)
+		if (
+			(await compareHashService(
+				user.passwordHash,
+				command.loginBody.password
+			)) === false
+		)
+			return new ResponseContract(null, ErrorMessageEnum.PASSWORD_NOT_COMPARED)
 		// ↑↑↑
 
-		const accessJwtSecret = this.configService
-			.get(Secrets.ACCESS_JWT_SECRET, { infer: true })
-		const refreshJwtSecret = this.configService
-			.get(Secrets.REFRESH_JWT_SECRET, { infer: true })
+		const accessJwtSecret = this.configService.get(Secrets.ACCESS_JWT_SECRET, {
+			infer: true
+		})
+		const refreshJwtSecret = this.configService.get(
+			Secrets.REFRESH_JWT_SECRET,
+			{ infer: true }
+		)
 
+		const issueAt = new Date(Date.now())
 
 		const tokensPayload = {
-			userId: user.id,
-			id: randomUUID(),
+			deviceId: randomUUID(),
 			ip: command.deviceIp,
-			title: command.userAgent
+			title: command.userAgent,
+			userId: user.id,
+			issueAt: issueAt
 		}
 		const accessToken = await this.tokensService.createToken(
 			tokensPayload,
@@ -70,14 +80,6 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 			ExpiresTime.REFRESH_EXPIRES_TIME
 		)
 
-		const refreshTokenVerify = await this.tokensService
-			.verifyToken(refreshToken, refreshJwtSecret)
-
-		await this.usersRepository.createDevice({
-			...tokensPayload,
-			lastActiveDate: new Date(refreshTokenVerify.iat),
-			expireAt: new Date(refreshTokenVerify.exp)
-		})
 		return new ResponseContract(
 			{ accessJwt: { accessToken }, refreshToken }, null)
 	}
