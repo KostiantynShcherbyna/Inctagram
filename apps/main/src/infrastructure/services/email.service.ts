@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer'
 import { EmailBodyDto } from '../dto/email-body.dto'
+import * as nodemailer from 'nodemailer'
 
 export const emailService = {
 	async sendEmail(emailBody: EmailBodyDto) {
