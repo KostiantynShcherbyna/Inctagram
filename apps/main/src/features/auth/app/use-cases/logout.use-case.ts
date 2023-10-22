@@ -12,7 +12,8 @@ export class LogoutCommand {
 		public lastActiveDate: Date,
 		public title: string,
 		public userId: string
-	) {}
+	) {
+	}
 }
 
 @CommandHandler(LogoutCommand)
@@ -20,7 +21,8 @@ export class LogoutUseCase implements ICommandHandler<LogoutCommand> {
 	constructor(
 		protected devicesRepository: DevicesRepository,
 		protected usersRepository: UsersRepository
-	) {}
+	) {
+	}
 
 	async execute(command: LogoutCommand) {
 		const user = await this.usersRepository.findUserById(command.userId)
@@ -30,12 +32,11 @@ export class LogoutUseCase implements ICommandHandler<LogoutCommand> {
 		const device = await this.devicesRepository.findDeviceById(command.deviceId)
 		if (device === null)
 			return new ResponseContract(null, ErrorMessageEnum.DEVICE_NOT_FOUND)
-		if (command.lastActiveDate !== device.lastActiveDate)
+		if (new Date(command.lastActiveDate).toISOString() !== device.lastActiveDate.toISOString())
 			return new ResponseContract(null, ErrorMessageEnum.TOKEN_NOT_VERIFY)
 
-		const deleteResult = await this.devicesRepository.deleteDeviceById(
-			command.deviceId
-		)
+		const deleteResult = await this.devicesRepository
+			.deleteDeviceById(command.deviceId)
 		if (deleteResult === null)
 			return new ResponseContract(null, ErrorMessageEnum.DEVICE_NOT_DELETE)
 
