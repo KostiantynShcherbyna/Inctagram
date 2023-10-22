@@ -11,6 +11,7 @@ export const emailService = {
 			}
 		})
 
+
 		try {
 			await transporter.sendMail({
 				from: emailBody.from,
