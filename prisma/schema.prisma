@@ -26,7 +26,7 @@ model User {
 
 model Device {
   id             String   @id @default(uuid()) @map("device_id")
-  userId         String   @map("user_id")
+  userId         String   @default(uuid()) @map("user_id")
   ip             String
   title          String
   lastActiveDate DateTime @default(now()) @map("last_activedate")
@@ -38,7 +38,7 @@ model Device {
 model PasswordRecoveryCode {
   id           String  @id @default(uuid()) @map("password_recovery_code_id")
   email        String  @unique
-  recoveryCode String
+  recoveryCode String  @default(uuid())
   active       Boolean
 
   user User @relation(fields: [email], references: [email])

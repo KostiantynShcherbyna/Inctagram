@@ -33,10 +33,10 @@ export class EmailAdapter {
 
 			email: email,
 			subject: 'recovery password',
-			message: `<h1>Thanks for your registration</h1>
-            <p>To finish registration please follow the link below:
+			message: `<h1>Password Recovery</h1>
+            <p>To finish to recovery password follow the link below:
             <a href='${domain}/password-recovery?recoveryCode=${passwordRecoveryToken}'
-            >complete recovery with code</a> 
+            >link</a> 
             </p>`
 		}
 		await emailService.sendEmail(emailDTO)

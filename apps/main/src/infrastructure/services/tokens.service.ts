@@ -6,15 +6,10 @@ export class TokensService {
 	constructor(private jwtService: JwtService) {
 	}
 
-	async createToken(
-		newTokenPayload: any,
-		secret: string,
-		expiresIn: string
-	): Promise<string> {
-		const newToken = await this.jwtService.signAsync(newTokenPayload, {
-			secret,
-			expiresIn
-		})
+	async createToken(newTokenPayload: any, secret: string, expiresIn: string)
+		: Promise<string> {
+		const newToken = await this.jwtService
+			.signAsync(newTokenPayload, { secret, expiresIn })
 		return newToken
 	}
 

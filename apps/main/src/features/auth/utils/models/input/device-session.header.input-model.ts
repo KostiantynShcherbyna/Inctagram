@@ -11,7 +11,7 @@ export class DeviceSessionHeaderInputModel {
 
 	@IsString()
 	@IsNotEmpty()
-	lastActiveDate: Date
+	iat: Date
 
 	@IsString()
 	@IsNotEmpty()
@@ -23,5 +23,5 @@ export class DeviceSessionHeaderInputModel {
 
 	@IsDate()
 	@IsNotEmpty()
-	expireAt: Date
+	exp: Date
 }
