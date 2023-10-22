@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,11 +11,44 @@ datasource db {
 }
 
 model User {
-  email             String   @unique
-  createdAt         DateTime @default(now()) @map("created_at")
-  isConfirmed       Boolean  @default(false) @map("is_confirmed")
-  passwordHash      String?   @map("password_hash")
   id                String   @id @default(uuid()) @map("user_id")
+  email             String   @unique
   username          String
-  confirmationCodes String[] @default([]) @unique @map("confirmation_codes")
+  passwordHash      String   @map("password_hash")
+  createdAt         DateTime @default(now()) @map("created_at")
+  confirmationCodes String[] @unique @map("confirmation_codes")
+  isConfirmed       Boolean  @default(false) @map("is_confirmed")
+
+  posts                 Post[]
+  devices               Device[]
+  PasswordRecoveryCodes PasswordRecoveryCode[]
+}
+
+model Device {
+  id             String   @id @default(uuid()) @map("device_id")
+  userId         String   @default(uuid()) @map("user_id")
+  ip             String
+  title          String
+  lastActiveDate DateTime @default(now()) @map("last_activedate")
+  expireAt       DateTime @map("expire_at")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model PasswordRecoveryCode {
+  id           String  @id @default(uuid()) @map("password_recovery_code_id")
+  email        String  @unique
+  recoveryCode String  @default(uuid())
+  active       Boolean
+
+  user User @relation(fields: [email], references: [email])
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean? @default(false)
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  String?
 }

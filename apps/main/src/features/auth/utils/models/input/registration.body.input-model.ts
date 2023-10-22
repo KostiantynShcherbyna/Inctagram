@@ -7,25 +7,21 @@ import {
 	LOGIN_REGEX,
 	PASSWORD_MAX_LENGTH,
 	PASSWORD_MIN_LENGTH
-} from '../../../../../../../infrastructure/utils/constants'
-import { trimTransformer } from '../../../../../../../infrastructure/utils/trim-transformer'
-import { ApiProperty } from '@nestjs/swagger'
+} from '../../../../../infrastructure/utils/constants'
+import { trimTransformer } from '../../../../../infrastructure/utils/trim-transformer'
 
 export class RegistrationBodyInputModel {
-	@ApiProperty()
 	@Transform(({ value }) => trimTransformer(value, 'login'))
 	@IsString()
 	@Length(LOGIN_MIN_LENGTH, LOGIN_MAX_LENGTH)
 	@Matches(LOGIN_REGEX)
 	login: string
 
-	@ApiProperty()
 	@Transform(({ value }) => trimTransformer(value, 'password'))
 	@IsString()
 	@Length(PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH)
 	password: string
 
-	@ApiProperty()
 	@Transform(({ value }) => trimTransformer(value, 'email'))
 	@IsString()
 	@IsNotEmpty()
