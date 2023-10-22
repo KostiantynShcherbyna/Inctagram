@@ -1,21 +1,21 @@
 import {
 	BadRequestException,
 	Body,
-	Controller,
+	Controller, Get,
 	Headers,
 	HttpCode,
 	HttpStatus,
 	Injectable,
 	InternalServerErrorException,
 	Ip,
-	Post,
+	Post, Req,
 	Res,
 	ServiceUnavailableException,
 	UnauthorizedException,
 	UseGuards
 } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import { outputMessageException } from '../../../infrastructure/utils/output-message-exception'
 import { ErrorMessageEnum } from '../../../infrastructure/utils/error-message-enum'
 import { RegistrationCommand } from '../app/use-cases/registration.use-case'
@@ -34,6 +34,9 @@ import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-
 import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
 import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
 import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
+import { GoogleAuthGuard } from '../utils/guards/google-auth.guard'
+import { UserDetails } from '../../../types/user-details.type'
+import { OAutLoginCommand } from '../app/use-cases/OAuth-login.use-case'
 
 @Injectable()
 @Controller('auth')
@@ -215,4 +218,50 @@ export class AuthController {
 				)
 			)
 	}
+
+	@Get('google/login')
+	@UseGuards(GoogleAuthGuard)
+	async handleLogin() {
+		return { msg: 'Google Auth' }
+	}
+
+	@Get('google/redirect')
+	@UseGuards(GoogleAuthGuard)
+	async handleRedirect(
+		@Req() request: Request,
+		@Res({ passthrough: true }) res: Response
+	) {
+		const user: Partial<UserDetails> = request.user
+
+		const loginContract = await this.commandBus.execute(
+			new OAutLoginCommand({ email: user.email, username: user.displayName })
+		)
+
+		if (loginContract.error === ErrorMessageEnum.USER_NOT_FOUND)
+			throw new UnauthorizedException()
+		if (loginContract.error === ErrorMessageEnum.USER_IS_BANNED)
+			throw new UnauthorizedException()
+		if (loginContract.error === ErrorMessageEnum.USER_EMAIL_NOT_CONFIRMED)
+			throw new UnauthorizedException()
+		if (loginContract.error === ErrorMessageEnum.PASSWORD_NOT_COMPARED)
+			throw new UnauthorizedException()
+
+		res.cookie('refreshToken', loginContract.data?.refreshToken, {
+			httpOnly: true,
+			secure: true
+		})
+
+		return loginContract.data?.accessJwt
+	}
+
+	@Get('status')
+	user(@Req() request: Request) {
+		console.log(request.user)
+		if (request.user) {
+			return { msg: 'Authenticated' }
+		} else {
+			return { msg: 'Not Authenticated' }
+		}
+	}
+
 }
