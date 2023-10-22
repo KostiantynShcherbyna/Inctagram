@@ -3,6 +3,7 @@ import { AppModule } from './app.module'
 import { ConfigService } from '@nestjs/config'
 import * as session from 'express-session'
 import * as passport from 'passport'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
@@ -21,6 +22,17 @@ async function bootstrap() {
 	)
 	app.use(passport.initialize())
 	app.use(passport.session())
+
+	const config = new DocumentBuilder()
+		//.addCookieAuth('refreshToken')
+		.setTitle('Authorization')
+		.setDescription('Authorization API')
+		.setVersion('1.0')
+		.build()
+
+	const document = SwaggerModule.createDocument(app, config)
+	SwaggerModule.setup('swagger', app, document)
+
 	await app.listen(port)
 }
 
