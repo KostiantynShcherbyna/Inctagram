@@ -36,6 +36,8 @@ import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-
 import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
 import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
 import { GoogleAuthGuard } from '../utils/guards/google-auth.guard'
+import { OAutLoginCommand } from '../app/use-cases/OAuth-login.use-case'
+import { UserDetails } from '../../../types/user-details.type'
 
 @Injectable()
 @Controller('auth')
@@ -230,8 +232,31 @@ export class AuthController {
 
 	@Get('google/redirect')
 	@UseGuards(GoogleAuthGuard)
-	async handleRedirect() {
-		return { msg: 'Ok' }
+	async handleRedirect(
+		@Req() request: Request,
+		@Res({ passthrough: true }) res: Response
+	) {
+		const user: Partial<UserDetails> = request.user
+
+		const loginContract = await this.commandBus.execute(
+			new OAutLoginCommand({ email: user.email, username: user.displayName })
+		)
+
+		if (loginContract.error === ErrorMessageEnum.USER_NOT_FOUND)
+			throw new UnauthorizedException()
+		if (loginContract.error === ErrorMessageEnum.USER_IS_BANNED)
+			throw new UnauthorizedException()
+		if (loginContract.error === ErrorMessageEnum.USER_EMAIL_NOT_CONFIRMED)
+			throw new UnauthorizedException()
+		if (loginContract.error === ErrorMessageEnum.PASSWORD_NOT_COMPARED)
+			throw new UnauthorizedException()
+
+		res.cookie('refreshToken', loginContract.data?.refreshToken, {
+			httpOnly: true,
+			secure: true
+		})
+
+		return loginContract.data?.accessJwt
 	}
 
 	@Get('status')

@@ -13,8 +13,9 @@ import { RegistrationUseCase } from './features/auth/app/use-cases/registration.
 import { UsersRepository } from './features/users/repo/users.repository'
 import { GoogleStrategy } from './features/auth/utils/strategies/google.strategy'
 import { PassportModule } from '@nestjs/passport'
-import { AuthService } from './features/auth/auth.service'
+import { AuthService } from './features/auth/app/services/auth.service'
 import { SessionSerializer } from './features/auth/utils/session-serializer'
+import { OAuthUseCase } from './features/auth/app/use-cases/OAuth-login.use-case'
 
 const services = [
 	PrismaClient,
@@ -26,7 +27,7 @@ const services = [
 	EmailAdapter
 ]
 const controllers = [AuthController]
-const useCases = [RegistrationUseCase, RefreshTokenUseCase]
+const useCases = [RegistrationUseCase, RefreshTokenUseCase, OAuthUseCase]
 const repository = [UsersRepository]
 const strategies = [GoogleStrategy]
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaClient, User } from '@prisma/client'
-import { UserDetails } from '../../auth/user-details.type'
+import { UserDetails } from '../../../types/user-details.type'
 import {
 	ICreateUser,
 	UserEntity
@@ -30,11 +30,13 @@ export class UsersRepository {
 	}
 
 	async findUserByEmail(email: string): Promise<any> {
-		return await this.prisma.user.findMany({
+		const result = await this.prisma.user.findMany({
 			where: {
 				email: email
 			}
 		})
+
+		return result[0]
 	}
 
 	async createUser(
@@ -62,12 +64,12 @@ export class UsersRepository {
 	}
 
 	async createUserFromOAuth(details: UserDetails) {
-		console.log(details)
 		return await this.prisma.user.create({
 			data: {
 				email: details.email,
 				username: details.displayName,
-				passwordHash: 'none'
+				passwordHash: 'none',
+				isConfirmed: true
 			}
 		})
 	}
