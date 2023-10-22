@@ -31,7 +31,7 @@ export const endpoints = {
 			return `${authController}/registration`
 		},
 		registrationConfirmationResend() {
-			return `${authController}/registration-confirmation-resend`
+			return `${authController}/registration-email-resending`
 		},
 		logout() {
 			return `${authController}/logout`

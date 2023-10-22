@@ -8,6 +8,16 @@ interface ICreatePasswordRecoveryCode {
 	active: boolean
 }
 
+interface ICreateDeviceDto {
+	id: string
+	ip: string
+	title: string
+	userId: string
+	lastActiveDate: Date
+	expireAt: Date
+}
+
+
 @Injectable()
 export class UsersRepository {
 	constructor(protected prisma: PrismaClient) {
@@ -93,6 +103,10 @@ export class UsersRepository {
 			where: { id },
 			data: { active: false }
 		})
+	}
+
+	async createDevice(data: ICreateDeviceDto): Promise<Device> {
+		return this.prisma.device.create({ data })
 	}
 
 	async findDeviceById(id: string): Promise<Device> {
