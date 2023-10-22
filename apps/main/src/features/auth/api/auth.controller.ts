@@ -36,7 +36,7 @@ import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
 import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
 import { GoogleAuthGuard } from '../utils/guards/google-auth.guard'
 import { UserDetails } from '../../../types/user-details.type'
-import { OAutLoginCommand } from '../app/use-cases/OAuth-login.use-case'
+import { OAutLoginCommand } from '../app/use-cases/oAuth-login.use-case'
 
 @Injectable()
 @Controller('auth')
