@@ -76,6 +76,7 @@ export class AuthController {
 		const confirmationContract = await this.commandBus.execute(
 			new EmailConfirmationCommand(bodyConfirmation.code)
 		)
+
 		if (confirmationContract.error === ErrorMessageEnum.USER_NOT_FOUND)
 			throw new BadRequestException(
 				outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'code')
@@ -92,6 +93,10 @@ export class AuthController {
 					ErrorMessageEnum.CONFIRMATION_CODE_EXPIRED,
 					'code'
 				)
+			)
+		if (confirmationContract.error === ErrorMessageEnum.TOKEN_NOT_VERIFY)
+			throw new BadRequestException(
+				outputMessageException(ErrorMessageEnum.TOKEN_NOT_VERIFY, 'code')
 			)
 	}
 
