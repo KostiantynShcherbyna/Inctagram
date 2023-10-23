@@ -25,9 +25,4 @@ describe('AppController-unit', () => {
 			.delete(`/api/testing/all-data`)
 			.expect(204)
 	})
-	// it('/ (GET)', () => {
-	// 	return request(app.getHttpServer())
-	// 		.get('/api/')
-	// 		.expect(404)
-	// })
 })
