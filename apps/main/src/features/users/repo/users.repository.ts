@@ -24,29 +24,22 @@ export class UsersRepository {
 	constructor(protected prisma: PrismaClient) {
 	}
 
-	async findUserByUserNameOrEmail(
-		username: string,
-		email: string
-	): Promise<User | null> {
+	async findUserByUserNameOrEmail(username: string, email: string)
+		: Promise<User | null> {
 		return this.prisma.user.findFirst({
 			where: { OR: [{ username }, { email }] }
 		})
 	}
 
-	async findUserByConfirmationCode(
-		confirmationCode: string
-	): Promise<User | null> {
+	async findUserByConfirmationCode(confirmationCode: string)
+		: Promise<User | null> {
 		return this.prisma.user.findFirst({
-			where: {
-				confirmationCodes: { has: confirmationCode }
-			}
+			where: { confirmationCodes: { has: confirmationCode } }
 		})
 	}
 
 	async findUserByEmail(email: string): Promise<User | null> {
-		return this.prisma.user.findUnique({
-			where: { email }
-		})
+		return this.prisma.user.findUnique({ where: { email } })
 	}
 
 	async findUserById(id: string): Promise<User | null> {
@@ -55,75 +48,80 @@ export class UsersRepository {
 		})
 	}
 
-	async createUser(
-		userEntity: UserEntity,
-		userDTO: ICreateUser
-	): Promise<User> {
+	async createUser(userEntity: UserEntity, userDTO: ICreateUser)
+		: Promise<User> {
 		return userEntity.createUser(userDTO)
 	}
 
-	async addConfirmationCode(
-		id: string,
-		confirmationCode: string
-	): Promise<User> {
+	async addConfirmationCode(id: string, confirmationCode: string)
+		: Promise<User> {
 		return this.prisma.user.update({
 			where: { id },
 			data: { confirmationCodes: { push: confirmationCode } }
 		})
 	}
 
-	async updateConfirmation(id: string, isConfirmed: boolean): Promise<User> {
+	async updateConfirmation(id: string, isConfirmed: boolean)
+		: Promise<User> {
 		return this.prisma.user.update({
 			where: { id },
 			data: { isConfirmed }
 		})
 	}
 
-	async findActivePasswordRecoveryCodeByEmail(email: string): Promise<PasswordRecoveryCode> {
+	async findActivePasswordRecoveryCodeByEmail(email: string)
+		: Promise<PasswordRecoveryCode> {
 		return this.prisma.passwordRecoveryCode.findUnique({
 			where: { email, active: true }
 		})
 	}
 
-	async updatePasswordHash(id: string, passwordHash: string): Promise<User> {
+	async updatePasswordHash(id: string, passwordHash: string)
+		: Promise<User> {
 		return this.prisma.user.update({
 			where: { id },
 			data: { passwordHash }
 		})
 	}
 
-	async createPasswordRecoveryCode({ email, recoveryCode, active }: ICreatePasswordRecoveryCode)
+	async createPasswordRecoveryCode({ email, recoveryCode, active }
+																		 : ICreatePasswordRecoveryCode)
 		: Promise<PasswordRecoveryCode> {
 		return this.prisma.passwordRecoveryCode.create({
 			data: { email, recoveryCode, active }
 		})
 	}
 
-	async deactivatePasswordRecoveryCode(id: string): Promise<PasswordRecoveryCode> {
+	async deactivatePasswordRecoveryCode(id: string)
+		: Promise<PasswordRecoveryCode> {
 		return this.prisma.passwordRecoveryCode.update({
 			where: { id },
 			data: { active: false }
 		})
 	}
 
-	async createDevice(data: ICreateDeviceDto): Promise<Device> {
+	async createDevice(data: ICreateDeviceDto)
+		: Promise<Device> {
 		return this.prisma.device.create({ data })
 	}
 
-	async findDeviceById(id: string): Promise<Device> {
+	async findDeviceById(id: string)
+		: Promise<Device> {
 		return this.prisma.device.findUnique({
 			where: { id }
 		})
 	}
 
-	async updateActiveDate(id: string, lastActiveDate: Date): Promise<Device> {
+	async updateActiveDate(id: string, lastActiveDate: Date)
+		: Promise<Device> {
 		return this.prisma.device.update({
 			where: { id },
 			data: { lastActiveDate }
 		})
 	}
 
-	async createUserFromOAuth(details: UserDetails) {
+	async createUserFromOAuth(details: UserDetails)
+		: Promise<User> {
 		return this.prisma.user.create({
 			data: {
 				email: details.email,
@@ -133,6 +131,5 @@ export class UsersRepository {
 			}
 		})
 	}
-
 
 }
