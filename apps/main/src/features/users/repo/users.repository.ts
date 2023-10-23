@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Device, PasswordRecoveryCode, PrismaClient, User } from '@prisma/client'
 import { ICreateUser, UserEntity } from '../../../../../../prisma/domain/user.entity'
-import { UserDetails } from '../../../types/user-details.type'
+import { UserDetails } from '../../../infrastructure/types/user-details.type'
 
 interface ICreatePasswordRecoveryCode {
 	email: string

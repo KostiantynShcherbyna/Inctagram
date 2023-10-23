@@ -19,6 +19,11 @@ import { LoginUseCase } from './features/auth/app/use-cases/login.use-case'
 import { LogoutUseCase } from './features/auth/app/use-cases/logout.use-case'
 import { NewPasswordUseCase } from './features/auth/app/use-cases/new-password.use-case'
 import { PasswordRecoveryUseCase } from './features/auth/app/use-cases/password-recovery.use-case'
+import { OAuthUseCase } from './features/auth/app/use-cases/oAuth-login.use-case'
+import { GoogleStrategy } from './infrastructure/strategies/google.strategy'
+import { SessionSerializer } from './infrastructure/utils/session-serializer'
+import { AuthService } from './features/auth/app/services/auth.service'
+import { PassportModule } from '@nestjs/passport'
 
 const services = [
 	PrismaClient,
@@ -27,10 +32,11 @@ const services = [
 	TokensService,
 	PrismaService,
 	UserService,
-	EmailAdapter
+	EmailAdapter,
+	SessionSerializer
 ]
 const controllers = [AuthController, TestingController]
-const usecases = [
+const useCases = [
 	RegistrationUseCase,
 	EmailConfirmationUseCase,
 	RefreshTokenUseCase,
@@ -38,14 +44,27 @@ const usecases = [
 	LoginUseCase,
 	LogoutUseCase,
 	NewPasswordUseCase,
-	PasswordRecoveryUseCase
+	PasswordRecoveryUseCase,
+	OAuthUseCase
 ]
 const repository = [UsersRepository, DevicesRepository]
+const strategies = [GoogleStrategy]
+const providers = [{ provide: 'AUTH_SERVICE', useClass: AuthService }]
 
 @Module({
-	imports: [ConfigModule.forRoot({ isGlobal: true }), CqrsModule],
+	imports: [
+		CqrsModule,
+		ConfigModule.forRoot({ isGlobal: true }),
+		PassportModule.register({ session: true })
+	],
 	controllers: [...controllers],
-	providers: [...services, ...usecases, ...repository]
+	providers: [
+		...providers,
+		...services,
+		...useCases,
+		...repository,
+		...strategies
+	]
 })
 export class AppModule {
 }
