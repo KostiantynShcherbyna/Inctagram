@@ -8,26 +8,25 @@ import { ConfigType } from '../../../../infrastructure/configurations/configurat
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
 
-export class OAutLoginCommand {
-	constructor(public loginBody: OAuthLoginBodyInputModel) {}
+export class OAuthLoginCommand {
+	constructor(public loginBody: OAuthLoginBodyInputModel) {
+	}
 }
 
-@CommandHandler(OAutLoginCommand)
-export class OAuthUseCase implements ICommandHandler<OAutLoginCommand> {
+@CommandHandler(OAuthLoginCommand)
+export class OAuthUseCase implements ICommandHandler<OAuthLoginCommand> {
 	constructor(
 		protected configService: ConfigService<ConfigType, true>,
 		protected tokensService: TokensService
-	) {}
+	) {
+	}
 
-	async execute(command: OAutLoginCommand) {
-		const accessJwtSecret = this.configService.get(Secrets.ACCESS_JWT_SECRET, {
-			infer: true
-		})
+	async execute(command: OAuthLoginCommand) {
+		const accessJwtSecret = this.configService.get(
+			Secrets.ACCESS_JWT_SECRET, { infer: true })
 
 		const refreshJwtSecret = this.configService.get(
-			Secrets.REFRESH_JWT_SECRET,
-			{ infer: true }
-		)
+			Secrets.REFRESH_JWT_SECRET, { infer: true })
 
 		const issueAt = new Date(Date.now())
 

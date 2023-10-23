@@ -36,7 +36,7 @@ import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
 import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
 import { GoogleAuthGuard } from '../../../infrastructure/guards/google-auth.guard'
 import { UserDetails } from '../../../infrastructure/types/user-details.type'
-import { OAutLoginCommand } from '../app/use-cases/oAuth-login.use-case'
+import { OAuthLoginCommand } from '../app/use-cases/oAuth-login.use-case'
 
 @Injectable()
 @Controller('auth')
@@ -234,7 +234,7 @@ export class AuthController {
 		const user: Partial<UserDetails> = request.user
 
 		const loginContract = await this.commandBus.execute(
-			new OAutLoginCommand({ email: user.email, username: user.displayName })
+			new OAuthLoginCommand({ email: user.email, username: user.displayName })
 		)
 
 		if (loginContract.error === ErrorMessageEnum.USER_NOT_FOUND)
