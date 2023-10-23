@@ -34,7 +34,7 @@ import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-
 import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
 import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
 import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
-import { GoogleAuthGuard } from '../utils/guards/google-auth.guard'
+import { GoogleAuthGuard } from '../../../infrastructure/guards/google-auth.guard'
 import { UserDetails } from '../../../types/user-details.type'
 import { OAutLoginCommand } from '../app/use-cases/oAuth-login.use-case'
 

@@ -1,6 +1,6 @@
 import { PassportSerializer } from '@nestjs/passport'
 import { Injectable } from '@nestjs/common'
-import { UsersRepository } from '../../users/repo/users.repository'
+import { UsersRepository } from '../../features/users/repo/users.repository'
 import { User } from '@prisma/client'
 
 @Injectable()

@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { randomUUID } from 'crypto'
 import { ConfigService } from '@nestjs/config'
 
-import { OAuthLoginBodyInputModel } from '../../utils/models/input/OAuth-login.input-model'
+import { OAuthLoginBodyInputModel } from '../../utils/models/input/oAuth-login.input-model'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { ConfigType } from '../../../../infrastructure/configurations/configuration'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'

@@ -3,7 +3,7 @@ import { Profile, Strategy } from 'passport-google-oauth20'
 import * as process from 'process'
 import { Inject, Injectable } from '@nestjs/common'
 import * as dotenv from 'dotenv'
-import { AuthService } from '../../app/services/auth.service'
+import { AuthService } from '../../features/auth/app/services/auth.service'
 
 dotenv.config()
 
