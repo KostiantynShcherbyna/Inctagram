@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { HttpStatus, INestApplication } from '@nestjs/common'
+import { HttpServer, HttpStatus, INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { AppModule } from './../src/app.module'
 import { EmailAdapterMock } from './infrastructure/email-adapter.mock'
@@ -18,8 +18,8 @@ describe
 
 	jest.setTimeout(5 * minute)
 
-	let app
-	let server: INestApplication
+	let app: INestApplication
+	let server: HttpServer
 	let publicHelper: PublicTestingHelper
 
 	let userRepository: UsersRepository
@@ -41,12 +41,12 @@ describe
 		publicHelper = new PublicTestingHelper(server)
 		userRepository = app.get(UsersRepository)
 
-		await request(server).delete(`/testing/all-data`)
+		await request(server).delete(`/api/testing/all-data`)
 	})
 
 	afterAll
 	(async () => {
-		await request(server).delete(`/testing/all-data`)
+		await request(server).delete(`/api/testing/all-data`)
 		await app.close()
 	})
 

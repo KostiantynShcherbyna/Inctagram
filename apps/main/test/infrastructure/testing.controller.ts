@@ -7,7 +7,6 @@ export class TestingController {
 	constructor(protected prisma: PrismaClient) {
 	}
 
-
 	@Delete('all-data')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async deleteAllData() {
@@ -28,21 +27,4 @@ export class TestingController {
 		}
 	}
 
-	// @Delete("all-data")
-	// @HttpCode(HttpStatus.NO_CONTENT)
-	// async deleteAllData() {
-	//   return await this.dataSource.query(`SELECT truncate_tables('nestjsk');`)
-	// }
-
-
-	// @Get("user")
-	// async getUser(
-	//   @Body() bodyUser: UserBodyInputModel,
-	// ) {
-	//   const user = await this.testingRepository.getUser(bodyUser)
-	//   if (user === null) throw new NotFoundException(
-	//     callErrorMessage(ErrorEnums.USER_NOT_FOUND, "loginOrEmail")
-	//   )
-	//   return user
-	// }
 }
