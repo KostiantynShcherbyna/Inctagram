@@ -254,6 +254,7 @@ export class AuthController {
 		return loginContract.data?.accessJwt
 	}
 
+
 	@Get('status')
 	user(@Req() request: Request) {
 		console.log(request.user)
