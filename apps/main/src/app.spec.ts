@@ -3,7 +3,6 @@ import { AppModule } from './app.module'
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 
-
 describe('App (unit)', () => {
 	let app: INestApplication
 
