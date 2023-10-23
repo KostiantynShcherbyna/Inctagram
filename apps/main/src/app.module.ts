@@ -13,7 +13,7 @@ import { RegistrationUseCase } from './features/auth/app/use-cases/registration.
 import { UsersRepository } from './features/users/repo/users.repository'
 import { EmailConfirmationUseCase } from './features/auth/app/use-cases/email-confirmation.use-case'
 import { DevicesRepository } from './features/users/repo/devices.repository'
-import { TestingController } from './infrastructure/utils/testing.controller'
+import { TestingController } from '../test/infrastructure/testing.controller'
 import { EmailConfirmationResendUseCase } from './features/auth/app/use-cases/email-confirmation-resend.use-case'
 import { LoginUseCase } from './features/auth/app/use-cases/login.use-case'
 import { LogoutUseCase } from './features/auth/app/use-cases/logout.use-case'
