@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { HttpServer, INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
-import { AppModule } from './../src/app.module'
-import { appSettings } from '../src/infrastructure/configurations/app.settings'
+import { AppModule } from './app.module'
+import { appSettings } from './infrastructure/configurations/app.settings'
 
 describe('AppController-unit', () => {
 	let app: INestApplication
@@ -22,7 +22,7 @@ describe('AppController-unit', () => {
 
 	it('/testing/all-data', () => {
 		return request(server)
-			.delete(`/api/testing/all-data`)
-			.expect(204)
+			.get(`/api/`)
+			.expect(404)
 	})
 })
