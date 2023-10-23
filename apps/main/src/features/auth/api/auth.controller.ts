@@ -1,14 +1,16 @@
 import {
 	BadRequestException,
 	Body,
-	Controller, Get,
+	Controller,
+	Get,
 	Headers,
 	HttpCode,
 	HttpStatus,
 	Injectable,
 	InternalServerErrorException,
 	Ip,
-	Post, Req,
+	Post,
+	Req,
 	Res,
 	ServiceUnavailableException,
 	UnauthorizedException,
@@ -257,11 +259,9 @@ export class AuthController {
 	@Get('status')
 	user(@Req() request: Request) {
 		console.log(request.user)
-		if (request.user) {
-			return { msg: 'Authenticated' }
-		} else {
-			return { msg: 'Not Authenticated' }
-		}
+		return request.user
+			? { msg: 'Authenticated' }
+			: { msg: 'Not Authenticated' }
 	}
 
 }
