@@ -1,28 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { HttpServer, INestApplication } from '@nestjs/common'
-import * as request from 'supertest'
 import { AppModule } from './app.module'
-import { appSettings } from './infrastructure/configurations/app.settings'
+import { INestApplication } from '@nestjs/common'
+import * as request from 'supertest'
 
-describe('AppController-unit', () => {
+
+describe('App (unit)', () => {
 	let app: INestApplication
-	let server: HttpServer
-
 
 	beforeEach(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AppModule]
 		}).compile()
 
-		app = await moduleFixture.createNestApplication()
-		app = appSettings(app)
+		app = moduleFixture.createNestApplication()
 		await app.init()
-		server = app.getHttpServer()
 	})
 
-	it('/testing/all-data', () => {
-		return request(server)
-			.get(`/api/`)
+	it('/ (GET)', () => {
+		return request(app.getHttpServer())
+			.get('/api/')
 			.expect(404)
 	})
 })
