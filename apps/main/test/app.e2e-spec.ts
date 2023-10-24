@@ -17,7 +17,7 @@ describe('App (e2e)', () => {
 
   it('/ (GET)', () => {
     return request(app.getHttpServer())
-      .get('/api/')
+      .get('/api')
       .expect(404)
   });
 });

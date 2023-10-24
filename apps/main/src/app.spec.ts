@@ -3,7 +3,6 @@ import { AppModule } from './app.module'
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 
-
 describe('App (unit)', () => {
 	let app: INestApplication
 
@@ -18,7 +17,7 @@ describe('App (unit)', () => {
 
 	it('/ (GET)', () => {
 		return request(app.getHttpServer())
-			.get('/api/')
+			.get('/api')
 			.expect(404)
 	})
 })
