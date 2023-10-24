@@ -3,14 +3,14 @@ import { Profile, Strategy } from 'passport-google-oauth20'
 import * as process from 'process'
 import { Inject, Injectable } from '@nestjs/common'
 import * as dotenv from 'dotenv'
-import { AuthService } from '../../features/auth/app/services/auth.service'
+import { GoogleAuthService } from '../../features/auth/app/services/google-auth.service'
 
 dotenv.config()
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy) {
+export class GoogleAuthStrategy extends PassportStrategy(Strategy) {
 	constructor(
-		@Inject('AUTH_SERVICE') private readonly authService: AuthService
+		@Inject('G00GLE_AUTH_SERVICE') private readonly authService: GoogleAuthService
 	) {
 		super({
 			clientID: process.env.GOOGLE_CLIENT_ID,

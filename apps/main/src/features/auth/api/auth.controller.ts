@@ -38,7 +38,9 @@ import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
 import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
 import { GoogleAuthGuard } from '../../../infrastructure/guards/google-auth.guard'
 import { UserDetails } from '../../../infrastructure/types/user-details.type'
-import { OAuthLoginCommand } from '../app/use-cases/oAuth-login.use-case'
+import { OAuthGoogleLoginCommand } from '../app/use-cases/oAuth-google-login.use-case'
+import { GitHubAuthGuard } from '../../../infrastructure/guards/github-auth.guard'
+import { OAuthGitHubLoginCommand } from '../app/use-cases/oAuth-github-login.use-case'
 
 @Injectable()
 @Controller('auth')
@@ -148,7 +150,8 @@ export class AuthController {
 	@UseGuards(RefreshGuard)
 	@Post('logout')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	async logout(@DeviceSession() deviceSession: DeviceSessionHeaderInputModel) {
+	async logout(
+		@DeviceSession() deviceSession: DeviceSessionHeaderInputModel) {
 		const logoutContract = await this.commandBus.execute(
 			new LogoutCommand(
 				deviceSession.id,
@@ -185,7 +188,8 @@ export class AuthController {
 
 	@Post('new-password')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	async newPassword(@Body() bodyNewPassword: NewPasswordBodyInputModel) {
+	async newPassword(
+		@Body() bodyNewPassword: NewPasswordBodyInputModel) {
 		const newPasswordContract = await this.commandBus.execute(
 			new NewPasswordCommand(
 				bodyNewPassword.newPassword,
@@ -222,6 +226,14 @@ export class AuthController {
 			)
 	}
 
+	@Get('status')
+	user(@Req() request: Request) {
+		console.log(request.user)
+		return request.user
+			? { msg: 'Authenticated' }
+			: { msg: 'Not Authenticated' }
+	}
+
 	@Get('google/login')
 	@UseGuards(GoogleAuthGuard)
 	async googleLogin() {
@@ -237,7 +249,8 @@ export class AuthController {
 		const user: Partial<UserDetails> = request.user
 
 		const loginContract = await this.commandBus.execute(
-			new OAuthLoginCommand({ email: user.email, username: user.displayName })
+			new OAuthGoogleLoginCommand(
+				{ email: user.email, username: user.displayName })
 		)
 
 		if (loginContract.error === ErrorMessageEnum.USER_NOT_FOUND)
@@ -257,14 +270,6 @@ export class AuthController {
 		return loginContract.data?.accessJwt
 	}
 
-	@Get('status')
-	user(@Req() request: Request) {
-		console.log(request.user)
-		return request.user
-			? { msg: 'Authenticated' }
-			: { msg: 'Not Authenticated' }
-	}
-
 
 	@Get('github/login')
 	@UseGuards(GoogleAuthGuard)
@@ -273,7 +278,7 @@ export class AuthController {
 	}
 
 	@Get('github/redirect')
-	@UseGuards(GoogleAuthGuard)
+	@UseGuards(GitHubAuthGuard)
 	async githubRedirect(
 		@Req() request: Request,
 		@Res({ passthrough: true }) res: Response
@@ -281,7 +286,8 @@ export class AuthController {
 		const user: Partial<UserDetails> = request.user
 
 		const loginContract = await this.commandBus.execute(
-			new OAuthLoginCommand({ email: user.email, username: user.displayName })
+			new OAuthGitHubLoginCommand(
+				{ email: user.email, username: user.displayName })
 		)
 
 		if (loginContract.error === ErrorMessageEnum.USER_NOT_FOUND)
