@@ -156,7 +156,8 @@ export class AuthController {
 				deviceSession.ip,
 				deviceSession.iat,
 				deviceSession.title,
-				deviceSession.userId)
+				deviceSession.userId
+			)
 		)
 		if (logoutContract.error === ErrorMessageEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
