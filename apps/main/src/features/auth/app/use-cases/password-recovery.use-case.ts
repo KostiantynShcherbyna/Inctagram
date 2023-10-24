@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ConfigService } from '@nestjs/config'
-import { ConfigType } from '../../../../infrastructure/configurations/configuration'
+import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { UsersRepository } from '../../../users/repo/users.repository'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'

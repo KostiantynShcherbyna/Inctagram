@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ConfigService } from '@nestjs/config'
 import { Secrets } from '../../../../infrastructure/utils/constants'
-import { ConfigType } from '../../../../infrastructure/configurations/configuration'
+import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
 import { ErrorMessageEnum } from '../../../../infrastructure/utils/error-message-enum'

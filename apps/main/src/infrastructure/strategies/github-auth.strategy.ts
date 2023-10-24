@@ -1,13 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
-import { Strategy } from 'passport-github'
 import * as process from 'process'
-import { GoogleAuthService } from '../../features/auth/app/services/google-auth.service'
+import { GitHubAuthService } from '../../features/auth/app/services/github-auth.service'
+import { Strategy } from 'passport-github2'
+
 
 @Injectable()
-export class GithubAuthStrategy extends PassportStrategy(Strategy, 'github') {
+export class GithubAuthStrategy
+	extends PassportStrategy(Strategy, 'github') {
 	constructor(
-		@Inject('GITHUB_AUTH_SERVICE') private readonly authService: GoogleAuthService
+		@Inject('GITHUB_AUTH_SERVICE')
+		private readonly authService: GitHubAuthService
 	) {
 		super({
 			clientID: process.env.GITHUB_CLIENT_ID,
@@ -17,8 +20,12 @@ export class GithubAuthStrategy extends PassportStrategy(Strategy, 'github') {
 	}
 
 	async validate(accessToken: string, refreshToken: string, profile: any) {
-		// Здесь можно сохранить информацию о пользователе в базе данных
-		// И выполнить дополнительные действия, связанные с аутентификацией
+		const user = await this.authService.validateUser({
+			email: profile.emails[0].value,
+			displayName: profile.displayName
+		})
+
+		if (user) return user
 		console.log(profile)
 		return profile
 	}

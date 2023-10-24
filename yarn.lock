@@ -1099,10 +1099,10 @@
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
-"@types/passport-github@^1.1.11":
-  version "1.1.11"
-  resolved "https://registry.yarnpkg.com/@types/passport-github/-/passport-github-1.1.11.tgz#e9257efaa15fbd9726739f51ce13a4ecce8784c4"
-  integrity sha512-V2t1/P8BnnFX8AOYpk0ep9p4p7u2V1KdQBSUIvSvcxMseu7n2+cTLCr3rat8K876caQ1C95Y9vprVBbtLVVYXg==
+"@types/passport-github2@^1.2.7":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@types/passport-github2/-/passport-github2-1.2.7.tgz#de9b468c0a2a6a462b80a6988ed5a84816c6b7e2"
+  integrity sha512-TktIhu2m6BJCBMVF1Aab8xTCUqruS+a2SyhnmLgjGqU5vpprb72c0cMtRGKngNECdCabD01DlUl8RzpUXtnosg==
   dependencies:
     "@types/express" "*"
     "@types/passport" "*"

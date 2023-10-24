@@ -5,7 +5,7 @@ import { ResponseContract } from '../../../../infrastructure/utils/response-cont
 import { ErrorMessageEnum } from '../../../../infrastructure/utils/error-message-enum'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { ConfigService } from '@nestjs/config'
-import { ConfigType } from '../../../../infrastructure/configurations/configuration'
+import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 
 export class EmailConfirmationResendCommand {

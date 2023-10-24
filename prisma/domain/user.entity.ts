@@ -1,7 +1,7 @@
 import { PrismaClient, User } from '@prisma/client'
 import { generateHashService } from '../../apps/main/src/infrastructure/services/generate-hash.service'
 import { ConfigService } from '@nestjs/config'
-import { ConfigType } from '../../apps/main/src/infrastructure/configurations/configuration'
+import { ConfigType } from '../../apps/main/src/infrastructure/settings/custom-settings'
 import { TokensService } from '../../apps/main/src/infrastructure/services/tokens.service'
 import { ExpiresTime, Secrets } from '../../apps/main/src/infrastructure/utils/constants'
 

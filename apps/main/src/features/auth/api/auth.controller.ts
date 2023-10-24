@@ -272,7 +272,7 @@ export class AuthController {
 
 
 	@Get('github/login')
-	@UseGuards(GoogleAuthGuard)
+	@UseGuards(GitHubAuthGuard)
 	async githubLogin() {
 		return { msg: 'GitHub Auth' }
 	}

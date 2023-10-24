@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config'
 
 import { OAuthLoginBodyInputModel } from '../../utils/models/input/oAuth-login.input-model'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
-import { ConfigType } from '../../../../infrastructure/configurations/configuration'
+import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
 
