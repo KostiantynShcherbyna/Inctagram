@@ -318,11 +318,13 @@ export class AuthController {
 		return { msg: 'GitHub Auth' }
 	}
 
+
 	@Get('some')
 	@HttpCode(HttpStatus.OK)
 	async some() {
 		return { msg: 'GitHub Auth' }
 	}
+
 
 	@Post('github/redirect')
 	@HttpCode(HttpStatus.NO_CONTENT)
