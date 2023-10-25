@@ -199,7 +199,10 @@ export class AuthController {
 
 	@Post('password-recovery')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@ApiResponse({ status: HttpStatus.NO_CONTENT })
+	@ApiResponse({
+		description: 'Even if current email is not registered (for prevent user\'s email detection)',
+		status: HttpStatus.NO_CONTENT
+	})
 	@ApiBadRequestResponse({
 		description: 'If the inputModel has invalid email (for example 222^gmail.com)'
 	})
