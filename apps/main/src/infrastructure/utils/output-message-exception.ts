@@ -1,7 +1,5 @@
-export const outputMessageException = (
-	message: string,
-	field: string
-): OutputExceptionType => {
+export const outputMessageException = (message: string, field: string)
+	: OutputExceptionType => {
 	return {
 		message: message,
 		field: field

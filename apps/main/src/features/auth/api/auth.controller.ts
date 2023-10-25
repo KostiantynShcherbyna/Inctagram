@@ -2,7 +2,6 @@ import {
 	BadRequestException,
 	Body,
 	Controller,
-	Get,
 	Headers,
 	HttpCode,
 	HttpStatus,
@@ -41,6 +40,8 @@ import { UserDetails } from '../../../infrastructure/types/user-details.type'
 import { OAuthGoogleLoginCommand } from '../app/use-cases/oAuth-google-login.use-case'
 import { GitHubAuthGuard } from '../../../infrastructure/guards/github-auth.guard'
 import { OAuthGitHubLoginCommand } from '../app/use-cases/oAuth-github-login.use-case'
+import { ApiBadRequestResponse, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger'
+import { BadResponse, ValidResponse } from '../../../infrastructure/utils/constants'
 
 @Injectable()
 @Controller('auth')
@@ -50,6 +51,13 @@ export class AuthController {
 
 	@Post('registration')
 	@HttpCode(HttpStatus.NO_CONTENT)
+	@ApiResponse({
+		description: ValidResponse.REGISTRATION,
+		status: HttpStatus.NO_CONTENT
+	})
+	@ApiBadRequestResponse({
+		description: BadResponse.REGISTRATION
+	})
 	async registration(@Body() bodyRegistration: RegistrationBodyInputModel) {
 		const registrationContract = await this.commandBus.execute(
 			new RegistrationCommand(
@@ -74,6 +82,13 @@ export class AuthController {
 
 	@Post('registration-confirmation')
 	@HttpCode(HttpStatus.NO_CONTENT)
+	@ApiResponse({
+		description: ValidResponse.REGISTRATION_CONFIRAMTION,
+		status: HttpStatus.NO_CONTENT
+	})
+	@ApiBadRequestResponse({
+		description: BadResponse.REGISTRATION_CONFIRAMTION
+	})
 	async emailConfirmation(
 		@Body() bodyConfirmation: ConfirmationBodyInputModel
 	) {
@@ -97,6 +112,8 @@ export class AuthController {
 
 	@Post('registration-email-resending')
 	@HttpCode(HttpStatus.NO_CONTENT)
+	@ApiResponse({ status: HttpStatus.NO_CONTENT })
+	@ApiBadRequestResponse()
 	async emailConfirmationResend(
 		@Body() bodyConfirmationResend: EmailConfirmationResendBodyInputModel
 	) {
@@ -121,6 +138,10 @@ export class AuthController {
 
 	@Post('login')
 	// @UseGuards(AuthGuard(StrategyNames.loginLocalStrategy))
+	@ApiOperation({ summary: 'Try to login user to the system' })
+	@ApiResponse({ status: HttpStatus.NO_CONTENT })
+	@ApiBadRequestResponse({ description: 'If the inputModel has incorrect values' })
+	@ApiUnauthorizedResponse({ description: 'If the password or login is wrong' })
 	@HttpCode(HttpStatus.OK)
 	async login(
 		@Headers('user-agent') userAgent: string,
@@ -150,6 +171,10 @@ export class AuthController {
 	@UseGuards(RefreshGuard)
 	@Post('logout')
 	@HttpCode(HttpStatus.NO_CONTENT)
+	@ApiResponse({ status: HttpStatus.NO_CONTENT })
+	@ApiUnauthorizedResponse({
+		description: 'If the JWT refreshToken inside cookie is missing, expired or incorrect'
+	})
 	async logout(
 		@DeviceSession() deviceSession: DeviceSessionHeaderInputModel) {
 		const logoutContract = await this.commandBus.execute(
@@ -174,6 +199,10 @@ export class AuthController {
 
 	@Post('password-recovery')
 	@HttpCode(HttpStatus.NO_CONTENT)
+	@ApiResponse({ status: HttpStatus.NO_CONTENT })
+	@ApiBadRequestResponse({
+		description: 'If the inputModel has invalid email (for example 222^gmail.com)'
+	})
 	async passwordRecovery(
 		@Body() bodyPasswordRecovery: PasswordRecoveryBodyInputModel
 	) {
@@ -188,6 +217,10 @@ export class AuthController {
 
 	@Post('new-password')
 	@HttpCode(HttpStatus.NO_CONTENT)
+	@ApiResponse({ status: HttpStatus.NO_CONTENT })
+	@ApiBadRequestResponse({
+		description: 'If the inputModel has incorrect value (for incorrect password length) or RecoveryCode is incorrect or expired'
+	})
 	async newPassword(
 		@Body() bodyNewPassword: NewPasswordBodyInputModel) {
 		const newPasswordContract = await this.commandBus.execute(
@@ -226,7 +259,9 @@ export class AuthController {
 			)
 	}
 
-	@Get('status')
+	@Post('status')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@ApiResponse({ status: HttpStatus.NO_CONTENT })
 	user(@Req() request: Request) {
 		console.log(request.user)
 		return request.user
@@ -234,14 +269,18 @@ export class AuthController {
 			: { msg: 'Not Authenticated' }
 	}
 
-	@Get('google/login')
+	@Post('google/login')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GoogleAuthGuard)
+	@ApiResponse({ status: HttpStatus.NO_CONTENT })
 	async googleLogin() {
 		return { msg: 'Google Auth' }
 	}
 
-	@Get('google/redirect')
+	@Post('google/redirect')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GoogleAuthGuard)
+	@ApiResponse({ status: HttpStatus.NO_CONTENT })
 	async googleRedirect(
 		@Req() request: Request,
 		@Res({ passthrough: true }) res: Response
@@ -271,14 +310,18 @@ export class AuthController {
 	}
 
 
-	@Get('github/login')
+	@Post('github/login')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GitHubAuthGuard)
+	@ApiResponse({ status: HttpStatus.NO_CONTENT })
 	async githubLogin() {
 		return { msg: 'GitHub Auth' }
 	}
 
-	@Get('github/redirect')
+	@Post('github/redirect')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GitHubAuthGuard)
+	@ApiResponse({ status: HttpStatus.NO_CONTENT })
 	async githubRedirect(
 		@Req() request: Request,
 		@Res({ passthrough: true }) res: Response
