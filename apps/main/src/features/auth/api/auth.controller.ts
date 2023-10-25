@@ -1,7 +1,7 @@
 import {
 	BadRequestException,
 	Body,
-	Controller,
+	Controller, Get,
 	Headers,
 	HttpCode,
 	HttpStatus,
@@ -318,7 +318,7 @@ export class AuthController {
 		return { msg: 'GitHub Auth' }
 	}
 
-	@Post('some')
+	@Get('some')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async some() {
 		return { msg: 'GitHub Auth' }
