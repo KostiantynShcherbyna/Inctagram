@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { HttpServer, HttpStatus, INestApplication } from '@nestjs/common'
-import * as request from 'supertest'
+import request from 'supertest'
 import { AppModule } from './../src/app.module'
 import { EmailAdapterMock } from './infrastructure/email-adapter.mock'
 import { EmailAdapter } from '../src/infrastructure/adapters/email.adapter'

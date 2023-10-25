@@ -5,6 +5,26 @@ export const LOGIN_MIN_LENGTH = 6
 export const PASSWORD_MAX_LENGTH = 20
 export const PASSWORD_MIN_LENGTH = 6
 
+export enum BadResponse {
+	REGISTRATION = 'If the inputModel has incorrect values (in particular if the user with the given email or password already exists)',
+	REGISTRATION_CONFIRMATION = 'If the confirmation code is incorrect, expired or already been applied'
+}
+
+export enum ValidResponse {
+	REGISTRATION = 'Input data is accepted. Email with confirmation code will be send to passed email address',
+	REGISTRATION_CONFIRMATION = 'Email was verified. Account was activated'
+}
+
+
+export const BadRegistration = `
+	'errorsMessages': [
+		{
+			'message': 'string',
+			'field': 'string'
+		}
+	]
+`
+
 export enum ExpiresTime {
 	EMAIL_CONFIRMATION_CODE_EXP_TIME = '300s',
 	ACCESS_EXPIRES_TIME = '100000000000s',

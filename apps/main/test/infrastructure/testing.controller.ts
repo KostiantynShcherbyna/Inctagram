@@ -1,7 +1,8 @@
 import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common'
 import { PrismaClient } from '@prisma/client'
+import { ApiExcludeController } from '@nestjs/swagger'
 
-
+@ApiExcludeController()
 @Controller('testing')
 export class TestingController {
 	constructor(protected prisma: PrismaClient) {
