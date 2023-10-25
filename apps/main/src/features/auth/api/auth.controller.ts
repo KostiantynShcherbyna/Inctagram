@@ -37,11 +37,11 @@ import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
 import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
 import { GoogleAuthGuard } from '../../../infrastructure/guards/google-auth.guard'
 import { UserDetails } from '../../../infrastructure/types/user-details.type'
-import { OAuthGoogleLoginCommand } from '../app/use-cases/oAuth-google-login.use-case'
 import { GitHubAuthGuard } from '../../../infrastructure/guards/github-auth.guard'
 import { OAuthGitHubLoginCommand } from '../app/use-cases/oAuth-github-login.use-case'
 import { ApiBadRequestResponse, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger'
 import { BadResponse, ValidResponse } from '../../../infrastructure/utils/constants'
+import { OAuthGoogleLoginCommand } from '../app/use-cases/oAuth-google-login.use-case'
 
 @Injectable()
 @Controller('auth')
@@ -171,12 +171,12 @@ export class AuthController {
 	@UseGuards(RefreshGuard)
 	@Post('logout')
 	@HttpCode(HttpStatus.NO_CONTENT)
+
 	@ApiResponse({ status: HttpStatus.NO_CONTENT })
 	@ApiUnauthorizedResponse({
 		description: 'If the JWT refreshToken inside cookie is missing, expired or incorrect'
 	})
-	async logout(
-		@DeviceSession() deviceSession: DeviceSessionHeaderInputModel) {
+	async logout(@DeviceSession() deviceSession: DeviceSessionHeaderInputModel) {
 		const logoutContract = await this.commandBus.execute(
 			new LogoutCommand(
 				deviceSession.id,
@@ -184,8 +184,7 @@ export class AuthController {
 				deviceSession.ip,
 				deviceSession.iat,
 				deviceSession.title,
-				deviceSession.userId
-			)
+				deviceSession.userId)
 		)
 		if (logoutContract.error === ErrorMessageEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
@@ -224,8 +223,7 @@ export class AuthController {
 	@ApiBadRequestResponse({
 		description: 'If the inputModel has incorrect value (for incorrect password length) or RecoveryCode is incorrect or expired'
 	})
-	async newPassword(
-		@Body() bodyNewPassword: NewPasswordBodyInputModel) {
+	async newPassword(@Body() bodyNewPassword: NewPasswordBodyInputModel) {
 		const newPasswordContract = await this.commandBus.execute(
 			new NewPasswordCommand(
 				bodyNewPassword.newPassword,
@@ -291,8 +289,7 @@ export class AuthController {
 		const user: Partial<UserDetails> = request.user
 
 		const loginContract = await this.commandBus.execute(
-			new OAuthGoogleLoginCommand(
-				{ email: user.email, username: user.displayName })
+			new OAuthGoogleLoginCommand({ email: user.email, username: user.displayName })
 		)
 
 		if (loginContract.error === ErrorMessageEnum.USER_NOT_FOUND)
