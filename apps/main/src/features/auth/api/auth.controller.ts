@@ -1,7 +1,7 @@
 import {
 	BadRequestException,
 	Body,
-	Controller,
+	Controller, Get,
 	Headers,
 	HttpCode,
 	HttpStatus,
@@ -315,6 +315,13 @@ export class AuthController {
 	@UseGuards(GitHubAuthGuard)
 	@ApiResponse({ status: HttpStatus.NO_CONTENT })
 	async githubLogin() {
+		return { msg: 'GitHub Auth' }
+	}
+
+
+	@Get('some')
+	@HttpCode(HttpStatus.OK)
+	async some() {
 		return { msg: 'GitHub Auth' }
 	}
 
