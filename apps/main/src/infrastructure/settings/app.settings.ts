@@ -3,9 +3,9 @@ import { useContainer } from 'class-validator'
 import { ErrorExceptionFilter, HttpExceptionFilter } from '../utils/exeption-filter'
 import { AppModule } from '../../app.module'
 import { errorMessagesAdapter } from '../adapters/error-messages.adapter'
-import * as cookieParser from 'cookie-parser'
-import * as session from 'express-session'
-import * as passport from 'passport'
+import cookieParser from 'cookie-parser'
+import session from 'express-session'
+import passport from 'passport'
 
 export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
