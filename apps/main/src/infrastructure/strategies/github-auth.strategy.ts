@@ -15,7 +15,8 @@ export class GithubAuthStrategy
 		super({
 			clientID: process.env.GITHUB_CLIENT_ID,
 			clientSecret: process.env.GITHUB_CLIENT_SECRET,
-			callbackURL: process.env.GITHUB_OAUTH_REDIRECT_URL
+			callbackURL: process.env.GITHUB_OAUTH_REDIRECT_URL,
+			scope: ['user'] // fetches non-public emails as well
 		})
 	}
 
