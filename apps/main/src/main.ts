@@ -15,7 +15,7 @@ async function bootstrap() {
 		.addTag("Auth")
 		.build()
 	const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig)
-	SwaggerModule.setup('api', app, swaggerDocument)
+	SwaggerModule.setup('/swagger', app, swaggerDocument)
 
 	await app.listen(port)
 }
