@@ -1,9 +1,9 @@
 import { PassportStrategy } from '@nestjs/passport'
 import { Profile, Strategy } from 'passport-google-oauth20'
-import * as process from 'process'
 import { Inject, Injectable } from '@nestjs/common'
 import * as dotenv from 'dotenv'
 import { GoogleAuthService } from '../../features/auth/app/services/google-auth.service'
+import { customSettings } from '../settings/custom-settings'
 
 dotenv.config()
 
@@ -14,9 +14,9 @@ export class GoogleAuthStrategy extends PassportStrategy(Strategy) {
 		private readonly authService: GoogleAuthService
 	) {
 		super({
-			clientID: process.env.GOOGLE_CLIENT_ID,
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-			callbackURL: process.env.GOOGLE_OAUTH_REDIRECT_URL,
+			clientID: customSettings().GOOGLE_CLIENT_ID,
+			clientSecret: customSettings().GOOGLE_CLIENT_SECRET,
+			callbackURL: customSettings().GOOGLE_OAUTH_REDIRECT_URL,
 			scope: ['profile', 'email']
 		})
 	}

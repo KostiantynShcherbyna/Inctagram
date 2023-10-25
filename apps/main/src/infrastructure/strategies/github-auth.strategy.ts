@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
-import * as process from 'process'
 import { GitHubAuthService } from '../../features/auth/app/services/github-auth.service'
 import { Strategy } from 'passport-github2'
+import { customSettings } from '../settings/custom-settings'
 
 
 @Injectable()
@@ -13,9 +13,9 @@ export class GithubAuthStrategy
 		private readonly authService: GitHubAuthService
 	) {
 		super({
-			clientID: process.env.GITHUB_CLIENT_ID,
-			clientSecret: process.env.GITHUB_CLIENT_SECRET,
-			callbackURL: process.env.GITHUB_OAUTH_REDIRECT_URL,
+			clientID: customSettings().GITHUB_CLIENT_ID,
+			clientSecret: customSettings().GITHUB_CLIENT_SECRET,
+			callbackURL: customSettings().GITHUB_OAUTH_REDIRECT_URL,
 			scope: ['user'] // fetches non-public emails as well
 		})
 	}
