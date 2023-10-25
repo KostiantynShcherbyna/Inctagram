@@ -221,6 +221,14 @@ export class AuthController {
 			)
 	}
 
+	@Get('status')
+	user(@Req() request: Request) {
+		console.log(request.user)
+		return request.user
+			? { msg: 'Authenticated' }
+			: { msg: 'Not Authenticated' }
+	}
+
 	@Get('google/login')
 	@UseGuards(GoogleAuthGuard)
 	async handleLogin() {
@@ -257,12 +265,40 @@ export class AuthController {
 	}
 
 
-	@Get('status')
-	user(@Req() request: Request) {
-		console.log(request.user)
-		return request.user
-			? { msg: 'Authenticated' }
-			: { msg: 'Not Authenticated' }
+	@Get('github/login')
+	@UseGuards(GitHubAuthGuard)
+	async githubLogin() {
+		return { msg: 'GitHub Auth' }
+	}
+
+	@Get('github/redirect')
+	@UseGuards(GitHubAuthGuard)
+	async githubRedirect(
+		@Req() request: Request,
+		@Res({ passthrough: true }) res: Response
+	) {
+		const user: Partial<UserDetails> = request.user
+
+		const loginContract = await this.commandBus.execute(
+			new OAuthGitHubLoginCommand(
+				{ email: user.email, username: user.displayName })
+		)
+
+		if (loginContract.error === ErrorMessageEnum.USER_NOT_FOUND)
+			throw new UnauthorizedException()
+		if (loginContract.error === ErrorMessageEnum.USER_IS_BANNED)
+			throw new UnauthorizedException()
+		if (loginContract.error === ErrorMessageEnum.USER_EMAIL_NOT_CONFIRMED)
+			throw new UnauthorizedException()
+		if (loginContract.error === ErrorMessageEnum.PASSWORD_NOT_COMPARED)
+			throw new UnauthorizedException()
+
+		res.cookie('refreshToken', loginContract.data?.refreshToken, {
+			httpOnly: true,
+			secure: true
+		})
+
+		return loginContract.data?.accessJwt
 	}
 
 }

@@ -3,7 +3,7 @@ import { LoginBodyInputModel } from '../../utils/models/input/login.body.input-m
 import { randomUUID } from 'crypto'
 import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
 import { ErrorMessageEnum } from '../../../../infrastructure/utils/error-message-enum'
-import { ConfigType } from '../../../../infrastructure/configurations/configuration'
+import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { ConfigService } from '@nestjs/config'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { UsersRepository } from '../../../users/repo/users.repository'

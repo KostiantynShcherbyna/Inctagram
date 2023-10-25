@@ -5,7 +5,7 @@ import { ErrorMessageEnum } from '../../../../infrastructure/utils/error-message
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { Secrets } from '../../../../infrastructure/utils/constants'
 import { ConfigService } from '@nestjs/config'
-import { ConfigType } from '../../../../infrastructure/configurations/configuration'
+import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 
 export class EmailConfirmationCommand {
 	constructor(public code: string) {

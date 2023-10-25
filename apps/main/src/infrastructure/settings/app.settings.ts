@@ -27,9 +27,7 @@ export const appSettings = (app: INestApplication) => {
 			secret: 'dhwye08u4w90ri0w94ur09wi3-0',
 			saveUninitialized: false,
 			resave: false,
-			cookie: {
-				maxAge: 60000
-			}
+			cookie: { maxAge: 60000 }
 		})
 	)
 	app.use(passport.initialize())

@@ -4,24 +4,24 @@ import { ConfigService } from '@nestjs/config'
 
 import { OAuthLoginBodyInputModel } from '../../utils/models/input/oAuth-login.input-model'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
-import { ConfigType } from '../../../../infrastructure/configurations/configuration'
+import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
 
-export class OAuthLoginCommand {
+export class OAuthGoogleLoginCommand {
 	constructor(public loginBody: OAuthLoginBodyInputModel) {
 	}
 }
 
-@CommandHandler(OAuthLoginCommand)
-export class OAuthUseCase implements ICommandHandler<OAuthLoginCommand> {
+@CommandHandler(OAuthGoogleLoginCommand)
+export class OAuthGoogleUseCase implements ICommandHandler<OAuthGoogleLoginCommand> {
 	constructor(
 		protected configService: ConfigService<ConfigType, true>,
 		protected tokensService: TokensService
 	) {
 	}
 
-	async execute(command: OAuthLoginCommand) {
+	async execute(command: OAuthGoogleLoginCommand) {
 		const accessJwtSecret = this.configService.get(
 			Secrets.ACCESS_JWT_SECRET, { infer: true })
 

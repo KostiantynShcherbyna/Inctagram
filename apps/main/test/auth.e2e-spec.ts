@@ -6,10 +6,11 @@ import { EmailAdapterMock } from './infrastructure/email-adapter.mock'
 import { EmailAdapter } from '../src/infrastructure/adapters/email.adapter'
 import { PublicTestingHelper } from './infrastructure/public-testing.helper'
 import { UsersRepository } from '../src/features/users/repo/users.repository'
-import { appSettings } from '../src/infrastructure/configurations/app.settings'
+import { appSettings } from '../src/infrastructure/settings/app.settings'
 import { faker } from '@faker-js/faker'
 import { endpoints } from './infrastructure/routing.helper'
 import { RegistrationBodyInputModel } from '../src/features/auth/utils/models/input/registration.body.input-model'
+import { LOGIN_MAX_LENGTH, LOGIN_MIN_LENGTH } from '../src/infrastructure/utils/constants'
 
 describe
 ('Auth', () => {
@@ -56,7 +57,9 @@ describe
 		let inputDataUser_0: RegistrationBodyInputModel
 		it(`+ registration user_0`, async () => {
 			inputDataUser_0 = {
-				login: faker.person.firstName(),
+				login: faker.lorem.word({
+					length: { min: LOGIN_MIN_LENGTH, max: LOGIN_MAX_LENGTH }
+				}),
 				email: faker.internet.email(),
 				password: faker.internet.password()
 			}

@@ -19,11 +19,14 @@ import { LoginUseCase } from './features/auth/app/use-cases/login.use-case'
 import { LogoutUseCase } from './features/auth/app/use-cases/logout.use-case'
 import { NewPasswordUseCase } from './features/auth/app/use-cases/new-password.use-case'
 import { PasswordRecoveryUseCase } from './features/auth/app/use-cases/password-recovery.use-case'
-import { OAuthUseCase } from './features/auth/app/use-cases/oAuth-login.use-case'
-import { GoogleStrategy } from './infrastructure/strategies/google.strategy'
+import { OAuthGoogleUseCase } from './features/auth/app/use-cases/oAuth-google-login.use-case'
+import { GoogleAuthStrategy } from './infrastructure/strategies/google-auth.strategy'
 import { SessionSerializer } from './infrastructure/utils/session-serializer'
-import { AuthService } from './features/auth/app/services/auth.service'
+import { GoogleAuthService } from './features/auth/app/services/google-auth.service'
 import { PassportModule } from '@nestjs/passport'
+import { OAuthGitHubUseCase } from './features/auth/app/use-cases/oAuth-github-login.use-case'
+import { GithubAuthStrategy } from './infrastructure/strategies/github-auth.strategy'
+import { GitHubAuthService } from './features/auth/app/services/github-auth.service'
 
 const services = [
 	PrismaClient,
@@ -45,11 +48,15 @@ const useCases = [
 	LogoutUseCase,
 	NewPasswordUseCase,
 	PasswordRecoveryUseCase,
-	OAuthUseCase
+	OAuthGoogleUseCase,
+	OAuthGitHubUseCase
 ]
 const repository = [UsersRepository, DevicesRepository]
-const strategies = [GoogleStrategy]
-const providers = [{ provide: 'AUTH_SERVICE', useClass: AuthService }]
+const strategies = [GoogleAuthStrategy, GithubAuthStrategy]
+const providers = [
+	{ provide: 'G00GLE_AUTH_SERVICE', useClass: GoogleAuthService },
+	{ provide: 'GITHUB_AUTH_SERVICE', useClass: GitHubAuthService }
+]
 
 @Module({
 	imports: [
