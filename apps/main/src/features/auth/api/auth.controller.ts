@@ -319,7 +319,7 @@ export class AuthController {
 	}
 
 	@Get('some')
-	@HttpCode(HttpStatus.NO_CONTENT)
+	@HttpCode(HttpStatus.OK)
 	async some() {
 		return { msg: 'GitHub Auth' }
 	}
