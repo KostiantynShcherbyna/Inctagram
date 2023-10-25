@@ -1,5 +1,5 @@
-export const EMAIL_REGISTRATION_REGEX = '/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/'
-export const LOGIN_REGEX = '/^[a-zA-Z0-9_-]*$/'
+export const EMAIL_REGISTRATION_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+export const LOGIN_REGEX = /^[a-zA-Z0-9_-]*$/
 export const LOGIN_MAX_LENGTH = 30
 export const LOGIN_MIN_LENGTH = 6
 export const PASSWORD_MAX_LENGTH = 20
@@ -7,12 +7,12 @@ export const PASSWORD_MIN_LENGTH = 6
 
 export enum BadResponse {
 	REGISTRATION = 'If the inputModel has incorrect values (in particular if the user with the given email or password already exists)',
-	REGISTRATION_CONFIRAMTION = 'If the confirmation code is incorrect, expired or already been applied'
+	REGISTRATION_CONFIRMATION = 'If the confirmation code is incorrect, expired or already been applied'
 }
 
 export enum ValidResponse {
 	REGISTRATION = 'Input data is accepted. Email with confirmation code will be send to passed email address',
-	REGISTRATION_CONFIRAMTION = 'Email was verified. Account was activated'
+	REGISTRATION_CONFIRMATION = 'Email was verified. Account was activated'
 }
 
 

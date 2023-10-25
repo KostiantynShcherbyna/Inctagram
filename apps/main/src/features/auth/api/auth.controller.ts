@@ -83,11 +83,11 @@ export class AuthController {
 	@Post('registration-confirmation')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@ApiResponse({
-		description: ValidResponse.REGISTRATION_CONFIRAMTION,
+		description: ValidResponse.REGISTRATION_CONFIRMATION,
 		status: HttpStatus.NO_CONTENT
 	})
 	@ApiBadRequestResponse({
-		description: BadResponse.REGISTRATION_CONFIRAMTION
+		description: BadResponse.REGISTRATION_CONFIRMATION
 	})
 	async emailConfirmation(
 		@Body() bodyConfirmation: ConfirmationBodyInputModel
