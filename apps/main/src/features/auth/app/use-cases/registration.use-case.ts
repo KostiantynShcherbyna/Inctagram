@@ -6,8 +6,8 @@ import { EmailAdapter } from '../../../../infrastructure/adapters/email.adapter'
 import { ConfigService } from '@nestjs/config'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
-import { UserEntity } from '../../../../../../../prisma/domain/user.entity'
 import { UsersRepository } from '../../../users/repo/users.repository'
+import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 
 export class RegistrationCommand {
 	constructor(
@@ -40,20 +40,40 @@ export class RegistrationUseCase
 		if (user?.email === command.email)
 			return new ResponseContract(null, ErrorMessageEnum.USER_EMAIL_EXIST)
 
-		const userInstance = new UserEntity(this.prisma.user)
+		await this.prisma.$transaction(async () => {
+			const user = await this.usersRepository
+				.createUser({
+					username: command.login,
+					email: command.email,
+					password: command.password
+				})
+			const confirmationCode = await this
+				.generateConfirmationCode({
+					userId: user.id,
+					tokensService: this.tokensService,
+					configService: this.configService
+				})
+			console.log('confirmationCode', confirmationCode)
+			await this.usersRepository
+				.createConfirmationCode(user.id, confirmationCode)
 
-		const userDto = {
-			username: command.login,
-			email: command.email,
-			password: command.password,
-			configService: this.configService,
-			tokensService: this.tokensService
-		}
-
-		const newUser = await this.usersRepository.createUser(userInstance, userDto)
-
-		this.emailAdapter.sendConfirmationCode(newUser)
+			this.emailAdapter.sendConfirmationCode(user.email, confirmationCode)
+		})
 
 		return new ResponseContract(true, null)
 	}
+
+	private async generateConfirmationCode({ userId, tokensService, configService })
+		: Promise<string> {
+		const confirmationCodeSecret = configService.get(
+			Secrets.EMAIL_CONFIRMATION_CODE_SECRET,
+			{ infer: true })
+
+		return tokensService.createToken(
+			{ userId },
+			confirmationCodeSecret,
+			ExpiresTime.EMAIL_CONFIRMATION_CODE_EXP_TIME)
+	}
+
+
 }

@@ -14,6 +14,7 @@ export enum ErrorMessageEnum {
 	RECOVERY_CODE_NOT_DELETE = `RECOVERY_CODE_NOT_DELETE`,
 	FOREIGN_DEVICE = `Foreign device`,
 	CONFIRMATION_CODE_EXPIRED = `Confirmation code is expired`,
+	CONFIRMATION_CODE_NOT_FOUND = `Confirmation code not found`,
 
 	// ↓↓↓ USERS
 	USER_IS_BANNED = `User is banned`,

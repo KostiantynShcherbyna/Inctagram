@@ -15,15 +15,18 @@ export enum ValidResponse {
 	REGISTRATION_CONFIRMATION = 'Email was verified. Account was activated'
 }
 
+export const WALLPAPER_NORMAL_SIZE = 100 * (2 ** 10) // 100 KB
+export enum WallpaperNormalDimensions {
+	Width = 1028,
+	Height = 312,
+}
 
-export const BadRegistration = `
-	'errorsMessages': [
-		{
-			'message': 'string',
-			'field': 'string'
-		}
-	]
-`
+export enum WallpaperNormalTypes {
+	Png = 'image/png',
+	Jpg = 'image/jpg',
+	Jpeg = 'image/jpeg',
+}
+
 
 export enum ExpiresTime {
 	EMAIL_CONFIRMATION_CODE_EXP_TIME = '300s',

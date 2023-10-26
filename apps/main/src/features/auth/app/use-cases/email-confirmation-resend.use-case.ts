@@ -31,14 +31,15 @@ export class EmailConfirmationResendUseCase
 		if (user.isConfirmed === true)
 			return new ResponseContract(null, ErrorMessageEnum.USER_EMAIL_CONFIRMED)
 
-		const newConfirmationCode = await this.createNewConfirmationCode(
-			user.username,
-			user.email)
-		console.log('newConfirmationCode -', newConfirmationCode)
+		const newConfirmationCode = await this
+			.createNewConfirmationCode(user.username, user.email)
+		console.log('newConfirmationCode', newConfirmationCode)
 
-		await this.usersRepository.addConfirmationCode(user.id, newConfirmationCode)
+		const confirmationCode = await this.usersRepository
+			.createConfirmationCode(user.id, newConfirmationCode)
 
-		this.emailAdapter.sendConfirmationCode(user)
+		this.emailAdapter
+			.sendConfirmationCode(user.email, confirmationCode.confirmationCode)
 
 		return new ResponseContract(true, null)
 	}
@@ -47,6 +48,9 @@ export class EmailConfirmationResendUseCase
 		const confirmationCodeSecret = this.configService.get(
 			Secrets.EMAIL_CONFIRMATION_CODE_SECRET, { infer: true })
 		return await this.tokensService.createToken(
-			{ username, email }, confirmationCodeSecret, ExpiresTime.EMAIL_CONFIRMATION_CODE_EXP_TIME)
+			{ username, email },
+			confirmationCodeSecret,
+			ExpiresTime.EMAIL_CONFIRMATION_CODE_EXP_TIME
+		)
 	}
 }

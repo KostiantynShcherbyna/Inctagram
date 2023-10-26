@@ -23,27 +23,30 @@ export class EmailConfirmationUseCase
 	}
 
 	async execute(command: EmailConfirmationCommand) {
-		const user = await this.usersRepository.findUserByConfirmationCode(
-			command.code)
+		const confirmationCode = await this.usersRepository
+			.findConfirmationCode(command.code)
+
+		if (confirmationCode === null)
+			return new ResponseContract(null, ErrorMessageEnum.CONFIRMATION_CODE_NOT_FOUND)
+
+		const user = await this.usersRepository.findUserById(confirmationCode.userId)
 
 		if (user === null)
 			return new ResponseContract(null, ErrorMessageEnum.USER_NOT_FOUND)
 		if (user.isConfirmed === true)
 			return new ResponseContract(null, ErrorMessageEnum.USER_EMAIL_CONFIRMED)
 
-		const confirmationCodeSecret = this.configService.get(
-			Secrets.EMAIL_CONFIRMATION_CODE_SECRET,
-			{ infer: true }
-		)
+		const confirmationCodeSecret = this.configService
+			.get(Secrets.EMAIL_CONFIRMATION_CODE_SECRET, { infer: true })
 
-		const confirmationCodeDto = await this.tokensService.verifyToken(
-			command.code,
-			confirmationCodeSecret)
+		const confirmationCodeDto = await this.tokensService
+			.verifyToken(command.code, confirmationCodeSecret)
 
 		if (confirmationCodeDto === null)
 			return new ResponseContract(null, ErrorMessageEnum.TOKEN_NOT_VERIFY)
 
-		const updateResult = await this.usersRepository.updateConfirmation(user.id, true)
+		const updateResult = await this.usersRepository
+			.updateConfirmation(user.id, true)
 
 		if (!updateResult)
 			return new ResponseContract(null, ErrorMessageEnum.USER_NOT_FOUND)

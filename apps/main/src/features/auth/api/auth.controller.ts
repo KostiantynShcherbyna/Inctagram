@@ -93,21 +93,20 @@ export class AuthController {
 		@Body() bodyConfirmation: ConfirmationBodyInputModel
 	) {
 		const confirmationContract = await this.commandBus.execute(
-			new EmailConfirmationCommand(bodyConfirmation.code)
-		)
+			new EmailConfirmationCommand(bodyConfirmation.code))
 
+		if (confirmationContract.error === ErrorMessageEnum.CONFIRMATION_CODE_NOT_FOUND)
+			throw new BadRequestException(outputMessageException(
+				ErrorMessageEnum.CONFIRMATION_CODE_NOT_FOUND, 'code'))
 		if (confirmationContract.error === ErrorMessageEnum.USER_NOT_FOUND)
-			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'code')
-			)
+			throw new BadRequestException(outputMessageException(
+				ErrorMessageEnum.USER_NOT_FOUND, 'code'))
 		if (confirmationContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED)
-			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'code')
-			)
+			throw new BadRequestException(outputMessageException(
+				ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'code'))
 		if (confirmationContract.error === ErrorMessageEnum.TOKEN_NOT_VERIFY)
-			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnum.TOKEN_NOT_VERIFY, 'code')
-			)
+			throw new BadRequestException(outputMessageException(
+				ErrorMessageEnum.TOKEN_NOT_VERIFY, 'code'))
 	}
 
 	@Post('registration-email-resending')
@@ -171,7 +170,6 @@ export class AuthController {
 	@UseGuards(RefreshGuard)
 	@Post('logout')
 	@HttpCode(HttpStatus.NO_CONTENT)
-
 	@ApiResponse({ status: HttpStatus.NO_CONTENT })
 	@ApiUnauthorizedResponse({
 		description: 'If the JWT refreshToken inside cookie is missing, expired or incorrect'
@@ -349,5 +347,6 @@ export class AuthController {
 
 		return loginContract.data?.accessJwt
 	}
+
 
 }

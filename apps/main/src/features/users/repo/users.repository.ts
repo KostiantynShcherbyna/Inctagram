@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { Device, PasswordRecoveryCode, PrismaClient, User } from '@prisma/client'
-import { ICreateUser, UserEntity } from '../../../../../../prisma/domain/user.entity'
+import { ConfirmationCode, Device, PasswordRecoveryCode, PrismaClient, User } from '@prisma/client'
 import { UserDetails } from '../../../infrastructure/types/user-details.type'
+import { generateHashService } from '../../../infrastructure/services/generate-hash.service'
 
 interface ICreatePasswordRecoveryCode {
 	email: string
@@ -31,10 +31,10 @@ export class UsersRepository {
 		})
 	}
 
-	async findUserByConfirmationCode(confirmationCode: string)
-		: Promise<User | null> {
-		return this.prisma.user.findFirst({
-			where: { confirmationCodes: { has: confirmationCode } }
+	async findConfirmationCode(confirmationCode: string)
+		: Promise<ConfirmationCode | null> {
+		return this.prisma.confirmationCode.findUnique({
+			where: { confirmationCode }
 		})
 	}
 
@@ -48,16 +48,15 @@ export class UsersRepository {
 		})
 	}
 
-	async createUser(userEntity: UserEntity, userDTO: ICreateUser)
-		: Promise<User> {
-		return userEntity.createUser(userDTO)
+	async createUser({ username, email, password }) {
+		const passwordHash = await generateHashService(password)
+		return this.prisma.user.create({ data: { username, email, passwordHash } })
 	}
 
-	async addConfirmationCode(id: string, confirmationCode: string)
-		: Promise<User> {
-		return this.prisma.user.update({
-			where: { id },
-			data: { confirmationCodes: { push: confirmationCode } }
+	async createConfirmationCode(userId: string, confirmationCode: string)
+		: Promise<ConfirmationCode> {
+		return this.prisma.confirmationCode.create({
+			data: { userId, confirmationCode }
 		})
 	}
 
