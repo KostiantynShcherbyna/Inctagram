@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { UsersRepository } from '../../../users/repo/users.repository'
 import { EmailAdapter } from '../../../../infrastructure/adapters/email.adapter'
-import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
-import { ErrorMessageEnum } from '../../../../infrastructure/utils/error-message-enum'
+import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
+import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { ConfigService } from '@nestjs/config'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
@@ -27,9 +27,9 @@ export class EmailConfirmationResendUseCase
 	async execute(command: EmailConfirmationResendCommand) {
 		const user = await this.usersRepository.findUserByEmail(command.email)
 		if (user === null)
-			return new ResponseContract(null, ErrorMessageEnum.USER_NOT_FOUND)
+			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
 		if (user.isConfirmed === true)
-			return new ResponseContract(null, ErrorMessageEnum.USER_EMAIL_CONFIRMED)
+			return new ReturnContract(null, ErrorEnum.USER_EMAIL_CONFIRMED)
 
 		const newConfirmationCode = await this
 			.createNewConfirmationCode(user.username, user.email)
@@ -41,7 +41,7 @@ export class EmailConfirmationResendUseCase
 		this.emailAdapter
 			.sendConfirmationCode(user.email, confirmationCode.confirmationCode)
 
-		return new ResponseContract(true, null)
+		return new ReturnContract(true, null)
 	}
 
 	private async createNewConfirmationCode(username: string, email: string) {

@@ -1,6 +1,6 @@
 import { IsDate, IsNotEmpty, IsString } from 'class-validator'
 
-export class DeviceSessionInputModel {
+export class DeviceSessionHeaderInputModel {
 	@IsString()
 	@IsNotEmpty()
 	ip: string

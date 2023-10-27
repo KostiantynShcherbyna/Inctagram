@@ -27,6 +27,11 @@ import { PassportModule } from '@nestjs/passport'
 import { OAuthGitHubUseCase } from './features/auth/app/use-cases/oAuth-github-login.use-case'
 import { GithubAuthStrategy } from './infrastructure/strategies/github-auth.strategy'
 import { GitHubAuthService } from './features/auth/app/services/github-auth.service'
+import { UserPhotoPipe } from './infrastructure/pipes/user-photo.pipe'
+import { UserController } from './features/users/api/user.controller'
+import { UploadPhotoS3UseCase } from './features/users/app/use-cases/upload-photo.s3.use-case'
+import { FilesS3Adapter } from './infrastructure/adapters/files-s3.adapter'
+import { UserPhotosRepository } from './features/users/repo/user-photos.repository'
 
 const services = [
 	PrismaClient,
@@ -36,9 +41,15 @@ const services = [
 	PrismaService,
 	UserService,
 	EmailAdapter,
-	SessionSerializer
+	SessionSerializer,
+	UserPhotoPipe,
+	FilesS3Adapter
 ]
-const controllers = [AuthController, TestingController]
+const controllers = [
+	AuthController,
+	TestingController,
+	UserController
+]
 const useCases = [
 	RegistrationUseCase,
 	EmailConfirmationUseCase,
@@ -49,10 +60,18 @@ const useCases = [
 	NewPasswordUseCase,
 	PasswordRecoveryUseCase,
 	OAuthGoogleUseCase,
-	OAuthGitHubUseCase
+	OAuthGitHubUseCase,
+	UploadPhotoS3UseCase
 ]
-const repository = [UsersRepository, DevicesRepository]
-const strategies = [GoogleAuthStrategy, GithubAuthStrategy]
+const repository = [
+	UsersRepository,
+	DevicesRepository,
+	UserPhotosRepository
+]
+const strategies = [
+	GoogleAuthStrategy,
+	GithubAuthStrategy
+]
 const providers = [
 	{ provide: 'G00GLE_AUTH_SERVICE', useClass: GoogleAuthService },
 	{ provide: 'GITHUB_AUTH_SERVICE', useClass: GitHubAuthService }

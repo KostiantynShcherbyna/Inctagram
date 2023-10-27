@@ -1,6 +1,11 @@
-export enum ErrorMessageEnum {
+export enum ErrorEnum {
+	NOT_FOUND = `Not found`,
+	UNAUTHORIZED = `Unauthorized`,
+	FORBIDDEN = `Forbidden`,
+
 
 	FAIL_LOGIC = `Fail logic`,
+	EXCEPTION = `EXCEPTION`,
 	EMAIL_NOT_SENT = `Email not sent`,
 
 	//↓↓↓ AUTH
@@ -26,5 +31,6 @@ export enum ErrorMessageEnum {
 	USER_EMAIL_CONFIRMED = `User email is confirmed`,
 	USER_EMAIL_NOT_CONFIRMED = `User email not confirmed`,
 
+	PHOTO_NOT_FOUND = `Photo not found`,
 
 }

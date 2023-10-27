@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { ErrorMessageEnum } from '../../../../infrastructure/utils/error-message-enum'
-import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
+import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
+import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { UsersRepository } from '../../../users/repo/users.repository'
 import { DevicesRepository } from '../../../users/repo/devices.repository'
 
@@ -27,19 +27,19 @@ export class LogoutUseCase implements ICommandHandler<LogoutCommand> {
 	async execute(command: LogoutCommand) {
 		const user = await this.usersRepository.findUserById(command.userId)
 		if (user === null)
-			return new ResponseContract(null, ErrorMessageEnum.USER_NOT_FOUND)
+			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
 
 		const device = await this.devicesRepository.findDeviceById(command.deviceId)
 		if (device === null)
-			return new ResponseContract(null, ErrorMessageEnum.DEVICE_NOT_FOUND)
+			return new ReturnContract(null, ErrorEnum.DEVICE_NOT_FOUND)
 		if (new Date(command.lastActiveDate).toISOString() !== device.lastActiveDate.toISOString())
-			return new ResponseContract(null, ErrorMessageEnum.TOKEN_NOT_VERIFY)
+			return new ReturnContract(null, ErrorEnum.TOKEN_NOT_VERIFY)
 
 		const deleteResult = await this.devicesRepository
 			.deleteDeviceById(command.deviceId)
 		if (deleteResult === null)
-			return new ResponseContract(null, ErrorMessageEnum.DEVICE_NOT_DELETE)
+			return new ReturnContract(null, ErrorEnum.DEVICE_NOT_DELETE)
 
-		return new ResponseContract(true, null)
+		return new ReturnContract(true, null)
 	}
 }

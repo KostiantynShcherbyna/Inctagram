@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { ErrorMessageEnum } from '../../../../infrastructure/utils/error-message-enum'
+import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { PrismaClient } from '@prisma/client'
-import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
+import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { EmailAdapter } from '../../../../infrastructure/adapters/email.adapter'
 import { ConfigService } from '@nestjs/config'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
@@ -36,11 +36,11 @@ export class RegistrationUseCase
 			command.email
 		)
 		if (user?.username === command.login)
-			return new ResponseContract(null, ErrorMessageEnum.USER_LOGIN_EXIST)
+			return new ReturnContract(null, ErrorEnum.USER_LOGIN_EXIST)
 		if (user?.email === command.email)
-			return new ResponseContract(null, ErrorMessageEnum.USER_EMAIL_EXIST)
+			return new ReturnContract(null, ErrorEnum.USER_EMAIL_EXIST)
 
-		await this.prisma.$transaction(async () => {
+		const registrationResult = await this.prisma.$transaction(async () => {
 			const user = await this.usersRepository
 				.createUser({
 					username: command.login,
@@ -53,14 +53,22 @@ export class RegistrationUseCase
 					tokensService: this.tokensService,
 					configService: this.configService
 				})
-			console.log('confirmationCode', confirmationCode)
-			await this.usersRepository
+			const newConfirmationCode = await this.usersRepository
 				.createConfirmationCode(user.id, confirmationCode)
 
-			this.emailAdapter.sendConfirmationCode(user.email, confirmationCode)
+			return { user, newConfirmationCode }
 		})
+		if (!registrationResult)
+			return new ReturnContract(false, ErrorEnum.EXCEPTION)
 
-		return new ResponseContract(true, null)
+		console.log(
+			'confirmationCode',
+			registrationResult.newConfirmationCode.confirmationCode)
+
+		this.emailAdapter.sendConfirmationCode(
+			registrationResult.user.email,
+			registrationResult.newConfirmationCode.confirmationCode)
+		return new ReturnContract(true, null)
 	}
 
 	private async generateConfirmationCode({ userId, tokensService, configService })
