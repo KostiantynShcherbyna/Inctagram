@@ -18,13 +18,15 @@ interface ICreateDevice {
 	expireAt: Date
 }
 
-interface IFillProfileUpdate {
+type FillProfile = {
 	firstname: string
 	lastname: string
 	birthDate: Date
 	city: string
 	aboutMe: string
 }
+
+type EditProfile = Partial<FillProfile>
 
 @Injectable()
 export class UsersRepository {
@@ -130,7 +132,11 @@ export class UsersRepository {
 		})
 	}
 
-	async updateUserInfo(id: string, data: IFillProfileUpdate): Promise<User> {
+	async updateUserInfo(id: string, data: FillProfile): Promise<User> {
+		return this.prismaClient.user.update({ where: { id }, data: data })
+	}
+
+	async editUserInfo(id: string, data: EditProfile): Promise<User> {
 		return this.prismaClient.user.update({ where: { id }, data: data })
 	}
 

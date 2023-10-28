@@ -74,7 +74,6 @@ export class UserController {
 
 	@UseGuards(AccessGuard)
 	@Post('edit-profile')
-	@UseInterceptors(FileInterceptor('file'))
 	async editProfile(
 		@DeviceSessionPipe() deviceSession: DeviceSessionHeaderInputModel,
 		@Body() body: EditProfileBodyInputModel

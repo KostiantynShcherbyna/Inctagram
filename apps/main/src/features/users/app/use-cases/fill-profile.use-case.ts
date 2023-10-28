@@ -18,9 +18,7 @@ interface IFillProfile {
 }
 
 export class FillProfileCommand {
-	constructor(
-		public details: IFillProfile
-	) {
+	constructor(public details: IFillProfile) {
 	}
 }
 
@@ -69,5 +67,6 @@ export class FillProfileUseCase
 
 		return new ReturnContract(updatedUser, null)
 	}
+
 
 }

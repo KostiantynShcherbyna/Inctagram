@@ -49,7 +49,7 @@ export class FilesS3Adapter {
 		return relativeFolderPath
 	}
 
-	async deletePhoto(filePath: string): Promise<boolean> {
+	async deleteUserPhoto(filePath: string): Promise<boolean> {
 
 		const command = new DeleteObjectCommand({
 			Bucket: this.bucketName,

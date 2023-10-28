@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { UserService } from './features/users/app/user.service'
 import { PrismaService } from './prisma.service'
 import { CqrsModule } from '@nestjs/cqrs'
 import { TokensService } from './infrastructure/services/tokens.service'
@@ -32,6 +31,9 @@ import { UserController } from './features/users/api/user.controller'
 import { UploadPhotoS3UseCase } from './features/users/app/use-cases/upload-photo.s3.use-case'
 import { FilesS3Adapter } from './infrastructure/adapters/files-s3.adapter'
 import { UserPhotosRepository } from './features/users/repo/user-photos.repository'
+import { DeletePhotoS3UseCase } from './features/users/app/use-cases/delete-photo.s3.use-case'
+import { EditProfileUseCase } from './features/users/app/use-cases/edit-profile.use-case'
+import { FillProfileUseCase } from './features/users/app/use-cases/fill-profile.use-case'
 
 const services = [
 	PrismaClient,
@@ -39,7 +41,6 @@ const services = [
 	ConfigService,
 	TokensService,
 	PrismaService,
-	UserService,
 	EmailAdapter,
 	SessionSerializer,
 	UserPhotoPipe,
@@ -61,7 +62,10 @@ const useCases = [
 	PasswordRecoveryUseCase,
 	OAuthGoogleUseCase,
 	OAuthGitHubUseCase,
-	UploadPhotoS3UseCase
+	UploadPhotoS3UseCase,
+	DeletePhotoS3UseCase,
+	EditProfileUseCase,
+	FillProfileUseCase
 ]
 const repository = [
 	UsersRepository,

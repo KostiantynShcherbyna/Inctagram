@@ -23,12 +23,12 @@ export class DeletePhotoS3UseCase implements ICommandHandler<DeletePhotoS3Comman
 
 	async execute(command: DeletePhotoS3Command) {
 		const photo = await this.userPhotosRepository.findUserPhoto(command.photoId)
-		if (!photo)
-			return new ReturnContract(null, ErrorEnum.NOT_FOUND)
+		if (!photo) return new ReturnContract(null, ErrorEnum.NOT_FOUND)
 		if (photo.userId !== command.userId)
 			return new ReturnContract(null, ErrorEnum.FORBIDDEN)
 
-		await this.filesS3Adapter.deletePhoto(photo.path)
+		await this.filesS3Adapter.deleteUserPhoto(photo.path)
+		await this.userPhotosRepository.deleteUserPhoto(photo.id)
 		return new ReturnContract(true, null)
 	}
 
