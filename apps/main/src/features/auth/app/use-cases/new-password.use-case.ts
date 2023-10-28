@@ -5,7 +5,7 @@ import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
-import { UsersRepository } from '../../../users/repo/users.repository'
+import { UsersRepository } from '../../../users/rep/users.repository'
 import { generateHashService } from '../../../../infrastructure/services/generate-hash.service'
 
 export class NewPasswordCommand {

@@ -26,21 +26,21 @@ import { ConfirmationBodyInputModel } from '../utils/models/input/confirmation.b
 import { EmailConfirmationCommand } from '../app/use-cases/email-confirmation.use-case'
 import { LoginBodyInputModel } from '../utils/models/input/login.body.input-model'
 import { LoginCommand } from '../app/use-cases/login.use-case'
-import { RefreshGuard } from '../../../infrastructure/guards/refresh.guard'
-import { DeviceSessionPipe } from '../../../infrastructure/pipes/device-session.pipe'
+import { RefreshGuard } from '../utils/guards/refresh.guard'
+import { DeviceSessionGuard } from '../utils/guards/device-session.guard'
 import { DeviceSessionHeaderInputModel } from '../utils/models/input/device-session.header.input-model'
 import { LogoutCommand } from '../app/use-cases/logout.use-case'
 import { PasswordRecoveryBodyInputModel } from '../utils/models/input/password-recovery.body.input-model'
 import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-case'
 import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
 import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
-import { GoogleAuthGuard } from '../../../infrastructure/guards/google-auth.guard'
+import { GoogleAuthGuard } from '../utils/guards/google-auth.guard'
 import { UserDetails } from '../../../infrastructure/types/user-details.type'
-import { GitHubAuthGuard } from '../../../infrastructure/guards/github-auth.guard'
-import { OAuthGitHubLoginCommand } from '../app/use-cases/oAuth-github-login.use-case'
+import { GitHubAuthGuard } from '../utils/guards/github-auth.guard'
+import { GitHubLoginCommand } from '../app/use-cases/github-login.use-case'
 import { ApiBadRequestResponse, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger'
 import { BadResponse, ValidResponse } from '../../../infrastructure/utils/constants'
-import { OAuthGoogleLoginCommand } from '../app/use-cases/oAuth-google-login.use-case'
+import { GoogleLoginCommand } from '../app/use-cases/google-login.use-case'
 import { RefreshTokenCommand } from '../app/use-cases/refresh-token.use-case'
 import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
 
@@ -165,7 +165,7 @@ export class AuthController {
 	@ApiUnauthorizedResponse({
 		description: 'If the JWT refreshToken inside cookie is missing, expired or incorrect'
 	})
-	async logout(@DeviceSessionPipe() deviceSession: DeviceSessionHeaderInputModel) {
+	async logout(@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel) {
 		const logoutContract = await this.commandBus.execute(
 			new LogoutCommand(
 				deviceSession.id,
@@ -239,7 +239,7 @@ export class AuthController {
 	@Post('refresh-token')
 	@HttpCode(HttpStatus.OK)
 	async refreshToken(
-		@DeviceSessionPipe() deviceSession: DeviceSessionHeaderInputModel,
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
 		@Headers('user-agent') userAgent: string,
 		@Ip() ip: string,
 		@Res({ passthrough: true }) res: Response
@@ -291,7 +291,7 @@ export class AuthController {
 		const user: Partial<UserDetails> = request.user
 
 		const loginContract = await this.commandBus.execute(
-			new OAuthGoogleLoginCommand(
+			new GoogleLoginCommand(
 				{ email: user.email, username: user.username }))
 
 		if (loginContract.error === ErrorEnum.USER_NOT_FOUND)
@@ -331,7 +331,7 @@ export class AuthController {
 		const user: Partial<UserDetails> = request.user
 
 		const loginContract = await this.commandBus.execute(
-			new OAuthGitHubLoginCommand(
+			new GitHubLoginCommand(
 				{ email: user.email, username: user.username }))
 
 		if (loginContract.error === ErrorEnum.USER_NOT_FOUND)

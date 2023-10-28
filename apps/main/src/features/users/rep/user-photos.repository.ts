@@ -14,8 +14,12 @@ export class UserPhotosRepository {
 	constructor(protected prismaClient: PrismaClient) {
 	}
 
-	async findUserPhoto(id: string): Promise<UserPhoto> {
+	async findUserPhotoById(id: string): Promise<UserPhoto> {
 		return this.prismaClient.userPhoto.findUnique({ where: { id } })
+	}
+
+	async findUserPhotoByPath(path: string): Promise<UserPhoto> {
+		return this.prismaClient.userPhoto.findUnique({ where: { path } })
 	}
 
 	async uploadUserPhoto(data: IUploadUserPhoto): Promise<UserPhoto> {

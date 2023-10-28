@@ -6,7 +6,7 @@ import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { ConfigService } from '@nestjs/config'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
-import { UsersRepository } from '../../../users/repo/users.repository'
+import { UsersRepository } from '../../../users/rep/users.repository'
 import { compareHashService } from '../../../../infrastructure/services/compare-hash.service'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 

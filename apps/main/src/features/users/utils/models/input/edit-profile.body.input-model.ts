@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer'
-import { IsDate, IsOptional, IsString, Length, Matches, MaxLength } from 'class-validator'
+import { IsDateString, IsOptional, IsString, Length, Matches, MaxLength, Validate } from 'class-validator'
 import {
 	ABOUT_ME_MAX_LENGTH,
 	FIRSTNAME_MAX_LENGTH,
@@ -12,6 +12,7 @@ import {
 } from '../../../../../infrastructure/utils/constants'
 import { trimTransformer } from '../../../../../infrastructure/utils/trim-transformer'
 import { ApiProperty } from '@nestjs/swagger'
+import { BirthDateValidator } from '../../validators/birth-date.validator'
 
 export class EditProfileBodyInputModel {
 	@ApiProperty({
@@ -52,8 +53,9 @@ export class EditProfileBodyInputModel {
 
 	@IsOptional()
 	@ApiProperty()
-	@IsDate()
-	birthDate: Date
+	@IsDateString()
+	@Validate(BirthDateValidator)
+	birthDate: string
 
 	@ApiProperty()
 	@IsOptional()

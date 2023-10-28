@@ -1,17 +1,19 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { FilesS3Adapter, ISavePhoto } from '../../../../infrastructure/adapters/files-s3.adapter'
-import { UsersRepository } from '../../repo/users.repository'
+import { UsersRepository } from '../../rep/users.repository'
 import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { PrismaClient, User } from '@prisma/client'
-import { UserPhotosRepository } from '../../repo/user-photos.repository'
+import { UserPhotosRepository } from '../../rep/user-photos.repository'
+import { join } from 'node:path'
+import { randomUUID } from 'crypto'
 
 interface IFillProfile {
 	userId: string,
 	username: string,
 	firstname: string,
 	lastname: string,
-	birthDate: Date,
+	birthDate: string,
 	city: string,
 	aboutMe: string,
 	file: ISavePhoto
@@ -28,8 +30,7 @@ export class FillProfileUseCase
 	constructor(
 		protected filesS3Adapter: FilesS3Adapter,
 		protected usersRepository: UsersRepository,
-		protected userPhotosRepository: UserPhotosRepository,
-		protected prismaClient: PrismaClient
+		protected prisma: PrismaClient
 	) {
 	}
 
@@ -38,35 +39,55 @@ export class FillProfileUseCase
 		if (user === null)
 			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
 
-		const relativeFolderPath = await this.filesS3Adapter.uploadUserPhoto(
-			user.id,
-			{
-				originalname: command.details.file.originalname,
-				buffer: command.details.file.buffer,
-				mimetype: command.details.file.mimetype
-			})
+		const photoId = randomUUID()
 
-		if (!relativeFolderPath)
-			return new ReturnContract(null, ErrorEnum.EXCEPTION)
+		const folderPath = join(
+			'users', command.details.userId,
+			'photos', photoId, command.details.file.originalname)
 
-		const updatedUser = await this.prismaClient.$transaction(
-			async (): Promise<User> => {
-				await this.userPhotosRepository.uploadUserPhoto({
+		await this.filesS3Adapter.uploadUserPhoto(folderPath, {
+			originalname: command.details.file.originalname,
+			buffer: command.details.file.buffer,
+			mimetype: command.details.file.mimetype
+		})
+
+		const [userPhoto, updatedUser] = await this.prisma.$transaction([
+			this.prisma.userPhoto.create({
+				data: {
+					id: photoId,
 					userId: command.details.userId,
-					path: relativeFolderPath,
+					path: folderPath,
 					contentType: command.details.file.mimetype
-				})
-				return await this.usersRepository.updateUserInfo(user.id, {
+				}
+			}),
+			this.prisma.user.update({
+				where: { id: user.id },
+				data: {
 					firstname: command.details.firstname,
 					lastname: command.details.lastname,
 					birthDate: command.details.birthDate,
 					aboutMe: command.details.aboutMe,
 					city: command.details.city
-				})
+				}
 			})
+		])
 
-		return new ReturnContract(updatedUser, null)
+		return new ReturnContract(this.mapUpdatedUser(updatedUser), null)
 	}
 
+	private mapUpdatedUser(updatedUser: User) {
+		return {
+			id: updatedUser.id,
+			email: updatedUser.email,
+			username: updatedUser.username,
+			firstname: updatedUser.firstname,
+			lastname: updatedUser.lastname,
+			birthDate: updatedUser.birthDate,
+			city: updatedUser.city,
+			aboutMe: updatedUser.aboutMe,
+			createdAt: updatedUser.createdAt,
+			isConfirmed: updatedUser.isConfirmed
+		}
+	}
 
 }

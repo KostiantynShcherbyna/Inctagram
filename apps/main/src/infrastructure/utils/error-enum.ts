@@ -32,5 +32,6 @@ export enum ErrorEnum {
 	USER_EMAIL_NOT_CONFIRMED = `User email not confirmed`,
 
 	PHOTO_NOT_FOUND = `Photo not found`,
+	FILE_IS_REQUIRED = `File is required`,
 
 }

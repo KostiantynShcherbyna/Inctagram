@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { join } from 'node:path'
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { PhotoNormalTypes } from '../utils/constants'
 
@@ -27,13 +26,11 @@ export class FilesS3Adapter {
 		})
 	}
 
-	async uploadUserPhoto(userId: string, data: ISavePhoto) {
-
-		const relativeFolderPath = join('users', userId, 'photos', data.originalname)
+	async uploadUserPhoto(folderPath: string, data: ISavePhoto) {
 
 		const command = new PutObjectCommand({
 			Bucket: this.bucketName,
-			Key: relativeFolderPath,
+			Key: folderPath,
 			Body: data.buffer,
 			ContentType: data.mimetype
 		})
@@ -46,7 +43,6 @@ export class FilesS3Adapter {
 			throw err
 		}
 
-		return relativeFolderPath
 	}
 
 	async deleteUserPhoto(filePath: string): Promise<boolean> {

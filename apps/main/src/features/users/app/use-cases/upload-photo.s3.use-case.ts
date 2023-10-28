@@ -1,17 +1,19 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { FilesS3Adapter } from '../../../../infrastructure/adapters/files-s3.adapter'
-import { UsersRepository } from '../../repo/users.repository'
+import { UsersRepository } from '../../rep/users.repository'
 import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { PhotoNormalTypes } from '../../../../infrastructure/utils/constants'
-import { UserPhotosRepository } from '../../repo/user-photos.repository'
+import { UserPhotosRepository } from '../../rep/user-photos.repository'
+import { randomUUID } from 'crypto'
+import { join } from 'node:path'
 
 export class UploadPhotoS3Command {
 	constructor(
 		public userId: string,
-		public originalName: string,
-		public wallpaperBuffer: Buffer,
-		public contentType: PhotoNormalTypes
+		public originalname: string,
+		public buffer: Buffer,
+		public mimetype: PhotoNormalTypes
 	) {
 	}
 }
@@ -32,18 +34,22 @@ export class UploadPhotoS3UseCase
 		if (user === null)
 			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
 
-		const relativeFolderPath = await this.filesS3Adapter.uploadUserPhoto(
-			command.userId,
-			{
-				originalname: command.originalName,
-				buffer: command.wallpaperBuffer,
-				mimetype: command.contentType
-			})
+		const photoId = randomUUID()
+
+		const folderPath = join(
+			'users', command.userId,
+			'photos', photoId, command.originalname)
+
+		await this.filesS3Adapter.uploadUserPhoto(folderPath, {
+			originalname: command.originalname,
+			buffer: command.buffer,
+			mimetype: command.mimetype
+		})
 
 		await this.userPhotosRepository.uploadUserPhoto({
 			userId: command.userId,
-			path: relativeFolderPath,
-			contentType: command.contentType
+			path: folderPath,
+			contentType: command.mimetype
 		})
 
 		return new ReturnContract(true, null)

@@ -6,7 +6,7 @@ import { EmailAdapter } from '../../../../infrastructure/adapters/email.adapter'
 import { ConfigService } from '@nestjs/config'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
-import { UsersRepository } from '../../../users/repo/users.repository'
+import { UsersRepository } from '../../../users/rep/users.repository'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 
 export class RegistrationCommand {
@@ -65,14 +65,14 @@ export class RegistrationUseCase
 			'confirmationCode',
 			registrationResult.newConfirmationCode.confirmationCode)
 
-		this.emailAdapter.sendConfirmationCode(
-			registrationResult.user.email,
-			registrationResult.newConfirmationCode.confirmationCode)
+		// this.emailAdapter.sendConfirmationCode(
+		// 	registrationResult.user.email,
+		// 	registrationResult.newConfirmationCode.confirmationCode)
 		return new ReturnContract(true, null)
 	}
 
-	private async generateConfirmationCode({ userId, tokensService, configService })
-		: Promise<string> {
+	private async generateConfirmationCode(
+		{ userId, tokensService, configService }): Promise<string> {
 		const confirmationCodeSecret = configService.get(
 			Secrets.EMAIL_CONFIRMATION_CODE_SECRET,
 			{ infer: true })

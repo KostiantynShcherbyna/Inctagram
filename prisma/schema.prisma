@@ -8,17 +8,17 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(uuid()) @map("user_id")
-  email        String    @unique
+  id           String   @id @default(uuid()) @map("user_id")
+  email        String   @unique
   username     String
   firstname    String?
   lastname     String?
-  birthDate    DateTime? @map("birth_date")
+  birthDate    String?  @map("birth_date")
   city         String?
-  aboutMe      String?   @map("about_me")
-  passwordHash String?   @map("password_hash")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  isConfirmed  Boolean   @default(false) @map("is_confirmed")
+  aboutMe      String?  @map("about_me")
+  passwordHash String?  @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  isConfirmed  Boolean  @default(false) @map("is_confirmed")
 
   devices               Device[]
   confirmationCodes     ConfirmationCode[]

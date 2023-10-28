@@ -6,7 +6,7 @@ import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
-import { UsersRepository } from '../../../users/repo/users.repository'
+import { UsersRepository } from '../../../users/rep/users.repository'
 
 export class RefreshTokenCommand {
 	constructor(

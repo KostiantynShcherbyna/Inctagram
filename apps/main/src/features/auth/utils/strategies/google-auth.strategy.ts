@@ -3,7 +3,7 @@ import { Profile, Strategy } from 'passport-google-oauth20'
 import * as process from 'process'
 import { Inject, Injectable } from '@nestjs/common'
 import * as dotenv from 'dotenv'
-import { GoogleAuthService } from '../../features/auth/app/services/google-auth.service'
+import { GoogleAuthValidator } from '../validators/google-auth.validator'
 
 dotenv.config()
 
@@ -11,7 +11,7 @@ dotenv.config()
 export class GoogleAuthStrategy extends PassportStrategy(Strategy) {
 	constructor(
 		@Inject('G00GLE_AUTH_SERVICE')
-		private readonly authService: GoogleAuthService
+		private readonly authValidator: GoogleAuthValidator
 	) {
 		super({
 			clientID: process.env.GOOGLE_CLIENT_ID,
@@ -22,7 +22,7 @@ export class GoogleAuthStrategy extends PassportStrategy(Strategy) {
 	}
 
 	async validate(accessToken: string, refreshToken: string, profile: Profile) {
-		const user = await this.authService.validateUser({
+		const user = await this.authValidator.validateUser({
 			email: profile.emails[0].value,
 			username: profile.username || profile.displayName
 		})

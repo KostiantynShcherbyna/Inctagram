@@ -9,6 +9,7 @@ import {
 	Injectable,
 	Param,
 	Post,
+	Put,
 	ServiceUnavailableException,
 	UnauthorizedException,
 	UploadedFile,
@@ -17,10 +18,10 @@ import {
 } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { DeviceSessionPipe } from '../../../infrastructure/pipes/device-session.pipe'
+import { DeviceSessionGuard } from '../../auth/utils/guards/device-session.guard'
 import { DeviceSessionHeaderInputModel } from '../utils/models/input/device-session.header.input.model'
-import { AccessGuard } from '../../../infrastructure/guards/access.guard'
-import { UserPhotoPipe } from '../../../infrastructure/pipes/user-photo.pipe'
+import { AccessGuard } from '../../auth/utils/guards/access.guard'
+import { UserPhotoGuard } from '../utils/guards/user-photo.guard'
 import { UploadPhotoS3Command } from '../app/use-cases/upload-photo.s3.use-case'
 import { PhotoNormalTypes } from '../../../infrastructure/utils/constants'
 import { FillProfileCommand } from '../app/use-cases/fill-profile.use-case'
@@ -42,8 +43,8 @@ export class UserController {
 	@Post('fill-profile')
 	@UseInterceptors(FileInterceptor('file'))
 	async fillProfile(
-		@DeviceSessionPipe() deviceSession: DeviceSessionHeaderInputModel,
-		@UploadedFile(UserPhotoPipe) file: Express.Multer.File,
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
+		@UploadedFile(UserPhotoGuard) file: Express.Multer.File,
 		@Body() body: FillProfileBodyInputModel
 	) {
 		console.log('file', file)
@@ -73,14 +74,13 @@ export class UserController {
 	}
 
 	@UseGuards(AccessGuard)
-	@Post('edit-profile')
+	@Put('edit-profile')
 	async editProfile(
-		@DeviceSessionPipe() deviceSession: DeviceSessionHeaderInputModel,
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
 		@Body() body: EditProfileBodyInputModel
 	) {
 		const editResult = await this.commandBus.execute(
-			new EditProfileCommand({
-				userId: deviceSession.userId,
+			new EditProfileCommand(deviceSession.userId, {
 				username: body.username,
 				firstname: body.firstname,
 				lastname: body.lastname,
@@ -102,8 +102,8 @@ export class UserController {
 	@Post('images/photo')
 	@UseInterceptors(FileInterceptor('file'))
 	async uploadPhoto(
-		@DeviceSessionPipe() deviceSession: DeviceSessionHeaderInputModel,
-		@UploadedFile(UserPhotoPipe) file: Express.Multer.File
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
+		@UploadedFile(UserPhotoGuard) file: Express.Multer.File
 	) {
 		console.log('file', file)
 		const uploadResult = await this.commandBus.execute(
@@ -123,7 +123,7 @@ export class UserController {
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseInterceptors(FileInterceptor('file'))
 	async deletePhoto(
-		@DeviceSessionPipe() deviceSession: DeviceSessionHeaderInputModel,
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
 		@Param() param: PhotoIdParamInputModelSql
 	) {
 		const deleteResult = await this.commandBus.execute(

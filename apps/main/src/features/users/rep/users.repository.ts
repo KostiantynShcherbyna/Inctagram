@@ -21,7 +21,7 @@ interface ICreateDevice {
 type FillProfile = {
 	firstname: string
 	lastname: string
-	birthDate: Date
+	birthDate: string
 	city: string
 	aboutMe: string
 }
@@ -132,9 +132,6 @@ export class UsersRepository {
 		})
 	}
 
-	async updateUserInfo(id: string, data: FillProfile): Promise<User> {
-		return this.prismaClient.user.update({ where: { id }, data: data })
-	}
 
 	async editUserInfo(id: string, data: EditProfile): Promise<User> {
 		return this.prismaClient.user.update({ where: { id }, data: data })

@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { FilesS3Adapter } from '../../../../infrastructure/adapters/files-s3.adapter'
-import { UserPhotosRepository } from '../../repo/user-photos.repository'
+import { UserPhotosRepository } from '../../rep/user-photos.repository'
 import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 
@@ -22,7 +22,7 @@ export class DeletePhotoS3UseCase implements ICommandHandler<DeletePhotoS3Comman
 	}
 
 	async execute(command: DeletePhotoS3Command) {
-		const photo = await this.userPhotosRepository.findUserPhoto(command.photoId)
+		const photo = await this.userPhotosRepository.findUserPhotoById(command.photoId)
 		if (!photo) return new ReturnContract(null, ErrorEnum.NOT_FOUND)
 		if (photo.userId !== command.userId)
 			return new ReturnContract(null, ErrorEnum.FORBIDDEN)

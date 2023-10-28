@@ -8,20 +8,20 @@ import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 
-export class OAuthGitHubLoginCommand {
+export class GoogleLoginCommand {
 	constructor(public loginBody: OAuthLoginBodyInputModel) {
 	}
 }
 
-@CommandHandler(OAuthGitHubLoginCommand)
-export class OAuthGitHubUseCase implements ICommandHandler<OAuthGitHubLoginCommand> {
+@CommandHandler(GoogleLoginCommand)
+export class GoogleLoginUseCase implements ICommandHandler<GoogleLoginCommand> {
 	constructor(
 		protected configService: ConfigService<ConfigType, true>,
 		protected tokensService: TokensService
 	) {
 	}
 
-	async execute(command: OAuthGitHubLoginCommand) {
+	async execute(command: GoogleLoginCommand) {
 		const accessJwtSecret = this.configService.get(
 			Secrets.ACCESS_JWT_SECRET, { infer: true })
 
