@@ -260,7 +260,7 @@ export class AuthController {
 	}
 
 
-	@Post('status')
+	@Get('status')
 	@ApiResponse({ status: HttpStatus.OK })
 	user(@Req() request: Request) {
 		console.log(request.user)
@@ -279,7 +279,7 @@ export class AuthController {
 	}
 
 
-	@Post('google/redirect')
+	@Get('google/redirect')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GoogleAuthGuard)
 	@ApiResponse({ status: HttpStatus.NO_CONTENT })
@@ -319,7 +319,7 @@ export class AuthController {
 	}
 
 
-	@Post('github/redirect')
+	@Get('github/redirect')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GitHubAuthGuard)
 	@ApiResponse({ status: HttpStatus.NO_CONTENT })
