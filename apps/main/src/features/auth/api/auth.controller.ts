@@ -1,7 +1,7 @@
 import {
 	BadRequestException,
 	Body,
-	Controller,
+	Controller, Get,
 	Headers,
 	HttpCode,
 	HttpStatus,
@@ -261,8 +261,7 @@ export class AuthController {
 
 
 	@Post('status')
-	@HttpCode(HttpStatus.NO_CONTENT)
-	@ApiResponse({ status: HttpStatus.NO_CONTENT })
+	@ApiResponse({ status: HttpStatus.OK })
 	user(@Req() request: Request) {
 		console.log(request.user)
 		return request.user
@@ -271,7 +270,7 @@ export class AuthController {
 	}
 
 
-	@Post('google/login')
+	@Get('google/login')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GoogleAuthGuard)
 	@ApiResponse({ status: HttpStatus.NO_CONTENT })
@@ -311,7 +310,7 @@ export class AuthController {
 	}
 
 
-	@Post('github/login')
+	@Get('github/login')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GitHubAuthGuard)
 	@ApiResponse({ status: HttpStatus.NO_CONTENT })
