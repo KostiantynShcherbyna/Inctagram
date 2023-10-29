@@ -22,13 +22,13 @@ import { DeviceSessionGuard } from '../../auth/utils/guards/device-session.guard
 import { DeviceSessionHeaderInputModel } from '../utils/models/input/device-session.header.input.model'
 import { AccessGuard } from '../../auth/utils/guards/access.guard'
 import { UserPhotoGuard } from '../utils/guards/user-photo.guard'
-import { UploadPhotoS3Command } from '../app/use-cases/upload-photo.s3.use-case'
+import { UploadPhotoCommand } from '../app/use-cases/upload-photo.use.case'
 import { PhotoNormalTypes } from '../../../infrastructure/utils/constants'
 import { FillProfileCommand } from '../app/use-cases/fill-profile.use-case'
 import { ErrorEnum } from '../../../infrastructure/utils/error-enum'
 import { FillProfileBodyInputModel } from '../utils/models/input/fill-profile.body.input-model'
 import { PhotoIdParamInputModelSql } from '../utils/models/input/photoId.param.input-model'
-import { DeletePhotoS3Command } from '../app/use-cases/delete-photo.s3.use-case'
+import { DeletePhotoCommand } from '../app/use-cases/delete-photo.use-case'
 import { outputMessageException } from '../../../infrastructure/utils/output-message-exception'
 import { EditProfileBodyInputModel } from '../utils/models/input/edit-profile.body.input-model'
 import { EditProfileCommand } from '../app/use-cases/edit-profile.use-case'
@@ -107,7 +107,7 @@ export class UserController {
 	) {
 		console.log('file', file)
 		const uploadResult = await this.commandBus.execute(
-			new UploadPhotoS3Command(
+			new UploadPhotoCommand(
 				deviceSession.userId,
 				file.originalname,
 				file.buffer,
@@ -127,7 +127,7 @@ export class UserController {
 		@Param() param: PhotoIdParamInputModelSql
 	) {
 		const deleteResult = await this.commandBus.execute(
-			new DeletePhotoS3Command(deviceSession.userId, param.photoId)
+			new DeletePhotoCommand(deviceSession.userId, param.photoId)
 		)
 
 		if (deleteResult.error === ErrorEnum.NOT_FOUND)

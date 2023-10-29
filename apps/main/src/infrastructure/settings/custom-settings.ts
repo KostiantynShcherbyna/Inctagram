@@ -12,7 +12,10 @@ export const customSettings = () => {
 		GOOGLE_OAUTH_REDIRECT_URL: process.env.GOOGLE_OAUTH_REDIRECT_URL || 'http://localhost:3000/api/auth/google/redirect',
 		GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID || 'c7d6b6fdee01d44d60fa',
 		GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET || 'c0af6c13bda37d0f4cedcfb2d5b5bf78431beb88',
-		GITHUB_OAUTH_REDIRECT_URL: process.env.GITHUB_OAUTH_REDIRECT_URL || 'http://localhost:3000/api/auth/github/redirect'
+		GITHUB_OAUTH_REDIRECT_URL: process.env.GITHUB_OAUTH_REDIRECT_URL || 'http://localhost:3000/api/auth/github/redirect',
+		AZURE_CONNECTION: process.env.AZURE_CONNECTION || 'DefaultEndpointsProtocol=https;AccountName=inctagram;AccountKey=BUGgT8hBJgcdgUbPzfUklWHe1bD8RZ0qqTVrBkDVsuAnYzh5xWyhE1AE/4XfvqMlcbbpW/So0+ol+ASteEMlNQ==;EndpointSuffix=core.windows.net',
+		AZURE_ACCOUNT_NAME: process.env.AZURE_ACCOUNT_NAME || 'inctagram',
+		AZURE_CONTAINER_NAME: process.env.AZURE_CONTAINER_NAME || 'inctagram-upload'
 	}
 }
 export type ConfigType = ReturnType<typeof customSettings>

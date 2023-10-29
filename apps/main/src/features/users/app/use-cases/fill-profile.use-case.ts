@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { FilesS3Adapter, ISavePhoto } from '../../../../infrastructure/adapters/files-s3.adapter'
+import { FilesS3Adapter, ISavePhoto } from '../../../../infrastructure/adapters/files.s3.adapter'
 import { UsersRepository } from '../../rep/users.repository'
 import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
@@ -7,6 +7,7 @@ import { PrismaClient, User } from '@prisma/client'
 import { UserPhotosRepository } from '../../rep/user-photos.repository'
 import { join } from 'node:path'
 import { randomUUID } from 'crypto'
+import { FilesAzureAdapter } from '../../../../infrastructure/adapters/files.azure.adapter'
 
 interface IFillProfile {
 	userId: string,
@@ -28,7 +29,7 @@ export class FillProfileCommand {
 export class FillProfileUseCase
 	implements ICommandHandler<FillProfileCommand> {
 	constructor(
-		protected filesS3Adapter: FilesS3Adapter,
+		protected filesAzureAdapter: FilesAzureAdapter,
 		protected usersRepository: UsersRepository,
 		protected prisma: PrismaClient
 	) {
@@ -45,7 +46,7 @@ export class FillProfileUseCase
 			'users', command.details.userId,
 			'photos', photoId, command.details.file.originalname)
 
-		await this.filesS3Adapter.uploadUserPhoto(folderPath, {
+		await this.filesAzureAdapter.uploadUserPhoto(folderPath, {
 			originalname: command.details.file.originalname,
 			buffer: command.details.file.buffer,
 			mimetype: command.details.file.mimetype

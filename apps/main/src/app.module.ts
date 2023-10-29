@@ -28,12 +28,13 @@ import { GithubAuthStrategy } from './features/auth/utils/strategies/github-auth
 import { GithubAuthValidator } from './features/auth/utils/validators/github-auth.validator'
 import { UserPhotoGuard } from './features/users/utils/guards/user-photo.guard'
 import { UserController } from './features/users/api/user.controller'
-import { UploadPhotoS3UseCase } from './features/users/app/use-cases/upload-photo.s3.use-case'
-import { FilesS3Adapter } from './infrastructure/adapters/files-s3.adapter'
+import { UploadPhotoUseCase } from './features/users/app/use-cases/upload-photo.use.case'
+import { FilesS3Adapter } from './infrastructure/adapters/files.s3.adapter'
 import { UserPhotosRepository } from './features/users/rep/user-photos.repository'
-import { DeletePhotoS3UseCase } from './features/users/app/use-cases/delete-photo.s3.use-case'
+import { DeletePhotoUseCase } from './features/users/app/use-cases/delete-photo.use-case'
 import { EditProfileUseCase } from './features/users/app/use-cases/edit-profile.use-case'
 import { FillProfileUseCase } from './features/users/app/use-cases/fill-profile.use-case'
+import { FilesAzureAdapter } from './infrastructure/adapters/files.azure.adapter'
 
 const services = [
 	PrismaClient,
@@ -44,7 +45,8 @@ const services = [
 	EmailAdapter,
 	SessionSerializer,
 	UserPhotoGuard,
-	FilesS3Adapter
+	FilesS3Adapter,
+	FilesAzureAdapter,
 ]
 const controllers = [
 	AuthController,
@@ -62,8 +64,8 @@ const useCases = [
 	PasswordRecoveryUseCase,
 	GoogleLoginUseCase,
 	GitHubLoginUseCase,
-	UploadPhotoS3UseCase,
-	DeletePhotoS3UseCase,
+	UploadPhotoUseCase,
+	DeletePhotoUseCase,
 	EditProfileUseCase,
 	FillProfileUseCase
 ]
@@ -84,7 +86,10 @@ const providers = [
 @Module({
 	imports: [
 		CqrsModule,
-		ConfigModule.forRoot({ isGlobal: true }),
+		ConfigModule.forRoot({
+			envFilePath: '.env',
+			isGlobal: true
+		}),
 		PassportModule.register({ session: true })
 	],
 	controllers: [...controllers],
