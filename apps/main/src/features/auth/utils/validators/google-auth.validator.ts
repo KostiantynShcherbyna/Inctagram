@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common'
-import { UsersRepository } from '../../../users/repo/users.repository'
+import { UsersRepository } from '../../../users/rep/users.repository'
 
 @Injectable()
-export class GoogleAuthService {
-	constructor(private readonly userRepository: UsersRepository) {}
+export class GoogleAuthValidator {
+	constructor(private readonly userRepository: UsersRepository) {
+	}
 
 	async validateUser(details: any) {
 		const user = await this.userRepository.findUserByEmail(details.email)
-
-		if (user) {
-			return user
-		}
+		if (user) return user
 		const newUser = await this.userRepository.createUserFromOAuth(details)
-
 		return newUser || null
 	}
 }

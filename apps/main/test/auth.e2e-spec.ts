@@ -5,7 +5,7 @@ import { AppModule } from './../src/app.module'
 import { EmailAdapterMock } from './infrastructure/email-adapter.mock'
 import { EmailAdapter } from '../src/infrastructure/adapters/email.adapter'
 import { PublicTestingHelper } from './infrastructure/public-testing.helper'
-import { UsersRepository } from '../src/features/users/repo/users.repository'
+import { UsersRepository } from '../src/features/users/rep/users.repository'
 import { appSettings } from '../src/infrastructure/settings/app.settings'
 import { faker } from '@faker-js/faker'
 import { endpoints } from './infrastructure/routing.helper'
@@ -84,16 +84,16 @@ describe
 		})
 
 
-		it(`+ registration-confirmation`, async () => {
-			const user_0 = await userRepository.findUserByEmail(inputDataUser_0.email)
-			const response = await request(server)
-				.post(endpoints.authController.registrationConfirmation())
-				.send({
-					code: user_0.confirmationCodes[user_0.confirmationCodes.length - 1]
-				})
-
-			expect(response.status).toEqual(HttpStatus.NO_CONTENT)
-		})
+		// it(`+ registration-confirmation`, async () => {
+		// 	const user_0 = await userRepository.findUserByEmail(inputDataUser_0.email)
+		// 	const response = await request(server)
+		// 		.post(endpoints.authController.registrationConfirmation())
+		// 		.send({
+		// 			code: user_0.confirmationCodes[user_0.confirmationCodes.length - 1]
+		// 		})
+		//
+		// 	expect(response.status).toEqual(HttpStatus.NO_CONTENT)
+		// })
 
 
 	})

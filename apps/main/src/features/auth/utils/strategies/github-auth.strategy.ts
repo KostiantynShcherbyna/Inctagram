@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import * as process from 'process'
-import { GitHubAuthService } from '../../features/auth/app/services/github-auth.service'
-import { Strategy } from 'passport-github2'
+import { GithubAuthValidator } from '../validators/github-auth.validator'
+import { Profile, Strategy } from 'passport-github2'
 
 
 @Injectable()
@@ -10,7 +10,7 @@ export class GithubAuthStrategy
 	extends PassportStrategy(Strategy, 'github') {
 	constructor(
 		@Inject('GITHUB_AUTH_SERVICE')
-		private readonly authService: GitHubAuthService
+		private readonly authValidator: GithubAuthValidator
 	) {
 		super({
 			clientID: process.env.GITHUB_CLIENT_ID,
@@ -20,10 +20,10 @@ export class GithubAuthStrategy
 		})
 	}
 
-	async validate(accessToken: string, refreshToken: string, profile: any) {
-		const user = await this.authService.validateUser({
+	async validate(accessToken: string, refreshToken: string, profile: Profile) {
+		const user = await this.authValidator.validateUser({
 			email: profile.emails[0].value,
-			displayName: profile.displayName
+			username: profile.username || profile.displayName
 		})
 
 		if (user) return user
