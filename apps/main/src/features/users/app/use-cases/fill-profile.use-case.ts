@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { IFile } from '../../../../infrastructure/adapters/files.s3.adapter'
 import { UsersRepository } from '../../rep/users.repository'
 import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
@@ -7,6 +6,7 @@ import { PrismaClient, User } from '@prisma/client'
 import { join } from 'node:path'
 import { randomUUID } from 'crypto'
 import { FilesFirebaseAdapter } from '../../../../infrastructure/adapters/files.firebase.adapter'
+import { PhotoNormalTypes } from '../../../../infrastructure/utils/constants'
 
 interface IProfile {
 	username: string
@@ -15,6 +15,12 @@ interface IProfile {
 	birthDate?: string
 	city?: string
 	aboutMe?: string
+}
+
+interface IFile {
+	originalname: string
+	buffer: Buffer,
+	mimetype: PhotoNormalTypes
 }
 
 export class FillProfileCommand {
