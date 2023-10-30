@@ -21,7 +21,7 @@ export class RegistrationBodyInputModel {
 	@IsString()
 	@Length(LOGIN_MIN_LENGTH, LOGIN_MAX_LENGTH)
 	@Matches(LOGIN_REGEX)
-	username: string
+	login: string
 
 	@ApiProperty({
 		maxLength: PASSWORD_MAX_LENGTH,
