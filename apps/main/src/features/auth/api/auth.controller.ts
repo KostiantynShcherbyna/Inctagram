@@ -60,7 +60,7 @@ export class AuthController {
 	async registration(@Body() bodyRegistration: RegistrationBodyInputModel) {
 		const registrationContract = await this.commandBus.execute(
 			new RegistrationCommand(
-				bodyRegistration.login,
+				bodyRegistration.username,
 				bodyRegistration.email,
 				bodyRegistration.password))
 
