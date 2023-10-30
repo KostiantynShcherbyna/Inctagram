@@ -44,7 +44,7 @@ export class FillProfileUseCase
 
 	async execute(command: FillProfileCommand) {
 		const user = await this.usersRepository.findUserById(command.userId)
-		if (user === null)
+		if (!user)
 			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
 
 		const photoId = randomUUID()
