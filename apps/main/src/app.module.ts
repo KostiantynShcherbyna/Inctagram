@@ -34,7 +34,6 @@ import { UserPhotosRepository } from './features/users/rep/user-photos.repositor
 import { DeletePhotoUseCase } from './features/users/app/use-cases/delete-photo.use-case'
 import { EditProfileUseCase } from './features/users/app/use-cases/edit-profile.use-case'
 import { FillProfileUseCase } from './features/users/app/use-cases/fill-profile.use-case'
-import { FilesAzureAdapter } from './infrastructure/adapters/files.azure.adapter'
 import { FilesFirebaseAdapter } from './infrastructure/adapters/files.firebase.adapter'
 
 const services = [
@@ -47,7 +46,6 @@ const services = [
 	SessionSerializer,
 	UserPhotoGuard,
 	FilesS3Adapter,
-	FilesAzureAdapter,
 	FilesFirebaseAdapter
 ]
 const controllers = [

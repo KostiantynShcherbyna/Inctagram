@@ -6,7 +6,7 @@ import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { PrismaClient, User } from '@prisma/client'
 import { join } from 'node:path'
 import { randomUUID } from 'crypto'
-import { FilesAzureAdapter } from '../../../../infrastructure/adapters/files.azure.adapter'
+import { FilesFirebaseAdapter } from '../../../../infrastructure/adapters/files.firebase.adapter'
 
 interface IProfile {
 	username: string
@@ -30,7 +30,7 @@ export class FillProfileCommand {
 export class FillProfileUseCase
 	implements ICommandHandler<FillProfileCommand> {
 	constructor(
-		protected filesAzureAdapter: FilesAzureAdapter,
+		protected filesFirebaseAdapter: FilesFirebaseAdapter,
 		protected usersRepository: UsersRepository,
 		protected prisma: PrismaClient
 	) {
@@ -47,7 +47,7 @@ export class FillProfileUseCase
 			'users', command.userId,
 			'photos', photoId, command.file.originalname)
 
-		await this.filesAzureAdapter.uploadUserPhoto(folderPath, {
+		await this.filesFirebaseAdapter.uploadUserPhoto(folderPath, {
 			originalname: command.file.originalname,
 			buffer: command.file.buffer,
 			mimetype: command.file.mimetype
