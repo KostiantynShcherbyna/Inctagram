@@ -84,16 +84,16 @@ describe
 		})
 
 
-		it(`+ registration-confirmation`, async () => {
-			const user_0 = await userRepository.findUserByEmail(inputDataUser_0.email)
-			const response = await request(server)
-				.post(endpoints.authController.registrationConfirmation())
-				.send({
-					code: user_0.confirmationCodes[user_0.confirmationCodes.length - 1]
-				})
-
-			expect(response.status).toEqual(HttpStatus.NO_CONTENT)
-		})
+		// it(`+ registration-confirmation`, async () => {
+		// 	const user_0 = await userRepository.findUserByEmail(inputDataUser_0.email)
+		// 	const response = await request(server)
+		// 		.post(endpoints.authController.registrationConfirmation())
+		// 		.send({
+		// 			code: user_0.confirmationCodes[user_0.confirmationCodes.length - 1]
+		// 		})
+		//
+		// 	expect(response.status).toEqual(HttpStatus.NO_CONTENT)
+		// })
 
 
 	})

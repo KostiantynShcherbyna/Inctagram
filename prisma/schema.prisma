@@ -39,7 +39,7 @@ model Device {
 
 model ConfirmationCode {
   id               String @id @default(uuid()) @map("confiramtion_code_id")
-  userId           String @unique @map("user_id")
+  userId           String @map("user_id")
   confirmationCode String @unique @map("confirmation_code")
 
   user User @relation(fields: [userId], references: [id])
