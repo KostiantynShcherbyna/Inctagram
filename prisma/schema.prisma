@@ -1,26 +1,29 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL_NEON")
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id                String   @id @default(uuid()) @map("user_id")
-  email             String   @unique
-  username          String
-  passwordHash      String   @map("password_hash")
-  createdAt         DateTime @default(now()) @map("created_at")
-  confirmationCodes String[] @unique @map("confirmation_codes")
-  isConfirmed       Boolean  @default(false) @map("is_confirmed")
+  id           String   @id @default(uuid()) @map("user_id")
+  email        String   @unique
+  username     String
+  firstname    String?
+  lastname     String?
+  birthDate    String?  @map("birth_date")
+  city         String?
+  aboutMe      String?  @map("about_me")
+  passwordHash String?  @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  isConfirmed  Boolean  @default(false) @map("is_confirmed")
 
   devices               Device[]
-  PasswordRecoveryCodes PasswordRecoveryCode[]
+  confirmationCodes     ConfirmationCode[]
+  passwordRecoveryCodes PasswordRecoveryCode[]
+  userPhotos            UserPhoto[]
 }
 
 model Device {
@@ -34,11 +37,30 @@ model Device {
   user User @relation(fields: [userId], references: [id])
 }
 
+model ConfirmationCode {
+  id               String @id @default(uuid()) @map("confiramtion_code_id")
+  userId           String @unique @map("user_id")
+  confirmationCode String @unique @map("confirmation_code")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
 model PasswordRecoveryCode {
-  id           String  @id @default(uuid()) @map("password_recovery_code_id")
-  email        String  @unique
-  recoveryCode String  @default(uuid())
+  id           String   @id @default(uuid()) @map("password_recovery_code_id")
+  email        String   @unique
+  recoveryCode String   @unique @map("recovery_code")
+  createdAt    DateTime @default(now()) @map("created_at")
   active       Boolean
 
   user User @relation(fields: [email], references: [email])
+}
+
+model UserPhoto {
+  id          String   @id @default(uuid()) @map("user_avatar_id")
+  path        String   @unique
+  contentType String   @map("content_type")
+  createdAt   DateTime @default(now()) @map("created_at")
+  userId      String   @default(uuid()) @map("user_id")
+
+  user User @relation(fields: [userId], references: [id])
 }

@@ -1,6 +1,11 @@
-export enum ErrorMessageEnum {
+export enum ErrorEnum {
+	NOT_FOUND = `Not found`,
+	UNAUTHORIZED = `Unauthorized`,
+	FORBIDDEN = `Forbidden`,
+
 
 	FAIL_LOGIC = `Fail logic`,
+	EXCEPTION = `EXCEPTION`,
 	EMAIL_NOT_SENT = `Email not sent`,
 
 	//↓↓↓ AUTH
@@ -14,6 +19,7 @@ export enum ErrorMessageEnum {
 	RECOVERY_CODE_NOT_DELETE = `RECOVERY_CODE_NOT_DELETE`,
 	FOREIGN_DEVICE = `Foreign device`,
 	CONFIRMATION_CODE_EXPIRED = `Confirmation code is expired`,
+	CONFIRMATION_CODE_NOT_FOUND = `Confirmation code not found`,
 
 	// ↓↓↓ USERS
 	USER_IS_BANNED = `User is banned`,
@@ -25,5 +31,7 @@ export enum ErrorMessageEnum {
 	USER_EMAIL_CONFIRMED = `User email is confirmed`,
 	USER_EMAIL_NOT_CONFIRMED = `User email not confirmed`,
 
+	PHOTO_NOT_FOUND = `Photo not found`,
+	FILE_IS_REQUIRED = `File is required`,
 
 }

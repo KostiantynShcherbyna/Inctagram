@@ -2,10 +2,10 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ConfigService } from '@nestjs/config'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
-import { UsersRepository } from '../../../users/repo/users.repository'
+import { UsersRepository } from '../../../users/rep/users.repository'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { EmailAdapter } from '../../../../infrastructure/adapters/email.adapter'
-import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
+import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 
 export class PasswordRecoveryCommand {
 	constructor(public email: string) {
@@ -48,6 +48,6 @@ export class PasswordRecoveryUseCase
 		console.log('newPasswordRecoveryCode', newPasswordRecoveryCode)
 		this.emailAdapter.sendPasswordRecovery(newPasswordRecoveryCodeResult.email, newPasswordRecoveryCodeResult.recoveryCode)
 
-		return new ResponseContract(true, null)
+		return new ReturnContract(true, null)
 	}
 }

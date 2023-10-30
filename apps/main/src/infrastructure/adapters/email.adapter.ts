@@ -1,20 +1,18 @@
 import { emailService } from '../services/email.service'
-import { User } from '@prisma/client'
 
 export class EmailAdapter {
-	async sendConfirmationCode(user: User) {
+	async sendConfirmationCode(email: string, confirmationCode: string) {
 		const domain = `https://visualvoyage.ru`
 		await emailService.sendEmail({
 			service: 'gmail',
 			user: 'kstntn.xxx@gmail.com',
 			pass: 'lkzebhjjcjymsvqc',
 			from: 'inctagram <visualvoyage@gmail.com>',
-			email: user.email,
+			email: email,
 			subject: 'registration confirmation',
 			message: `<h1>Thanks for your registration</h1>
             <p>To finish registration please follow the link below:
-            <a href='${domain}/confirm-email?code=${
-				user.confirmationCodes[user.confirmationCodes.length - 1]}'
+            <a href='${domain}/confirm-email?code=${confirmationCode}'
             >complete registration with code</a>
             </p>`
 		})
