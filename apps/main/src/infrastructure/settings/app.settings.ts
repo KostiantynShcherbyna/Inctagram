@@ -6,6 +6,8 @@ import { errorMessagesAdapter } from '../adapters/error-messages.adapter'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import passport from 'passport'
+import { initializeApp } from 'firebase/app'
+import { firebaseConfig } from './firebase.settings'
 
 export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
@@ -32,6 +34,7 @@ export const appSettings = (app: INestApplication) => {
 	)
 	app.use(passport.initialize())
 	app.use(passport.session())
+	initializeApp(firebaseConfig)
 	useContainer(app.select(AppModule), { fallbackOnErrors: true })
 	return app
 }

@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { PhotoNormalTypes } from '../utils/constants'
 import { BlobServiceClient } from '@azure/storage-blob'
-import { DefaultAzureCredential } from '@azure/identity'
+import { DefaultAzureCredential, EnvironmentCredential } from '@azure/identity'
 import { ConfigService } from '@nestjs/config'
 import { ConfigType } from '../settings/custom-settings'
+import { defaultOptions } from 'class-transformer/types/constants/default-options.constant'
 
 export interface ISavePhoto {
 	originalname: string
@@ -35,9 +36,14 @@ export class FilesAzureAdapter {
 	}
 
 	private getBlobClient() {
-		const accountName = this.configService.get('AZURE_ACCOUNT_NAME', { infer: true })
-		const containerName = this.configService.get('AZURE_CONTAINER_NAME', { infer: true })
-		const blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net`, new DefaultAzureCredential())
+		const accountName = this.configService
+			.get('AZURE_ACCOUNT_NAME', { infer: true })
+		const containerName = this.configService
+			.get('AZURE_CONTAINER_NAME', { infer: true })
+
+		const blobServiceClient = new BlobServiceClient(
+			`https://${accountName}.blob.core.windows.net`,
+			new DefaultAzureCredential())
 		return blobServiceClient.getContainerClient(containerName)
 	}
 

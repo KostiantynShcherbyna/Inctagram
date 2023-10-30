@@ -35,6 +35,7 @@ import { DeletePhotoUseCase } from './features/users/app/use-cases/delete-photo.
 import { EditProfileUseCase } from './features/users/app/use-cases/edit-profile.use-case'
 import { FillProfileUseCase } from './features/users/app/use-cases/fill-profile.use-case'
 import { FilesAzureAdapter } from './infrastructure/adapters/files.azure.adapter'
+import { FilesFirebaseAdapter } from './infrastructure/adapters/files.firebase.adapter'
 
 const services = [
 	PrismaClient,
@@ -47,6 +48,7 @@ const services = [
 	UserPhotoGuard,
 	FilesS3Adapter,
 	FilesAzureAdapter,
+	FilesFirebaseAdapter
 ]
 const controllers = [
 	AuthController,
