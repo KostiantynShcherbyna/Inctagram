@@ -5,7 +5,7 @@ import {
 	UnauthorizedException
 } from '@nestjs/common'
 import { Request } from 'express'
-import { TokensService } from '../services/tokens.service'
+import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { ConfigService } from "@nestjs/config"
 
 @Injectable()

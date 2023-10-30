@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { UsersRepository } from '../../../users/repo/users.repository'
-import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
-import { ErrorMessageEnum } from '../../../../infrastructure/utils/error-message-enum'
+import { UsersRepository } from '../../../users/rep/users.repository'
+import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
+import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { Secrets } from '../../../../infrastructure/utils/constants'
 import { ConfigService } from '@nestjs/config'
@@ -23,31 +23,34 @@ export class EmailConfirmationUseCase
 	}
 
 	async execute(command: EmailConfirmationCommand) {
-		const user = await this.usersRepository.findUserByConfirmationCode(
-			command.code)
+		const confirmationCode = await this.usersRepository
+			.findConfirmationCode(command.code)
+
+		if (confirmationCode === null)
+			return new ReturnContract(null, ErrorEnum.CONFIRMATION_CODE_NOT_FOUND)
+
+		const user = await this.usersRepository.findUserById(confirmationCode.userId)
 
 		if (user === null)
-			return new ResponseContract(null, ErrorMessageEnum.USER_NOT_FOUND)
+			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
 		if (user.isConfirmed === true)
-			return new ResponseContract(null, ErrorMessageEnum.USER_EMAIL_CONFIRMED)
+			return new ReturnContract(null, ErrorEnum.USER_EMAIL_CONFIRMED)
 
-		const confirmationCodeSecret = this.configService.get(
-			Secrets.EMAIL_CONFIRMATION_CODE_SECRET,
-			{ infer: true }
-		)
+		const confirmationCodeSecret = this.configService
+			.get(Secrets.EMAIL_CONFIRMATION_CODE_SECRET, { infer: true })
 
-		const confirmationCodeDto = await this.tokensService.verifyToken(
-			command.code,
-			confirmationCodeSecret)
+		const confirmationCodeDto = await this.tokensService
+			.verifyToken(command.code, confirmationCodeSecret)
 
 		if (confirmationCodeDto === null)
-			return new ResponseContract(null, ErrorMessageEnum.TOKEN_NOT_VERIFY)
+			return new ReturnContract(null, ErrorEnum.TOKEN_NOT_VERIFY)
 
-		const updateResult = await this.usersRepository.updateConfirmation(user.id, true)
+		const updateResult = await this.usersRepository
+			.updateConfirmation(user.id, true)
 
 		if (!updateResult)
-			return new ResponseContract(null, ErrorMessageEnum.USER_NOT_FOUND)
+			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
 
-		return new ResponseContract(true, null)
+		return new ReturnContract(true, null)
 	}
 }

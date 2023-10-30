@@ -1,12 +1,12 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { LoginBodyInputModel } from '../../utils/models/input/login.body.input-model'
 import { randomUUID } from 'crypto'
-import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
-import { ErrorMessageEnum } from '../../../../infrastructure/utils/error-message-enum'
+import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
+import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { ConfigService } from '@nestjs/config'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
-import { UsersRepository } from '../../../users/repo/users.repository'
+import { UsersRepository } from '../../../users/rep/users.repository'
 import { compareHashService } from '../../../../infrastructure/services/compare-hash.service'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 
@@ -35,16 +35,16 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 			command.loginBody.loginOrEmail
 		)
 		if (user === null)
-			return new ResponseContract(null, ErrorMessageEnum.USER_NOT_FOUND)
+			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
 
 		if (user.isConfirmed === false)
-			return new ResponseContract(
-				null, ErrorMessageEnum.USER_EMAIL_NOT_CONFIRMED)
+			return new ReturnContract(
+				null, ErrorEnum.USER_EMAIL_NOT_CONFIRMED)
 
 		if ((await compareHashService(
 			user.passwordHash, command.loginBody.password)) === false)
-			return new ResponseContract(
-				null, ErrorMessageEnum.PASSWORD_NOT_COMPARED)
+			return new ReturnContract(
+				null, ErrorEnum.PASSWORD_NOT_COMPARED)
 		// ↑↑↑
 
 		const accessJwtSecret = this.configService
@@ -78,7 +78,7 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 			lastActiveDate: new Date(refreshTokenVerify.iat),
 			expireAt: new Date(refreshTokenVerify.exp)
 		})
-		return new ResponseContract(
+		return new ReturnContract(
 			{ accessJwt: { accessToken }, refreshToken }, null)
 	}
 }

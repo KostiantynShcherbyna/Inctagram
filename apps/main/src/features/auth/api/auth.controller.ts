@@ -18,7 +18,7 @@ import {
 import { CommandBus } from '@nestjs/cqrs'
 import { Request, Response } from 'express'
 import { outputMessageException } from '../../../infrastructure/utils/output-message-exception'
-import { ErrorMessageEnum } from '../../../infrastructure/utils/error-message-enum'
+import { ErrorEnum } from '../../../infrastructure/utils/error-enum'
 import { RegistrationCommand } from '../app/use-cases/registration.use-case'
 import { EmailConfirmationResendBodyInputModel } from '../utils/models/input/email-confirmation-resend.body.input-model'
 import { EmailConfirmationResendCommand } from '../app/use-cases/email-confirmation-resend.use-case'
@@ -26,22 +26,23 @@ import { ConfirmationBodyInputModel } from '../utils/models/input/confirmation.b
 import { EmailConfirmationCommand } from '../app/use-cases/email-confirmation.use-case'
 import { LoginBodyInputModel } from '../utils/models/input/login.body.input-model'
 import { LoginCommand } from '../app/use-cases/login.use-case'
-import { RefreshGuard } from '../../../infrastructure/guards/refresh.guard'
-import { DeviceSession } from '../../../infrastructure/decorators/device-session.decorator'
+import { RefreshGuard } from '../utils/guards/refresh.guard'
+import { DeviceSessionGuard } from '../utils/guards/device-session.guard'
 import { DeviceSessionHeaderInputModel } from '../utils/models/input/device-session.header.input-model'
 import { LogoutCommand } from '../app/use-cases/logout.use-case'
 import { PasswordRecoveryBodyInputModel } from '../utils/models/input/password-recovery.body.input-model'
 import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-case'
 import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
 import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
-import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
-import { GoogleAuthGuard } from '../../../infrastructure/guards/google-auth.guard'
+import { GoogleAuthGuard } from '../utils/guards/google-auth.guard'
 import { UserDetails } from '../../../infrastructure/types/user-details.type'
-import { GitHubAuthGuard } from '../../../infrastructure/guards/github-auth.guard'
-import { OAuthGitHubLoginCommand } from '../app/use-cases/oAuth-github-login.use-case'
+import { GitHubAuthGuard } from '../utils/guards/github-auth.guard'
+import { GitHubLoginCommand } from '../app/use-cases/github-login.use-case'
 import { ApiBadRequestResponse, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger'
 import { BadResponse, ValidResponse } from '../../../infrastructure/utils/constants'
-import { OAuthGoogleLoginCommand } from '../app/use-cases/oAuth-google-login.use-case'
+import { GoogleLoginCommand } from '../app/use-cases/google-login.use-case'
+import { RefreshTokenCommand } from '../app/use-cases/refresh-token.use-case'
+import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
 
 @Injectable()
 @Controller('auth')
@@ -55,30 +56,24 @@ export class AuthController {
 		description: ValidResponse.REGISTRATION,
 		status: HttpStatus.NO_CONTENT
 	})
-	@ApiBadRequestResponse({
-		description: BadResponse.REGISTRATION
-	})
+	@ApiBadRequestResponse({ description: BadResponse.REGISTRATION })
 	async registration(@Body() bodyRegistration: RegistrationBodyInputModel) {
 		const registrationContract = await this.commandBus.execute(
 			new RegistrationCommand(
 				bodyRegistration.login,
 				bodyRegistration.email,
-				bodyRegistration.password
-			)
-		)
-		if (registrationContract.error === ErrorMessageEnum.USER_EMAIL_EXIST)
-			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnum.USER_EMAIL_EXIST, 'email')
-			)
-		if (registrationContract.error === ErrorMessageEnum.USER_LOGIN_EXIST)
-			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnum.USER_LOGIN_EXIST, 'login')
-			)
-		if (registrationContract.error === ErrorMessageEnum.USER_NOT_DELETED)
-			throw new ServiceUnavailableException()
-		if (registrationContract.error === ErrorMessageEnum.EMAIL_NOT_SENT)
+				bodyRegistration.password))
+
+		if (registrationContract.error === ErrorEnum.USER_EMAIL_EXIST)
+			throw new BadRequestException(outputMessageException(
+				ErrorEnum.USER_EMAIL_EXIST, 'email'))
+		if (registrationContract.error === ErrorEnum.USER_LOGIN_EXIST)
+			throw new BadRequestException(outputMessageException(
+				ErrorEnum.USER_LOGIN_EXIST, 'login'))
+		if (registrationContract.error === ErrorEnum.EXCEPTION)
 			throw new ServiceUnavailableException()
 	}
+
 
 	@Post('registration-confirmation')
 	@HttpCode(HttpStatus.NO_CONTENT)
@@ -86,55 +81,49 @@ export class AuthController {
 		description: ValidResponse.REGISTRATION_CONFIRMATION,
 		status: HttpStatus.NO_CONTENT
 	})
-	@ApiBadRequestResponse({
-		description: BadResponse.REGISTRATION_CONFIRMATION
-	})
+	@ApiBadRequestResponse(
+		{ description: BadResponse.REGISTRATION_CONFIRMATION })
 	async emailConfirmation(
-		@Body() bodyConfirmation: ConfirmationBodyInputModel
-	) {
+		@Body() bodyConfirmation: ConfirmationBodyInputModel) {
 		const confirmationContract = await this.commandBus.execute(
-			new EmailConfirmationCommand(bodyConfirmation.code)
-		)
+			new EmailConfirmationCommand(bodyConfirmation.code))
 
-		if (confirmationContract.error === ErrorMessageEnum.USER_NOT_FOUND)
-			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'code')
-			)
-		if (confirmationContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED)
-			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'code')
-			)
-		if (confirmationContract.error === ErrorMessageEnum.TOKEN_NOT_VERIFY)
-			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnum.TOKEN_NOT_VERIFY, 'code')
-			)
+		if (confirmationContract.error === ErrorEnum.CONFIRMATION_CODE_NOT_FOUND)
+			throw new BadRequestException(outputMessageException(
+				ErrorEnum.CONFIRMATION_CODE_NOT_FOUND, 'code'))
+		if (confirmationContract.error === ErrorEnum.USER_NOT_FOUND)
+			throw new BadRequestException(outputMessageException(
+				ErrorEnum.USER_NOT_FOUND, 'code'))
+		if (confirmationContract.error === ErrorEnum.USER_EMAIL_CONFIRMED)
+			throw new BadRequestException(outputMessageException(
+				ErrorEnum.USER_EMAIL_CONFIRMED, 'code'))
+		if (confirmationContract.error === ErrorEnum.TOKEN_NOT_VERIFY)
+			throw new BadRequestException(outputMessageException(
+				ErrorEnum.TOKEN_NOT_VERIFY, 'code'))
 	}
+
 
 	@Post('registration-email-resending')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@ApiResponse({ status: HttpStatus.NO_CONTENT })
 	@ApiBadRequestResponse()
 	async emailConfirmationResend(
-		@Body() bodyConfirmationResend: EmailConfirmationResendBodyInputModel
-	) {
+		@Body() bodyConfirmationResend: EmailConfirmationResendBodyInputModel) {
 		const confirmationResendContract = await this.commandBus.execute(
-			new EmailConfirmationResendCommand(bodyConfirmationResend.email)
-		)
-		if (confirmationResendContract.error === ErrorMessageEnum.USER_NOT_FOUND)
-			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnum.USER_NOT_FOUND, 'email')
-			)
-		if (
-			confirmationResendContract.error === ErrorMessageEnum.USER_EMAIL_CONFIRMED
-		)
-			throw new BadRequestException(
-				outputMessageException(ErrorMessageEnum.USER_EMAIL_CONFIRMED, 'email')
-			)
-		if (confirmationResendContract.error === ErrorMessageEnum.USER_NOT_DELETED)
+			new EmailConfirmationResendCommand(bodyConfirmationResend.email))
+
+		if (confirmationResendContract.error === ErrorEnum.USER_NOT_FOUND)
+			throw new BadRequestException(outputMessageException(
+				ErrorEnum.USER_NOT_FOUND, 'email'))
+		if (confirmationResendContract.error === ErrorEnum.USER_EMAIL_CONFIRMED)
+			throw new BadRequestException(outputMessageException(
+				ErrorEnum.USER_EMAIL_CONFIRMED, 'email'))
+		if (confirmationResendContract.error === ErrorEnum.USER_NOT_DELETED)
 			throw new InternalServerErrorException()
-		if (confirmationResendContract.error === ErrorMessageEnum.EMAIL_NOT_SENT)
+		if (confirmationResendContract.error === ErrorEnum.EMAIL_NOT_SENT)
 			throw new InternalServerErrorException()
 	}
+
 
 	@Post('login')
 	// @UseGuards(AuthGuard(StrategyNames.loginLocalStrategy))
@@ -150,15 +139,15 @@ export class AuthController {
 		@Res({ passthrough: true }) res: Response
 	) {
 		const loginContract = await this.commandBus.execute(
-			new LoginCommand(bodyAuth, ip, userAgent)
-		)
-		if (loginContract.error === ErrorMessageEnum.USER_NOT_FOUND)
+			new LoginCommand(bodyAuth, ip, userAgent))
+
+		if (loginContract.error === ErrorEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
-		if (loginContract.error === ErrorMessageEnum.USER_IS_BANNED)
+		if (loginContract.error === ErrorEnum.USER_IS_BANNED)
 			throw new UnauthorizedException()
-		if (loginContract.error === ErrorMessageEnum.USER_EMAIL_NOT_CONFIRMED)
+		if (loginContract.error === ErrorEnum.USER_EMAIL_NOT_CONFIRMED)
 			throw new UnauthorizedException()
-		if (loginContract.error === ErrorMessageEnum.PASSWORD_NOT_COMPARED)
+		if (loginContract.error === ErrorEnum.PASSWORD_NOT_COMPARED)
 			throw new UnauthorizedException()
 
 		res.cookie('refreshToken', loginContract.data?.refreshToken, {
@@ -168,15 +157,15 @@ export class AuthController {
 		return loginContract.data?.accessJwt
 	}
 
+
 	@UseGuards(RefreshGuard)
 	@Post('logout')
 	@HttpCode(HttpStatus.NO_CONTENT)
-
 	@ApiResponse({ status: HttpStatus.NO_CONTENT })
 	@ApiUnauthorizedResponse({
 		description: 'If the JWT refreshToken inside cookie is missing, expired or incorrect'
 	})
-	async logout(@DeviceSession() deviceSession: DeviceSessionHeaderInputModel) {
+	async logout(@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel) {
 		const logoutContract = await this.commandBus.execute(
 			new LogoutCommand(
 				deviceSession.id,
@@ -184,17 +173,18 @@ export class AuthController {
 				deviceSession.ip,
 				deviceSession.iat,
 				deviceSession.title,
-				deviceSession.userId)
-		)
-		if (logoutContract.error === ErrorMessageEnum.USER_NOT_FOUND)
+				deviceSession.userId))
+
+		if (logoutContract.error === ErrorEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
-		if (logoutContract.error === ErrorMessageEnum.DEVICE_NOT_FOUND)
+		if (logoutContract.error === ErrorEnum.DEVICE_NOT_FOUND)
 			throw new UnauthorizedException()
-		if (logoutContract.error === ErrorMessageEnum.DEVICE_NOT_DELETE)
+		if (logoutContract.error === ErrorEnum.DEVICE_NOT_DELETE)
 			throw new UnauthorizedException()
-		if (logoutContract.error === ErrorMessageEnum.TOKEN_NOT_VERIFY)
+		if (logoutContract.error === ErrorEnum.TOKEN_NOT_VERIFY)
 			throw new UnauthorizedException()
 	}
+
 
 	@Post('password-recovery')
 	@HttpCode(HttpStatus.NO_CONTENT)
@@ -209,13 +199,14 @@ export class AuthController {
 		@Body() bodyPasswordRecovery: PasswordRecoveryBodyInputModel
 	) {
 		const isRecoveryContract = await this.commandBus.execute(
-			new PasswordRecoveryCommand(bodyPasswordRecovery.email)
-		)
-		if (isRecoveryContract.error === ErrorMessageEnum.EMAIL_NOT_SENT)
+			new PasswordRecoveryCommand(bodyPasswordRecovery.email))
+
+		if (isRecoveryContract.error === ErrorEnum.EMAIL_NOT_SENT)
 			throw new InternalServerErrorException()
-		if (isRecoveryContract.error === ErrorMessageEnum.RECOVERY_CODE_NOT_DELETE)
+		if (isRecoveryContract.error === ErrorEnum.RECOVERY_CODE_NOT_DELETE)
 			throw new InternalServerErrorException()
 	}
+
 
 	@Post('new-password')
 	@HttpCode(HttpStatus.NO_CONTENT)
@@ -227,42 +218,50 @@ export class AuthController {
 		const newPasswordContract = await this.commandBus.execute(
 			new NewPasswordCommand(
 				bodyNewPassword.newPassword,
-				bodyNewPassword.recoveryCode
-			)
-		)
-		if (newPasswordContract.error === ErrorMessageEnum.TOKEN_NOT_VERIFY)
-			throw new BadRequestException(
-				outputMessageException(
-					ErrorMessageEnum.TOKEN_NOT_VERIFY,
-					'recoveryCode'
-				)
-			)
-		if (newPasswordContract.error === ErrorMessageEnum.RECOVERY_CODE_NOT_FOUND)
-			throw new BadRequestException(
-				outputMessageException(
-					ErrorMessageEnum.RECOVERY_CODE_NOT_FOUND,
-					'recoveryCode'
-				)
-			)
-		if (newPasswordContract.error === ErrorMessageEnum.RECOVERY_CODE_INVALID)
-			throw new BadRequestException(
-				outputMessageException(
-					ErrorMessageEnum.RECOVERY_CODE_INVALID,
-					'recoveryCode'
-				)
-			)
-		if (newPasswordContract.error === ErrorMessageEnum.USER_NOT_FOUND)
-			throw new BadRequestException(
-				outputMessageException(
-					ErrorMessageEnum.RECOVERY_CODE_INVALID,
-					'recoveryCode'
-				)
-			)
+				bodyNewPassword.recoveryCode))
+
+		if (newPasswordContract.error === ErrorEnum.TOKEN_NOT_VERIFY)
+			throw new BadRequestException(outputMessageException(
+				ErrorEnum.TOKEN_NOT_VERIFY, 'recoveryCode'))
+		if (newPasswordContract.error === ErrorEnum.RECOVERY_CODE_NOT_FOUND)
+			throw new BadRequestException(outputMessageException(
+				ErrorEnum.RECOVERY_CODE_NOT_FOUND, 'recoveryCode'))
+		if (newPasswordContract.error === ErrorEnum.RECOVERY_CODE_INVALID)
+			throw new BadRequestException(outputMessageException(
+				ErrorEnum.RECOVERY_CODE_INVALID, 'recoveryCode'))
+		if (newPasswordContract.error === ErrorEnum.USER_NOT_FOUND)
+			throw new BadRequestException(outputMessageException(
+				ErrorEnum.RECOVERY_CODE_INVALID, 'recoveryCode'))
 	}
 
-	@Post('status')
-	@HttpCode(HttpStatus.NO_CONTENT)
-	@ApiResponse({ status: HttpStatus.NO_CONTENT })
+
+	@UseGuards(RefreshGuard)
+	@Post('refresh-token')
+	@HttpCode(HttpStatus.OK)
+	async refreshToken(
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
+		@Headers('user-agent') userAgent: string,
+		@Ip() ip: string,
+		@Res({ passthrough: true }) res: Response
+	) {
+		const refreshTokenContract = await this.commandBus.execute(
+			new RefreshTokenCommand(deviceSession, ip, userAgent))
+
+		if (refreshTokenContract.error === ErrorEnum.USER_NOT_FOUND)
+			throw new UnauthorizedException()
+		if (refreshTokenContract.error === ErrorEnum.DEVICE_NOT_FOUND)
+			throw new UnauthorizedException()
+		if (refreshTokenContract.error === ErrorEnum.TOKEN_NOT_VERIFY)
+			throw new UnauthorizedException()
+
+		res.cookie('refreshToken', refreshTokenContract.data?.refreshToken,
+			{ httpOnly: true, secure: true })
+		return refreshTokenContract.data?.accessJwt
+	}
+
+
+	@Get('status')
+	@ApiResponse({ status: HttpStatus.OK })
 	user(@Req() request: Request) {
 		console.log(request.user)
 		return request.user
@@ -270,7 +269,8 @@ export class AuthController {
 			: { msg: 'Not Authenticated' }
 	}
 
-	@Post('google/login')
+
+	@Get('google/login')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GoogleAuthGuard)
 	@ApiResponse({ status: HttpStatus.NO_CONTENT })
@@ -278,7 +278,8 @@ export class AuthController {
 		return { msg: 'Google Auth' }
 	}
 
-	@Post('google/redirect')
+
+	@Get('google/redirect')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GoogleAuthGuard)
 	@ApiResponse({ status: HttpStatus.NO_CONTENT })
@@ -289,28 +290,27 @@ export class AuthController {
 		const user: Partial<UserDetails> = request.user
 
 		const loginContract = await this.commandBus.execute(
-			new OAuthGoogleLoginCommand({ email: user.email, username: user.displayName })
-		)
+			new GoogleLoginCommand(
+				{ email: user.email, username: user.username }))
 
-		if (loginContract.error === ErrorMessageEnum.USER_NOT_FOUND)
+		if (loginContract.error === ErrorEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
-		if (loginContract.error === ErrorMessageEnum.USER_IS_BANNED)
+		if (loginContract.error === ErrorEnum.USER_IS_BANNED)
 			throw new UnauthorizedException()
-		if (loginContract.error === ErrorMessageEnum.USER_EMAIL_NOT_CONFIRMED)
+		if (loginContract.error === ErrorEnum.USER_EMAIL_NOT_CONFIRMED)
 			throw new UnauthorizedException()
-		if (loginContract.error === ErrorMessageEnum.PASSWORD_NOT_COMPARED)
+		if (loginContract.error === ErrorEnum.PASSWORD_NOT_COMPARED)
 			throw new UnauthorizedException()
 
 		res.cookie('refreshToken', loginContract.data?.refreshToken, {
 			httpOnly: true,
 			secure: true
 		})
-
 		return loginContract.data?.accessJwt
 	}
 
 
-	@Post('github/login')
+	@Get('github/login')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GitHubAuthGuard)
 	@ApiResponse({ status: HttpStatus.NO_CONTENT })
@@ -319,14 +319,7 @@ export class AuthController {
 	}
 
 
-	@Get('some')
-	@HttpCode(HttpStatus.OK)
-	async some() {
-		return { msg: 'GitHub Auth' }
-	}
-
-
-	@Post('github/redirect')
+	@Get('github/redirect')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GitHubAuthGuard)
 	@ApiResponse({ status: HttpStatus.NO_CONTENT })
@@ -337,25 +330,24 @@ export class AuthController {
 		const user: Partial<UserDetails> = request.user
 
 		const loginContract = await this.commandBus.execute(
-			new OAuthGitHubLoginCommand(
-				{ email: user.email, username: user.displayName })
-		)
+			new GitHubLoginCommand(
+				{ email: user.email, username: user.username }))
 
-		if (loginContract.error === ErrorMessageEnum.USER_NOT_FOUND)
+		if (loginContract.error === ErrorEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
-		if (loginContract.error === ErrorMessageEnum.USER_IS_BANNED)
+		if (loginContract.error === ErrorEnum.USER_IS_BANNED)
 			throw new UnauthorizedException()
-		if (loginContract.error === ErrorMessageEnum.USER_EMAIL_NOT_CONFIRMED)
+		if (loginContract.error === ErrorEnum.USER_EMAIL_NOT_CONFIRMED)
 			throw new UnauthorizedException()
-		if (loginContract.error === ErrorMessageEnum.PASSWORD_NOT_COMPARED)
+		if (loginContract.error === ErrorEnum.PASSWORD_NOT_COMPARED)
 			throw new UnauthorizedException()
 
 		res.cookie('refreshToken', loginContract.data?.refreshToken, {
 			httpOnly: true,
 			secure: true
 		})
-
 		return loginContract.data?.accessJwt
 	}
+
 
 }

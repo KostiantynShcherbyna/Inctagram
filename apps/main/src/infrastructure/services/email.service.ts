@@ -10,8 +10,6 @@ export const emailService = {
 				pass: emailBody.pass
 			}
 		})
-
-
 		try {
 			await transporter.sendMail({
 				from: emailBody.from,
@@ -21,7 +19,7 @@ export const emailService = {
 			})
 			return true
 		} catch (err) {
-			console.log(`email-adapter-sendEmail - ` + err)
+			console.log(`email-adapter-sendEmail` + err)
 			return false
 		}
 	}

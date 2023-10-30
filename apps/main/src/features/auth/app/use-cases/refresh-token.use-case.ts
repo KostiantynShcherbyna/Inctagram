@@ -1,12 +1,12 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ConfigService } from '@nestjs/config'
 import { DeviceSessionHeaderInputModel } from '../../utils/models/input/device-session.header.input-model'
-import { ResponseContract } from '../../../../infrastructure/utils/response-contract'
-import { ErrorMessageEnum } from '../../../../infrastructure/utils/error-message-enum'
+import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
+import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
-import { UsersRepository } from '../../../users/repo/users.repository'
+import { UsersRepository } from '../../../users/rep/users.repository'
 
 export class RefreshTokenCommand {
 	constructor(
@@ -31,14 +31,14 @@ export class RefreshTokenUseCase
 		const user = await this.usersRepository
 			.findUserById(command.deviceSession.userId)
 		if (user === null)
-			return new ResponseContract(null, ErrorMessageEnum.USER_NOT_FOUND)
+			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
 
 		const device = await this.usersRepository
 			.findDeviceById(command.deviceSession.id)
 		if (device === null)
-			return new ResponseContract(null, ErrorMessageEnum.DEVICE_NOT_FOUND)
+			return new ReturnContract(null, ErrorEnum.DEVICE_NOT_FOUND)
 		if (command.deviceSession.iat !== device.lastActiveDate)
-			return new ResponseContract(null, ErrorMessageEnum.TOKEN_NOT_VERIFY)
+			return new ReturnContract(null, ErrorEnum.TOKEN_NOT_VERIFY)
 
 		const accessJwtSecret = this.configService
 			.get(Secrets.ACCESS_JWT_SECRET, { infer: true })
@@ -63,7 +63,7 @@ export class RefreshTokenUseCase
 		await this.usersRepository
 			.updateActiveDate(tokenPayload.deviceId, timeStamp)
 
-		return new ResponseContract(
+		return new ReturnContract(
 			{ accessJwt: { accessToken }, refreshToken }, null)
 	}
 }

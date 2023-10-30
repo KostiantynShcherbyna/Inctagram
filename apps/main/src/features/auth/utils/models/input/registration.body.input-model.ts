@@ -17,7 +17,7 @@ export class RegistrationBodyInputModel {
 		minLength: LOGIN_MIN_LENGTH,
 		pattern: '^[a-zA-Z0-9_-]*$'
 	})
-	@Transform(({ value }) => trimTransformer(value, 'login'))
+	@Transform(({ value }) => trimTransformer(value, 'username'))
 	@IsString()
 	@Length(LOGIN_MIN_LENGTH, LOGIN_MAX_LENGTH)
 	@Matches(LOGIN_REGEX)
@@ -32,11 +32,16 @@ export class RegistrationBodyInputModel {
 	@Length(PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH)
 	password: string
 
-	@ApiProperty({ pattern: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$' })
+	@ApiProperty({
+		maxLength: PASSWORD_MAX_LENGTH,
+		minLength: PASSWORD_MIN_LENGTH,
+		pattern: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'
+	})
 	@Transform(({ value }) => trimTransformer(value, 'email'))
 	@IsString()
 	@IsNotEmpty()
 	@IsEmail()
 	@Matches(EMAIL_REGISTRATION_REGEX)
 	email: string
+
 }
