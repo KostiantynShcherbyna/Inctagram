@@ -7,6 +7,7 @@ import { UserPhotosRepository } from '../../rep/user-photos.repository'
 import { randomUUID } from 'crypto'
 import { join } from 'node:path'
 import { FilesFirebaseAdapter } from '../../../../infrastructure/adapters/files.firebase.adapter'
+import { PrismaClient } from '@prisma/client'
 
 export class UploadPhotoCommand {
 	constructor(
@@ -25,7 +26,8 @@ export class UploadPhotoUseCase
 	constructor(
 		protected filesFirebaseAdapter: FilesFirebaseAdapter,
 		protected usersRepository: UsersRepository,
-		protected userPhotosRepository: UserPhotosRepository
+		protected userPhotosRepository: UserPhotosRepository,
+		protected prisma: PrismaClient
 	) {
 	}
 
@@ -40,19 +42,20 @@ export class UploadPhotoUseCase
 			'users', command.userId,
 			'photos', photoId, command.originalname)
 
-		await this.filesFirebaseAdapter.uploadUserPhoto(folderPath, {
-			originalname: command.originalname,
-			buffer: command.buffer,
-			mimetype: command.mimetype
+		const uploadFileUrl = await this.prisma.$transaction(async () => {
+			await this.userPhotosRepository.uploadUserPhoto({
+				userId: command.userId,
+				path: folderPath,
+				contentType: command.mimetype
+			})
+			return await this.filesFirebaseAdapter.uploadUserPhoto(folderPath, {
+				originalname: command.originalname,
+				buffer: command.buffer,
+				mimetype: command.mimetype
+			})
 		})
 
-		await this.userPhotosRepository.uploadUserPhoto({
-			userId: command.userId,
-			path: folderPath,
-			contentType: command.mimetype
-		})
-
-		return new ReturnContract(true, null)
+		return new ReturnContract({ url: uploadFileUrl }, null)
 	}
 
 }

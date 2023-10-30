@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { PhotoNormalTypes } from '../utils/constants'
 
-export interface ISavePhoto {
+export interface IFile {
 	originalname: string
 	buffer: Buffer,
 	mimetype: PhotoNormalTypes
@@ -26,7 +26,7 @@ export class FilesS3Adapter {
 		})
 	}
 
-	async uploadUserPhoto(folderPath: string, data: ISavePhoto) {
+	async uploadUserPhoto(folderPath: string, data: IFile) {
 
 		const command = new PutObjectCommand({
 			Bucket: this.bucketName,

@@ -49,20 +49,21 @@ export class UserController {
 	) {
 		console.log('file', file)
 		const fillResult = await this.commandBus.execute(
-			new FillProfileCommand({
-				userId: deviceSession.userId,
-				username: body.username,
-				firstname: body.firstname,
-				lastname: body.lastname,
-				birthDate: body.birthDate,
-				city: body.city,
-				aboutMe: body.aboutMe,
-				file: {
+			new FillProfileCommand(deviceSession.userId,
+				{
+					username: body.username,
+					firstname: body.firstname,
+					lastname: body.lastname,
+					birthDate: body.birthDate,
+					city: body.city,
+					aboutMe: body.aboutMe
+				},
+				{
 					originalname: file.originalname,
 					buffer: file.buffer,
 					mimetype: file.mimetype as PhotoNormalTypes
 				}
-			})
+			)
 		)
 
 		if (fillResult.error === ErrorEnum.USER_NOT_FOUND)
@@ -116,6 +117,7 @@ export class UserController {
 		)
 		if (uploadResult.error === ErrorEnum.NOT_FOUND)
 			throw new UnauthorizedException()
+		return uploadResult
 	}
 
 	@UseGuards(AccessGuard)
@@ -136,5 +138,6 @@ export class UserController {
 		if (deleteResult.error === ErrorEnum.FORBIDDEN)
 			throw new ForbiddenException()
 	}
+
 
 }

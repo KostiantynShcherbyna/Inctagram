@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer'
-import { IsDateString, IsString, Length, Matches, MaxLength, Validate } from 'class-validator'
+import { IsDateString, IsOptional, IsString, Length, Matches, MaxLength, Validate } from 'class-validator'
 import {
 	ABOUT_ME_MAX_LENGTH,
 	FIRSTNAME_MAX_LENGTH,
@@ -49,11 +49,13 @@ export class FillProfileBodyInputModel {
 	lastname: string
 
 	@ApiProperty()
+	@IsOptional()
 	@IsDateString()
 	@Validate(BirthDateValidator)
 	birthDate: string
 
 	@ApiProperty()
+	@IsOptional()
 	@Transform(({ value }) => trimTransformer(value, 'city'))
 	@IsString()
 	city: string
@@ -62,6 +64,7 @@ export class FillProfileBodyInputModel {
 		maxLength: ABOUT_ME_MAX_LENGTH,
 		pattern: '^[a-zA-Z0-9_-]*$'
 	})
+	@IsOptional()
 	@Transform(({ value }) => trimTransformer(value, 'aboutMe'))
 	@IsString()
 	@MaxLength(ABOUT_ME_MAX_LENGTH)
