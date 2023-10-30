@@ -29,7 +29,6 @@ import { GithubAuthValidator } from './features/auth/utils/validators/github-aut
 import { UserPhotoGuard } from './features/users/utils/guards/user-photo.guard'
 import { UserController } from './features/users/api/user.controller'
 import { UploadPhotoUseCase } from './features/users/app/use-cases/upload-photo.use.case'
-import { FilesS3Adapter } from './infrastructure/adapters/files.s3.adapter'
 import { UserPhotosRepository } from './features/users/rep/user-photos.repository'
 import { DeletePhotoUseCase } from './features/users/app/use-cases/delete-photo.use-case'
 import { EditProfileUseCase } from './features/users/app/use-cases/edit-profile.use-case'
@@ -45,7 +44,7 @@ const services = [
 	EmailAdapter,
 	SessionSerializer,
 	UserPhotoGuard,
-	FilesS3Adapter,
+	// FilesS3Adapter,
 	FilesFirebaseAdapter
 ]
 const controllers = [
