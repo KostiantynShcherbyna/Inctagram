@@ -76,7 +76,7 @@ export class UsersRepository {
 
 	async findActivePasswordRecoveryCodeByEmail(email: string)
 		: Promise<PasswordRecoveryCode> {
-		return this.prismaClient.passwordRecoveryCode.findUnique({
+		return this.prismaClient.passwordRecoveryCode.findFirst({
 			where: { email, active: true }
 		})
 	}
