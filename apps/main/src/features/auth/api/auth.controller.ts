@@ -1,7 +1,8 @@
 import {
 	BadRequestException,
 	Body,
-	Controller, Get,
+	Controller,
+	Get,
 	Headers,
 	HttpCode,
 	HttpStatus,
@@ -165,7 +166,10 @@ export class AuthController {
 	@ApiUnauthorizedResponse({
 		description: 'If the JWT refreshToken inside cookie is missing, expired or incorrect'
 	})
-	async logout(@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel) {
+	async logout(
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
+		@Res({ passthrough: true }) res: Response
+	) {
 		const logoutContract = await this.commandBus.execute(
 			new LogoutCommand(
 				deviceSession.id,
@@ -183,6 +187,8 @@ export class AuthController {
 			throw new UnauthorizedException()
 		if (logoutContract.error === ErrorEnum.TOKEN_NOT_VERIFY)
 			throw new UnauthorizedException()
+
+		res.clearCookie('refreshToken') // TODO todo not delete device
 	}
 
 

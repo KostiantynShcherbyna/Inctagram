@@ -3,7 +3,7 @@ import { emailService } from '../services/email.service'
 export class EmailAdapter {
 	async sendConfirmationCode(email: string, confirmationCode: string) {
 		console.log('confirmationCode', confirmationCode)
-		const domain = `https://visualvoyage.ru`
+		const domain = `http://localhost:3000/api`
 		await emailService.sendEmail({
 			service: 'gmail',
 			user: 'kstntn.xxx@gmail.com',
@@ -22,7 +22,7 @@ export class EmailAdapter {
 	async sendPasswordRecovery(email: string, passwordRecoveryCode: string) {
 		console.log('passwordRecoveryCode', passwordRecoveryCode)
 
-		const domain = `https://visualvoyage.ru`
+		const domain = `http://localhost:3000/api`
 
 		const emailDTO = {
 			service: 'gmail',
