@@ -2,6 +2,7 @@ import { emailService } from '../services/email.service'
 
 export class EmailAdapter {
 	async sendConfirmationCode(email: string, confirmationCode: string) {
+		console.log('confirmationCode', confirmationCode)
 		const domain = `https://visualvoyage.ru`
 		await emailService.sendEmail({
 			service: 'gmail',
@@ -11,15 +12,15 @@ export class EmailAdapter {
 			email: email,
 			subject: 'registration confirmation',
 			message: `<h1>Thanks for your registration</h1>
-            <p>To finish registration please follow the link below:
-            <a href='${domain}/confirm-email?code=${confirmationCode}'
-            >complete registration with code</a>
+            <p>To finish registration please follow the link below: 
+            <a href='${domain}/registration-confirmation?confirmationCode=${confirmationCode}'
+            >link</a>
             </p>`
 		})
 	}
 
-	async sendPasswordRecovery(email: string, passwordRecoveryToken: string) {
-		console.log('passwordRecoveryToken - ' + passwordRecoveryToken)
+	async sendPasswordRecovery(email: string, passwordRecoveryCode: string) {
+		console.log('passwordRecoveryCode', passwordRecoveryCode)
 
 		const domain = `https://visualvoyage.ru`
 
@@ -33,7 +34,7 @@ export class EmailAdapter {
 			subject: 'recovery password',
 			message: `<h1>Password Recovery</h1>
             <p>To finish to recovery password follow the link below:
-            <a href='${domain}/password-recovery?recoveryCode=${passwordRecoveryToken}'
+            <a href='${domain}/password-recovery?passwordRecoveryCode=${passwordRecoveryCode}'
             >link</a> 
             </p>`
 		}

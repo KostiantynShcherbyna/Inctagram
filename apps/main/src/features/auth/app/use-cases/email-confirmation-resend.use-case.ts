@@ -33,7 +33,6 @@ export class EmailConfirmationResendUseCase
 
 		const newConfirmationCode = await this
 			.createNewConfirmationCode(user.username, user.email)
-		console.log('newConfirmationCode', newConfirmationCode)
 
 		const confirmationCode = await this.usersRepository
 			.createConfirmationCode(user.id, newConfirmationCode)

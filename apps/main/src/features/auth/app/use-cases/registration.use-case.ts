@@ -40,36 +40,33 @@ export class RegistrationUseCase
 		if (user?.email === command.email)
 			return new ReturnContract(null, ErrorEnum.USER_EMAIL_EXIST)
 
-		const registrationResult = await this.prisma.$transaction(async () => {
-			const user = await this.usersRepository
-				.createUser({
+		const registrationResult = await this.prisma.$transaction(
+			async () => {
+				const user = await this.usersRepository.createUser({
 					username: command.login,
 					email: command.email,
 					password: command.password
 				})
-			const confirmationCode = await this
-				.generateConfirmationCode({
+				const confirmationCode = await this.generateConfirmationCode({
 					userId: user.id,
 					tokensService: this.tokensService,
 					configService: this.configService
 				})
-			const newConfirmationCode = await this.usersRepository
-				.createConfirmationCode(user.id, confirmationCode)
+				const newConfirmationCode = await this.usersRepository
+					.createConfirmationCode(user.id, confirmationCode)
 
-			return { user, newConfirmationCode }
-		})
+				return { user, newConfirmationCode }
+			})
+
 		if (!registrationResult)
 			return new ReturnContract(false, ErrorEnum.EXCEPTION)
-
-		console.log(
-			'confirmationCode',
-			registrationResult.newConfirmationCode.confirmationCode)
 
 		await this.emailAdapter.sendConfirmationCode(
 			registrationResult.user.email,
 			registrationResult.newConfirmationCode.confirmationCode)
 		return new ReturnContract(true, null)
 	}
+
 
 	private async generateConfirmationCode(
 		{ userId, tokensService, configService }): Promise<string> {
