@@ -65,7 +65,7 @@ export class RegistrationUseCase
 			'confirmationCode',
 			registrationResult.newConfirmationCode.confirmationCode)
 
-		this.emailAdapter.sendConfirmationCode(
+		await this.emailAdapter.sendConfirmationCode(
 			registrationResult.user.email,
 			registrationResult.newConfirmationCode.confirmationCode)
 		return new ReturnContract(true, null)

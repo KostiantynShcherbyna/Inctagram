@@ -46,7 +46,7 @@ export class PasswordRecoveryUseCase
 				active: true
 			})
 		console.log('newPasswordRecoveryCode', newPasswordRecoveryCode)
-		this.emailAdapter.sendPasswordRecovery(newPasswordRecoveryCodeResult.email, newPasswordRecoveryCodeResult.recoveryCode)
+		await this.emailAdapter.sendPasswordRecovery(newPasswordRecoveryCodeResult.email, newPasswordRecoveryCodeResult.recoveryCode)
 
 		return new ReturnContract(true, null)
 	}

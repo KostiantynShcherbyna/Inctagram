@@ -38,7 +38,7 @@ export class EmailConfirmationResendUseCase
 		const confirmationCode = await this.usersRepository
 			.createConfirmationCode(user.id, newConfirmationCode)
 
-		this.emailAdapter
+		await this.emailAdapter
 			.sendConfirmationCode(user.email, confirmationCode.confirmationCode)
 
 		return new ReturnContract(true, null)
