@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { ConfirmationCode, Device, PasswordRecoveryCode, PrismaClient, User } from '@prisma/client'
 import { UserDetails } from '../../../infrastructure/types/user-details.type'
-import { generateHashService } from '../../../infrastructure/services/generate-hash.service'
 
 interface ICreatePasswordRecoveryCode {
 	email: string
@@ -55,8 +54,7 @@ export class UsersRepository {
 		return this.prismaClient.user.findUnique({ where: { id } })
 	}
 
-	async createUser({ username, email, password }): Promise<User> {
-		const passwordHash = await generateHashService(password)
+	async createUser({ username, email, passwordHash }): Promise<User> {
 		return this.prismaClient.user.create({ data: { username, email, passwordHash } })
 	}
 

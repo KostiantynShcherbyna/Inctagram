@@ -3,7 +3,7 @@ import { Profile, Strategy } from 'passport-google-oauth20'
 import * as process from 'process'
 import { Inject, Injectable } from '@nestjs/common'
 import * as dotenv from 'dotenv'
-import { GoogleAuthValidator } from '../validators/google-auth.validator'
+import { GoogleAuthValidator } from '../middlewares/auth/validators/google-auth.validator'
 
 dotenv.config()
 

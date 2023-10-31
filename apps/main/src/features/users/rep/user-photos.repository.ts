@@ -3,6 +3,7 @@ import { PrismaClient, UserPhoto } from '@prisma/client'
 import { PhotoNormalTypes } from '../../../infrastructure/utils/constants'
 
 interface IUploadUserPhoto {
+	id: string
 	userId: string
 	path: string
 	contentType: PhotoNormalTypes

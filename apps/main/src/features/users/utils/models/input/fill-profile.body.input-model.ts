@@ -12,7 +12,8 @@ import {
 } from '../../../../../infrastructure/utils/constants'
 import { trimTransformer } from '../../../../../infrastructure/utils/trim-transformer'
 import { ApiProperty } from '@nestjs/swagger'
-import { BirthDateValidator } from '../../validators/birth-date.validator'
+import { BirthDateValidator } from '../../../../../infrastructure/middlewares/users/birth-date.validator'
+import { CityValidator } from '../../../../../infrastructure/middlewares/users/city.validator'
 
 export class FillProfileBodyInputModel {
 	@ApiProperty({
@@ -20,11 +21,11 @@ export class FillProfileBodyInputModel {
 		minLength: LOGIN_MIN_LENGTH,
 		pattern: '^[a-zA-Z0-9_-]*$'
 	})
-	@Transform(({ value }) => trimTransformer(value, 'username'))
+	@Transform(({ value }) => trimTransformer(value, 'login'))
 	@IsString()
 	@Length(LOGIN_MIN_LENGTH, LOGIN_MAX_LENGTH)
 	@Matches(LOGIN_REGEX)
-	username: string
+	login: string
 
 	@ApiProperty({
 		maxLength: FIRSTNAME_MAX_LENGTH,
@@ -58,6 +59,7 @@ export class FillProfileBodyInputModel {
 	@IsOptional()
 	@Transform(({ value }) => trimTransformer(value, 'city'))
 	@IsString()
+	@Validate(CityValidator)
 	city: string
 
 	@ApiProperty({

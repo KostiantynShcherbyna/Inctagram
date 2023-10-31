@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
-import { PhotoNormalTypes, WALLPAPER_NORMAL_SIZE } from '../../../../infrastructure/utils/constants'
-import { outputMessageException } from '../../../../infrastructure/utils/output-message-exception'
-import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
+import { PhotoNormalTypes, WALLPAPER_NORMAL_SIZE } from '../../utils/constants'
+import { outputMessageException } from '../../utils/output-message-exception'
+import { ErrorEnum } from '../../utils/error-enum'
 
 @Injectable()
-export class UserPhotoGuard implements PipeTransform {
+export class UserPhotoUploadPipe implements PipeTransform {
 	async transform(file: Express.Multer.File) {
 		if (!file) throw new BadRequestException(outputMessageException(
 			ErrorEnum.FILE_IS_REQUIRED, 'file'))

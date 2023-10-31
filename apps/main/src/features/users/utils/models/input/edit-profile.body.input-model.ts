@@ -12,7 +12,8 @@ import {
 } from '../../../../../infrastructure/utils/constants'
 import { trimTransformer } from '../../../../../infrastructure/utils/trim-transformer'
 import { ApiProperty } from '@nestjs/swagger'
-import { BirthDateValidator } from '../../validators/birth-date.validator'
+import { BirthDateValidator } from '../../../../../infrastructure/middlewares/users/birth-date.validator'
+import { CityValidator } from '../../../../../infrastructure/middlewares/users/city.validator'
 
 export class EditProfileBodyInputModel {
 	@ApiProperty({
@@ -61,6 +62,7 @@ export class EditProfileBodyInputModel {
 	@IsOptional()
 	@Transform(({ value }) => trimTransformer(value, 'city'))
 	@IsString()
+	@Validate(CityValidator)
 	city: string
 
 	@ApiProperty({
