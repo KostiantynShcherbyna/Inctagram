@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import * as process from 'process'
-import { GithubAuthValidator } from '../validators/github-auth.validator'
+import { GithubAuthValidator } from '../middlewares/auth/validators/github-auth.validator'
 import { Profile, Strategy } from 'passport-github2'
 
 

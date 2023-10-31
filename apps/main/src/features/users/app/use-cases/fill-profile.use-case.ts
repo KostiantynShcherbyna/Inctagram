@@ -53,11 +53,8 @@ export class FillProfileUseCase
 			'users', command.userId,
 			'photos', photoId, command.file.originalname)
 
-		await this.filesFirebaseAdapter.uploadUserPhoto(folderPath, {
-			originalname: command.file.originalname,
-			buffer: command.file.buffer,
-			mimetype: command.file.mimetype
-		})
+		await this.filesFirebaseAdapter
+			.uploadUserPhoto(folderPath, command.file.buffer)
 
 		const [userPhoto, updatedUser] = await this.prisma.$transaction([
 			this.prisma.userPhoto.create({

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { UsersRepository } from '../../../users/rep/users.repository'
+import { UsersRepository } from '../../../../features/users/rep/users.repository'
 
 @Injectable()
-export class GoogleAuthValidator {
+export class GithubAuthValidator {
 	constructor(private readonly userRepository: UsersRepository) {
 	}
 

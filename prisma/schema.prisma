@@ -56,11 +56,11 @@ model PasswordRecoveryCode {
 }
 
 model UserPhoto {
-  id          String   @id @default(uuid()) @map("user_avatar_id")
+  id          String   @id @map("user_avatar_id")
   path        String   @unique
   contentType String   @map("content_type")
   createdAt   DateTime @default(now()) @map("created_at")
-  userId      String   @default(uuid()) @map("user_id")
+  userId      String   @map("user_id")
 
   user User @relation(fields: [userId], references: [id])
 }

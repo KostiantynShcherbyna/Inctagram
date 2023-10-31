@@ -5,7 +5,7 @@ import {
 	UnauthorizedException
 } from '@nestjs/common'
 import { Request } from 'express'
-import { TokensService } from '../../../../infrastructure/services/tokens.service'
+import { TokensService } from '../../../services/tokens.service'
 import { ConfigService } from "@nestjs/config"
 
 @Injectable()
@@ -16,16 +16,12 @@ export class RefreshGuard implements CanActivate {
 	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
-		const refreshJwtSecret = this.configService.get('REFRESH_JWT_SECRET')
-
 		const request = context.switchToHttp().getRequest()
 		const token = this.extractTokenFromHeader(request)
 		if (!token) throw new UnauthorizedException('Not found token in request')
 
-		const payload = await this.tokensService.verifyToken(
-			token,
-			refreshJwtSecret
-		)
+		const refreshJwtSecret = this.configService.get('REFRESH_JWT_SECRET')
+		const payload = await this.tokensService.verifyToken(token, refreshJwtSecret)
 		if (payload === null) throw new UnauthorizedException('Not verify token')
 		request['deviceSession'] = payload
 		return true

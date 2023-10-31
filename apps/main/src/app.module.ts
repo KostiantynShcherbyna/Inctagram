@@ -19,14 +19,14 @@ import { LogoutUseCase } from './features/auth/app/use-cases/logout.use-case'
 import { NewPasswordUseCase } from './features/auth/app/use-cases/new-password.use-case'
 import { PasswordRecoveryUseCase } from './features/auth/app/use-cases/password-recovery.use-case'
 import { GoogleLoginUseCase } from './features/auth/app/use-cases/google-login.use-case'
-import { GoogleAuthStrategy } from './features/auth/utils/strategies/google-auth.strategy'
+import { GoogleAuthStrategy } from './infrastructure/strategies/google-auth.strategy'
 import { SessionSerializer } from './infrastructure/utils/session-serializer'
-import { GoogleAuthValidator } from './features/auth/utils/validators/google-auth.validator'
+import { GoogleAuthValidator } from './infrastructure/middlewares/auth/validators/google-auth.validator'
 import { PassportModule } from '@nestjs/passport'
 import { GitHubLoginUseCase } from './features/auth/app/use-cases/github-login.use-case'
-import { GithubAuthStrategy } from './features/auth/utils/strategies/github-auth.strategy'
-import { GithubAuthValidator } from './features/auth/utils/validators/github-auth.validator'
-import { UserPhotoGuard } from './features/users/utils/guards/user-photo.guard'
+import { GithubAuthStrategy } from './infrastructure/strategies/github-auth.strategy'
+import { GithubAuthValidator } from './infrastructure/middlewares/auth/validators/github-auth.validator'
+import { UserPhotoUploadPipe } from './infrastructure/middlewares/users/user-photo-upload.pipe'
 import { UserController } from './features/users/api/user.controller'
 import { UploadPhotoUseCase } from './features/users/app/use-cases/upload-photo.use.case'
 import { UserPhotosRepository } from './features/users/rep/user-photos.repository'
@@ -43,8 +43,7 @@ const services = [
 	PrismaService,
 	EmailAdapter,
 	SessionSerializer,
-	UserPhotoGuard,
-	// FilesS3Adapter,
+	UserPhotoUploadPipe,
 	FilesFirebaseAdapter
 ]
 const controllers = [

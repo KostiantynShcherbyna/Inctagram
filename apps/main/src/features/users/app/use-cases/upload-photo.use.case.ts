@@ -2,12 +2,14 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { UsersRepository } from '../../rep/users.repository'
 import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
-import { PhotoNormalTypes } from '../../../../infrastructure/utils/constants'
+import { PhotoNormalTypes, Secrets } from '../../../../infrastructure/utils/constants'
 import { UserPhotosRepository } from '../../rep/user-photos.repository'
-import { randomUUID } from 'crypto'
-import { join } from 'node:path'
 import { FilesFirebaseAdapter } from '../../../../infrastructure/adapters/files.firebase.adapter'
 import { PrismaClient } from '@prisma/client'
+import { ConfigService } from '@nestjs/config'
+import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
+import { TokensService } from '../../../../infrastructure/services/tokens.service'
+import { randomUUID } from 'crypto'
 
 export class UploadPhotoCommand {
 	constructor(
@@ -20,6 +22,14 @@ export class UploadPhotoCommand {
 }
 
 
+interface ICreateUserPhotoPathToken {
+	userId: string
+	photoId: string
+	originalname: string
+	tokensService: TokensService
+	configService: ConfigService<ConfigType, true>
+}
+
 @CommandHandler(UploadPhotoCommand)
 export class UploadPhotoUseCase
 	implements ICommandHandler<UploadPhotoCommand> {
@@ -27,7 +37,9 @@ export class UploadPhotoUseCase
 		protected filesFirebaseAdapter: FilesFirebaseAdapter,
 		protected usersRepository: UsersRepository,
 		protected userPhotosRepository: UserPhotosRepository,
-		protected prisma: PrismaClient
+		protected prisma: PrismaClient,
+		protected configService: ConfigService<ConfigType, true>,
+		protected tokensService: TokensService
 	) {
 	}
 
@@ -38,24 +50,42 @@ export class UploadPhotoUseCase
 
 		const photoId = randomUUID()
 
-		const folderPath = join(
-			'users', command.userId,
-			'photos', photoId, command.originalname)
-
-		const uploadFileUrl = await this.prisma.$transaction(async () => {
-			await this.userPhotosRepository.uploadUserPhoto({
-				userId: command.userId,
-				path: folderPath,
-				contentType: command.mimetype
-			})
-			return await this.filesFirebaseAdapter.uploadUserPhoto(folderPath, {
-				originalname: command.originalname,
-				buffer: command.buffer,
-				mimetype: command.mimetype
-			})
+		const photoPathToken = await this.createUserPhotoPathToken({
+			userId: command.userId,
+			photoId: photoId,
+			originalname: command.originalname,
+			tokensService: this.tokensService,
+			configService: this.configService
 		})
 
-		return new ReturnContract({ url: uploadFileUrl }, null)
+		await this.userPhotosRepository.uploadUserPhoto({
+			id: photoId,
+			userId: command.userId,
+			path: photoPathToken,
+			contentType: command.mimetype
+		})
+		const uploadFileUrl = await this.filesFirebaseAdapter.uploadUserPhoto(
+			photoPathToken, command.buffer)
+
+		return new ReturnContract(
+			{ url: uploadFileUrl, photoToken: photoPathToken },
+			null
+		)
+	}
+
+	private async createUserPhotoPathToken(details: ICreateUserPhotoPathToken)
+		: Promise<string> {
+		const userPhotoSecret = this.configService
+			.get(Secrets.USERPHOTO_SECRET, { infer: true })
+
+		return await details.tokensService.createToken(
+			{
+				userId: details.userId,
+				photoId: details.photoId,
+				originalname: details.originalname
+			},
+			userPhotoSecret
+		)
 	}
 
 }
