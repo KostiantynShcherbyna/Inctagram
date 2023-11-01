@@ -34,6 +34,8 @@ import { DeletePhotoUseCase } from './features/users/app/use-cases/delete-photo.
 import { EditProfileUseCase } from './features/users/app/use-cases/edit-profile.use-case'
 import { FillProfileUseCase } from './features/users/app/use-cases/fill-profile.use-case'
 import { FilesFirebaseAdapter } from './infrastructure/adapters/files.firebase.adapter'
+import { HashService } from './infrastructure/services/hash.service'
+import { Base64Service } from './infrastructure/services/base64.service'
 
 const services = [
 	PrismaClient,
@@ -44,7 +46,9 @@ const services = [
 	EmailAdapter,
 	SessionSerializer,
 	UserPhotoUploadPipe,
-	FilesFirebaseAdapter
+	FilesFirebaseAdapter,
+	HashService,
+	Base64Service
 ]
 const controllers = [
 	AuthController,

@@ -312,7 +312,7 @@ export class AuthController {
 			httpOnly: true,
 			secure: true
 		})
-		return loginContract.data?.accessJwt
+		return loginContract.data.accessJwt
 	}
 
 
@@ -352,7 +352,7 @@ export class AuthController {
 			httpOnly: true,
 			secure: true
 		})
-		return loginContract.data?.accessJwt
+		return loginContract.data.accessJwt
 	}
 
 

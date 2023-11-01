@@ -8,7 +8,7 @@ import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { UsersRepository } from '../../../users/rep/users.repository'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
-import { generateHashService } from '../../../../infrastructure/services/generate-hash.service'
+import { HashService } from '../../../../infrastructure/services/hash.service'
 
 export class RegistrationCommand {
 	constructor(
@@ -27,7 +27,8 @@ export class RegistrationUseCase
 		protected configService: ConfigService<ConfigType, true>,
 		protected tokensService: TokensService,
 		protected usersRepository: UsersRepository,
-		protected emailAdapter: EmailAdapter
+		protected emailAdapter: EmailAdapter,
+		protected hashService: HashService
 	) {
 	}
 
@@ -41,7 +42,7 @@ export class RegistrationUseCase
 		if (user?.email === command.email)
 			return new ReturnContract(null, ErrorEnum.USER_EMAIL_EXIST)
 
-		const passwordHash = await generateHashService(command.password)
+		const passwordHash = await this.hashService.encryption(command.password)
 
 		const registrationResult = await this.prisma.$transaction(
 			async () => {

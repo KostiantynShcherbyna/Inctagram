@@ -3,15 +3,9 @@ import { UsersRepository } from '../../rep/users.repository'
 import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { PrismaClient, User } from '@prisma/client'
+import { IEditProfile } from '../../../../infrastructure/types/edit-profile.interface'
 
-interface IEditProfile {
-	username?: string,
-	firstname?: string,
-	lastname?: string,
-	birthDate?: string,
-	city?: string,
-	aboutMe?: string,
-}
+
 
 export class EditProfileCommand {
 	constructor(

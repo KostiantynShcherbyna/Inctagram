@@ -7,8 +7,8 @@ import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { ConfigService } from '@nestjs/config'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { UsersRepository } from '../../../users/rep/users.repository'
-import { compareHashService } from '../../../../infrastructure/services/compare-hash.service'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
+import { HashService } from '../../../../infrastructure/services/hash.service'
 
 export class LoginCommand {
 	constructor(
@@ -24,7 +24,8 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 	constructor(
 		protected configService: ConfigService<ConfigType, true>,
 		protected tokensService: TokensService,
-		protected usersRepository: UsersRepository
+		protected usersRepository: UsersRepository,
+		protected hashService: HashService
 	) {
 	}
 
@@ -41,7 +42,7 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 			return new ReturnContract(
 				null, ErrorEnum.USER_EMAIL_NOT_CONFIRMED)
 
-		if ((await compareHashService(
+		if ((await this.hashService.comparison(
 			user.passwordHash, command.loginBody.password)) === false)
 			return new ReturnContract(
 				null, ErrorEnum.PASSWORD_NOT_COMPARED)

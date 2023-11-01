@@ -1,8 +1,7 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-local'
 import { StrategyNames } from '../utils/constants'
-import { compareHashService } from '../services/compare-hash.service'
 
 @Injectable()
 export class LoginLocalStrategySql extends PassportStrategy(

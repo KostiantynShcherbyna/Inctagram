@@ -114,7 +114,7 @@ export class UserController {
 				file.mimetype as PhotoNormalTypes
 			)
 		)
-		if (uploadResult.error === ErrorEnum.NOT_FOUND)
+		if (uploadResult.error === ErrorEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
 		return uploadResult.data
 	}

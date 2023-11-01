@@ -6,7 +6,7 @@ import { TokensService } from '../../../../infrastructure/services/tokens.servic
 import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { UsersRepository } from '../../../users/rep/users.repository'
-import { generateHashService } from '../../../../infrastructure/services/generate-hash.service'
+import { HashService } from '../../../../infrastructure/services/hash.service'
 
 export class NewPasswordCommand {
 	constructor(public newPassword: string, public recoveryCode: string) {
@@ -19,7 +19,8 @@ export class NewPasswordUseCase
 	constructor(
 		protected configService: ConfigService<ConfigType, true>,
 		protected tokensService: TokensService,
-		protected usersRepository: UsersRepository
+		protected usersRepository: UsersRepository,
+		protected hashService: HashService
 	) {
 	}
 
@@ -48,7 +49,7 @@ export class NewPasswordUseCase
 		if (user === null)
 			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
 
-		const newPasswordHash = await generateHashService(command.newPassword)
+		const newPasswordHash = await this.hashService.encryption(command.newPassword)
 
 		await this.usersRepository.updatePasswordHash(user.id, newPasswordHash)
 		await this.usersRepository.deactivatePasswordRecoveryCode(lastRecoveryCodeDto.id)

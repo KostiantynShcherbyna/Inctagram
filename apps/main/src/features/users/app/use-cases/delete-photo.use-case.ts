@@ -3,10 +3,10 @@ import { UserPhotosRepository } from '../../rep/user-photos.repository'
 import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { FilesFirebaseAdapter } from '../../../../infrastructure/adapters/files.firebase.adapter'
-import { Secrets } from '../../../../infrastructure/utils/constants'
 import { ConfigService } from '@nestjs/config'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
+import { Base64Service } from '../../../../infrastructure/services/base64.service'
 
 export class DeletePhotoCommand {
 	constructor(
@@ -23,23 +23,24 @@ export class DeletePhotoUseCase implements ICommandHandler<DeletePhotoCommand> {
 		protected filesFirebaseAdapter: FilesFirebaseAdapter,
 		protected userPhotosRepository: UserPhotosRepository,
 		protected configService: ConfigService<ConfigType, true>,
-		protected tokensService: TokensService
+		protected tokensService: TokensService,
+		protected base64Service: Base64Service
 	) {
 	}
 
 	async execute(command: DeletePhotoCommand) {
-		const userPhotoSecret = this.configService
-			.get(Secrets.USERPHOTO_SECRET, { infer: true })
 
-		const photoDetails = await this.tokensService
-			.verifyToken(command.photoToken, userPhotoSecret)
-		if (!photoDetails)
+		const photoDetails = await this.base64Service
+			.decodeUserPhoto(command.photoToken)
+		const photoTo = photoDetails.split(' ')
+
+		if (photoTo[0] !== command.userId)
 			return new ReturnContract(null, ErrorEnum.FORBIDDEN)
 
 		const photo = await this.userPhotosRepository
-			.findUserPhotoById(photoDetails.photoId)
-		if (!photo)
-			return new ReturnContract(null, ErrorEnum.NOT_FOUND)
+			.findUserPhotoById(photoTo[1])
+
+		if (!photo) return new ReturnContract(null, ErrorEnum.NOT_FOUND)
 		if (photo.userId !== command.userId)
 			return new ReturnContract(null, ErrorEnum.FORBIDDEN)
 
@@ -47,5 +48,6 @@ export class DeletePhotoUseCase implements ICommandHandler<DeletePhotoCommand> {
 		await this.userPhotosRepository.deleteUserPhoto(photo.id)
 		return new ReturnContract(true, null)
 	}
+
 
 }
