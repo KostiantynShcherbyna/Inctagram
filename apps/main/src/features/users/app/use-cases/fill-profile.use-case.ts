@@ -3,10 +3,10 @@ import { UsersRepository } from '../../rep/users.repository'
 import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { PrismaClient, User } from '@prisma/client'
-import { join } from 'node:path'
 import { randomUUID } from 'crypto'
 import { FilesFirebaseAdapter } from '../../../../infrastructure/adapters/files.firebase.adapter'
 import { PhotoNormalTypes } from '../../../../infrastructure/utils/constants'
+import { Base64Service } from '../../../../infrastructure/services/base64.service'
 
 interface IProfile {
 	username: string
@@ -38,7 +38,8 @@ export class FillProfileUseCase
 	constructor(
 		protected filesFirebaseAdapter: FilesFirebaseAdapter,
 		protected usersRepository: UsersRepository,
-		protected prisma: PrismaClient
+		protected prisma: PrismaClient,
+		protected base64Service: Base64Service
 	) {
 	}
 
@@ -49,19 +50,21 @@ export class FillProfileUseCase
 
 		const photoId = randomUUID()
 
-		const folderPath = join(
-			'users', command.userId,
-			'photos', photoId, command.file.originalname)
+		const photoPath = await this.base64Service.encodeUserPhoto({
+			userId: command.userId,
+			photoId: photoId,
+			originalname: command.file.originalname
+		})
 
 		await this.filesFirebaseAdapter
-			.uploadUserPhoto(folderPath, command.file.buffer)
+			.uploadUserPhoto(photoPath, command.file.buffer)
 
 		const [userPhoto, updatedUser] = await this.prisma.$transaction([
 			this.prisma.userPhoto.create({
 				data: {
 					id: photoId,
 					userId: command.userId,
-					path: folderPath,
+					path: photoPath,
 					contentType: command.file.mimetype
 				}
 			}),

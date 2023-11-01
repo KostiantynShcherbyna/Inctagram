@@ -27,7 +27,7 @@ import { GitHubLoginUseCase } from './features/auth/app/use-cases/github-login.u
 import { GithubAuthStrategy } from './infrastructure/strategies/github-auth.strategy'
 import { GithubAuthValidator } from './infrastructure/middlewares/auth/validators/github-auth.validator'
 import { UserPhotoUploadPipe } from './infrastructure/middlewares/users/user-photo-upload.pipe'
-import { UserController } from './features/users/api/user.controller'
+import { UsersController } from './features/users/api/users.controller'
 import { UploadPhotoUseCase } from './features/users/app/use-cases/upload-photo.use.case'
 import { UserPhotosRepository } from './features/users/rep/user-photos.repository'
 import { DeletePhotoUseCase } from './features/users/app/use-cases/delete-photo.use-case'
@@ -53,7 +53,7 @@ const services = [
 const controllers = [
 	AuthController,
 	TestingController,
-	UserController
+	UsersController
 ]
 const useCases = [
 	RegistrationUseCase,

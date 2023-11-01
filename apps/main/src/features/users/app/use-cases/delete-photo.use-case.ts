@@ -32,11 +32,12 @@ export class DeletePhotoUseCase implements ICommandHandler<DeletePhotoCommand> {
 
 		const photoDetails = await this.base64Service
 			.decodeUserPhoto(command.photoToken)
+		// Split on two parts userId and photoId
 		const photoTo = photoDetails.split(' ')
-
+		// Take on first part is userId
 		if (photoTo[0] !== command.userId)
 			return new ReturnContract(null, ErrorEnum.FORBIDDEN)
-
+		// Take on second part is photoId
 		const photo = await this.userPhotosRepository
 			.findUserPhotoById(photoTo[1])
 

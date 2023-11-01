@@ -277,18 +277,16 @@ export class AuthController {
 
 
 	@Get('google/login')
-	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GoogleAuthGuard)
-	@ApiResponse({ status: HttpStatus.NO_CONTENT })
+	@ApiResponse({ status: HttpStatus.OK })
 	async googleLogin() {
 		return { msg: 'Google Auth' }
 	}
 
 
 	@Get('google/redirect')
-	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GoogleAuthGuard)
-	@ApiResponse({ status: HttpStatus.NO_CONTENT })
+	@ApiResponse({ status: HttpStatus.OK })
 	async googleRedirect(
 		@Req() request: Request,
 		@Res({ passthrough: true }) res: Response
@@ -317,18 +315,16 @@ export class AuthController {
 
 
 	@Get('github/login')
-	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GitHubAuthGuard)
-	@ApiResponse({ status: HttpStatus.NO_CONTENT })
+	@ApiResponse({ status: HttpStatus.OK })
 	async githubLogin() {
 		return { msg: 'GitHub Auth' }
 	}
 
 
 	@Get('github/redirect')
-	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(GitHubAuthGuard)
-	@ApiResponse({ status: HttpStatus.NO_CONTENT })
+	@ApiResponse({ status: HttpStatus.OK })
 	async githubRedirect(
 		@Req() request: Request,
 		@Res({ passthrough: true }) res: Response
