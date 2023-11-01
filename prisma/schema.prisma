@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL_NEON")
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -56,7 +56,7 @@ model PasswordRecoveryCode {
 }
 
 model UserPhoto {
-  id          String   @id @map("user_avatar_id")
+  id          String   @id @map("user_photo_id")
   path        String   @unique
   contentType String   @map("content_type")
   createdAt   DateTime @default(now()) @map("created_at")

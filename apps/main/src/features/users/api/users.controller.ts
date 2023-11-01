@@ -34,7 +34,7 @@ import { EditProfileCommand } from '../app/use-cases/edit-profile.use-case'
 
 @Injectable()
 @Controller('users')
-export class UserController {
+export class UsersController {
 	constructor(protected commandBus: CommandBus) {
 	}
 
