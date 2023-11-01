@@ -53,7 +53,7 @@ export class UsersController {
 					username: body.login,
 					firstname: body.firstname,
 					lastname: body.lastname,
-					birthDate: body.birthDate,
+					birthDate: body.dateOfBirth,
 					city: body.city,
 					aboutMe: body.aboutMe
 				},
@@ -84,7 +84,7 @@ export class UsersController {
 				username: body.username,
 				firstname: body.firstname,
 				lastname: body.lastname,
-				birthDate: body.birthDate,
+				birthDate: body.dateOfBirth,
 				city: body.city,
 				aboutMe: body.aboutMe
 			})

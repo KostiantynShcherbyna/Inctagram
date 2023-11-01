@@ -10,7 +10,7 @@ dotenv.config()
 @Injectable()
 export class GoogleAuthStrategy extends PassportStrategy(Strategy) {
 	constructor(
-		@Inject('G00GLE_AUTH_SERVICE')
+		@Inject('G00GLE_AUTH_VALIDATOR')
 		private readonly authValidator: GoogleAuthValidator
 	) {
 		super({

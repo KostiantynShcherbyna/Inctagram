@@ -32,8 +32,6 @@ export class LogoutUseCase implements ICommandHandler<LogoutCommand> {
 		const device = await this.devicesRepository.findDeviceById(command.deviceId)
 		if (device === null)
 			return new ReturnContract(null, ErrorEnum.DEVICE_NOT_FOUND)
-		if (new Date(command.lastActiveDate).toISOString() !== device.lastActiveDate.toISOString())
-			return new ReturnContract(null, ErrorEnum.TOKEN_NOT_VERIFY) // TODO Think about
 
 		const deleteResult = await this.devicesRepository
 			.deleteDeviceById(command.deviceId)

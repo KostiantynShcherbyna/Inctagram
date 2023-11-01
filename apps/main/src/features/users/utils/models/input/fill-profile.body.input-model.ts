@@ -53,7 +53,7 @@ export class FillProfileBodyInputModel {
 	@IsOptional()
 	@IsDateString()
 	@Validate(BirthDateValidator)
-	birthDate: string
+	dateOfBirth: string
 
 	@ApiProperty()
 	@IsOptional()

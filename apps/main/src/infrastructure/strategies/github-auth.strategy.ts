@@ -9,7 +9,7 @@ import { Profile, Strategy } from 'passport-github2'
 export class GithubAuthStrategy
 	extends PassportStrategy(Strategy, 'github') {
 	constructor(
-		@Inject('GITHUB_AUTH_SERVICE')
+		@Inject('GITHUB_AUTH_VALIDATOR')
 		private readonly authValidator: GithubAuthValidator
 	) {
 		super({

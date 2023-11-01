@@ -2,7 +2,7 @@
 /dist
 /node_modules
 #.env
-
+/apps/main/test/infrastructure/testing.controller.ts
 # Logs
 logs
 *.log
