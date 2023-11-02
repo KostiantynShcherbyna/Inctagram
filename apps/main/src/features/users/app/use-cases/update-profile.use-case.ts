@@ -1,38 +1,32 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { UsersRepository } from '../../rep/users.repository'
-import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
-import { PrismaClient, User } from '@prisma/client'
-import { IEditProfile } from '../../../../infrastructure/types/edit-profile.interface'
+import { User } from '@prisma/client'
+import { UpdateProfileBodyInputModel } from '../../utils/models/input/update-profile.body.input-model'
 
 
-
-export class EditProfileCommand {
+export class UpdateProfileCommand {
 	constructor(
 		public userId: string,
-		public data: IEditProfile
+		public data: UpdateProfileBodyInputModel
 	) {
 	}
 }
 
-@CommandHandler(EditProfileCommand)
-export class EditProfileUseCase
-	implements ICommandHandler<EditProfileCommand> {
-	constructor(
-		protected usersRepository: UsersRepository,
-		protected prisma: PrismaClient
-	) {
+@CommandHandler(UpdateProfileCommand)
+export class UpdateProfileUseCase
+	implements ICommandHandler<UpdateProfileCommand> {
+	constructor(protected usersRepository: UsersRepository) {
 	}
 
-	async execute(command: EditProfileCommand) {
+	async execute(command: UpdateProfileCommand) {
 		const user = await this.usersRepository.findUserById(command.userId)
-		if (user === null)
-			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
+		if (user === null) return ErrorEnum.NOT_FOUND
 
 		const updatedUser = await this.usersRepository
-			.editUserInfo(user.id, { ...command.data })
+			.updateUserInfo(user.id, { ...command.data })
 
-		return new ReturnContract(this.mapUpdatedUser(updatedUser), null)
+		return this.mapUpdatedUser(updatedUser)
 	}
 
 	private mapUpdatedUser(updatedUser: User) {

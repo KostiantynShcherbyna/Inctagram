@@ -26,16 +26,19 @@ import { PassportModule } from '@nestjs/passport'
 import { GitHubLoginUseCase } from './features/auth/app/use-cases/github-login.use-case'
 import { GithubAuthStrategy } from './infrastructure/strategies/github-auth.strategy'
 import { GithubAuthValidator } from './infrastructure/middlewares/auth/validators/github-auth.validator'
-import { UserPhotoUploadPipe } from './infrastructure/middlewares/users/user-photo-upload.pipe'
+import { UploadAvatarPipe } from './infrastructure/middlewares/users/upload-avatar.pipe'
 import { UsersController } from './features/users/api/users.controller'
-import { UploadPhotoUseCase } from './features/users/app/use-cases/upload-photo.use.case'
-import { UserPhotosRepository } from './features/users/rep/user-photos.repository'
-import { DeletePhotoUseCase } from './features/users/app/use-cases/delete-photo.use-case'
-import { EditProfileUseCase } from './features/users/app/use-cases/edit-profile.use-case'
+import { UploadAvatarUseCase } from './features/users/app/use-cases/upload-avatar.use-case'
+import { DeleteAvatarUseCase } from './features/users/app/use-cases/delete-avatar.use-case'
+import { UpdateProfileUseCase } from './features/users/app/use-cases/update-profile.use-case'
 import { FillProfileUseCase } from './features/users/app/use-cases/fill-profile.use-case'
 import { FilesFirebaseAdapter } from './infrastructure/adapters/files.firebase.adapter'
 import { HashService } from './infrastructure/services/hash.service'
 import { Base64Service } from './infrastructure/services/base64.service'
+import { CreatePostUseCase } from './features/posts/app/use-cases/create-post.use.case'
+import { UpdatePostUseCase } from './features/posts/app/use-cases/update-post.use.case'
+import { DeletePostImageUseCase } from './features/posts/app/use-cases/delete-post-image.use-case'
+import { UploadPostImageUseCase } from './features/posts/app/use-cases/upload-post-image.use.case'
 
 const services = [
 	PrismaClient,
@@ -45,7 +48,7 @@ const services = [
 	PrismaService,
 	EmailAdapter,
 	SessionSerializer,
-	UserPhotoUploadPipe,
+	UploadAvatarPipe,
 	FilesFirebaseAdapter,
 	HashService,
 	Base64Service
@@ -66,15 +69,18 @@ const useCases = [
 	PasswordRecoveryUseCase,
 	GoogleLoginUseCase,
 	GitHubLoginUseCase,
-	UploadPhotoUseCase,
-	DeletePhotoUseCase,
-	EditProfileUseCase,
-	FillProfileUseCase
+	UploadAvatarUseCase,
+	DeleteAvatarUseCase,
+	UpdateProfileUseCase,
+	FillProfileUseCase,
+	CreatePostUseCase,
+	UpdatePostUseCase,
+	DeletePostImageUseCase,
+	UploadPostImageUseCase
 ]
 const repository = [
 	UsersRepository,
-	DevicesRepository,
-	UserPhotosRepository
+	DevicesRepository
 ]
 const strategies = [
 	GoogleAuthStrategy,

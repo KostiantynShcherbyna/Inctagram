@@ -7,7 +7,7 @@ export class FilesFirebaseAdapter {
 	constructor() {
 	}
 
-	async uploadUserPhoto(folderPath: string, data: Buffer) {
+	async uploadAvatar(folderPath: string, data: Buffer) {
 		const storage = getStorage()
 		const storageRef = ref(storage, folderPath)
 		const bytes = new Uint8Array(data.buffer)
@@ -17,13 +17,13 @@ export class FilesFirebaseAdapter {
 		return await getDownloadURL(storageRef)
 	}
 
-	async downloadUserPhoto(folderPath: string): Promise<string> {
+	async downloadAvatar(folderPath: string): Promise<string> {
 		const storage = getStorage()
 		const starsRef = ref(storage, folderPath)
 		return await getDownloadURL(starsRef)
 	}
 
-	async deleteUserPhoto(filePath: string) {
+	async deleteAvatar(filePath: string) {
 		const storage = getStorage()
 		const desertRef = ref(storage, filePath)
 		await deleteObject(desertRef)

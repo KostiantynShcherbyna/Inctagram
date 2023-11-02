@@ -1,18 +1,32 @@
 import { Injectable } from '@nestjs/common'
-import { ICreateUserPhotoPath } from '../types/create-user-photo-path.interface'
+import { ICreateAvatarPath } from '../types/auth.types'
+import { ICreatePostImagePath } from '../types/posts.types'
 
 @Injectable()
 export class Base64Service {
 
-	async encodeUserPhoto(details: ICreateUserPhotoPath)
+	async encodeAvatarPath(details: ICreateAvatarPath)
 		: Promise<string> {
-		const text = `${details.userId} ${details.photoId}`
-		const base64Text = Buffer.from(text).toString('base64')
-		return `${base64Text}${details.originalname}`
+		const path = `${details.userId} ${details.avatarId}`
+		const base64path = Buffer.from(path).toString('base64')
+		return `${base64path}${details.originalname}`
 	}
 
-	async decodeUserPhoto(photoToken: string): Promise<string> {
-		const codes = photoToken.split('==')
+	async decodeAvatarPath(avatarToken: string): Promise<string> {
+		const codes = avatarToken.split('==')
+		return Buffer.from(codes[0], 'base64').toString('utf-8')
+	}
+
+	async encodePostImagePath(details: ICreatePostImagePath)
+		: Promise<string> {
+		const path = `${details.userId} ${details.postId} ${details.imageId}`
+		const base64path = Buffer.from(path).toString('base64')
+		return `${base64path}${details.originalname}`
+	}
+
+	async decodePostImagePath(postImageToken: string)
+		: Promise<string> {
+		const codes = postImageToken.split('==')
 		return Buffer.from(codes[0], 'base64').toString('utf-8')
 	}
 
