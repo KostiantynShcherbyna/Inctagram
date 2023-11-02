@@ -12,11 +12,6 @@ export class Base64Service {
 		return `${base64path}${details.originalname}`
 	}
 
-	async decodeAvatarPath(avatarToken: string): Promise<string> {
-		const codes = avatarToken.split('==')
-		return Buffer.from(codes[0], 'base64').toString('utf-8')
-	}
-
 	async encodePostImagePath(details: ICreatePostImagePath)
 		: Promise<string> {
 		const path = `${details.userId} ${details.postId} ${details.imageId}`
