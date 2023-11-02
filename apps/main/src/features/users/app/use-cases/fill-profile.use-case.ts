@@ -1,33 +1,18 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { UsersRepository } from '../../rep/users.repository'
-import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { PrismaClient, User } from '@prisma/client'
 import { randomUUID } from 'crypto'
 import { FilesFirebaseAdapter } from '../../../../infrastructure/adapters/files.firebase.adapter'
-import { PhotoNormalTypes } from '../../../../infrastructure/utils/constants'
 import { Base64Service } from '../../../../infrastructure/services/base64.service'
-
-interface IProfile {
-	username: string
-	firstname: string
-	lastname: string
-	birthDate?: string
-	city?: string
-	aboutMe?: string
-}
-
-interface IFile {
-	originalname: string
-	buffer: Buffer,
-	mimetype: PhotoNormalTypes
-}
+import { FillProfileBodyInputModel } from '../../utils/models/input/fill-profile.body.input-model'
+import sharp from 'sharp'
 
 export class FillProfileCommand {
 	constructor(
 		public userId: string,
-		public profile: IProfile,
-		public file: IFile
+		public profile: FillProfileBodyInputModel,
+		public file: Express.Multer.File
 	) {
 	}
 }
@@ -38,19 +23,20 @@ export class FillProfileUseCase
 	constructor(
 		protected filesFirebaseAdapter: FilesFirebaseAdapter,
 		protected usersRepository: UsersRepository,
-		protected prisma: PrismaClient,
+		protected prismaClient: PrismaClient,
 		protected base64Service: Base64Service
 	) {
 	}
 
 	async execute(command: FillProfileCommand) {
 		const user = await this.usersRepository.findUserById(command.userId)
-		if (!user)
-			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
+		if (!user) return ErrorEnum.NOT_FOUND
+
+		const metadata = await sharp(command.file.buffer).metadata()
 
 		const photoId = randomUUID()
 
-		const photoPath = await this.base64Service.encodeUserPhoto({
+		const photoPath = await this.base64Service.encodeUserPhotoPath({
 			userId: command.userId,
 			photoId: photoId,
 			originalname: command.file.originalname
@@ -59,22 +45,23 @@ export class FillProfileUseCase
 		await this.filesFirebaseAdapter
 			.uploadUserPhoto(photoPath, command.file.buffer)
 
-		const [userPhoto, updatedUser] = await this.prisma.$transaction([
-			this.prisma.userPhoto.create({
+		const [userPhoto, updatedUser] = await this.prismaClient.$transaction([
+			this.prismaClient.userPhoto.create({
 				data: {
 					id: photoId,
 					userId: command.userId,
-					path: photoPath,
-					contentType: command.file.mimetype
+					uploadPath: photoPath,
+					contentType: command.file.mimetype,
+					size: command.file.size,
+					width: metadata.width,
+					height: metadata.height
 				}
 			}),
-			this.prisma.user.update({
-				where: { id: user.id },
-				data: { ...command.profile }
-			})
+			this.prismaClient.user.update(
+				{ where: { id: user.id }, data: { ...command.profile } })
 		])
 
-		return new ReturnContract(this.mapUpdatedUser(updatedUser), null)
+		return this.mapUpdatedUser(updatedUser)
 	}
 
 	private mapUpdatedUser(updatedUser: User) {

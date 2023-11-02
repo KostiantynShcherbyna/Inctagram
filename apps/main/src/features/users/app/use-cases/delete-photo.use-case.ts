@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { UserPhotosRepository } from '../../rep/user-photos.repository'
-import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { FilesFirebaseAdapter } from '../../../../infrastructure/adapters/files.firebase.adapter'
 import { ConfigService } from '@nestjs/config'
@@ -31,23 +30,21 @@ export class DeletePhotoUseCase implements ICommandHandler<DeletePhotoCommand> {
 	async execute(command: DeletePhotoCommand) {
 
 		const photoDetails = await this.base64Service
-			.decodeUserPhoto(command.photoToken)
+			.decodeUserPhotoPath(command.photoToken)
 		// Split on two parts userId and photoId
-		const photoTo = photoDetails.split(' ')
+		const photoSplitResult = photoDetails.split(' ')
 		// Take on first part is userId
-		if (photoTo[0] !== command.userId)
-			return new ReturnContract(null, ErrorEnum.FORBIDDEN)
+		if (photoSplitResult[0] !== command.userId) return ErrorEnum.FORBIDDEN
 		// Take on second part is photoId
 		const photo = await this.userPhotosRepository
-			.findUserPhotoById(photoTo[1])
+			.findUserPhotoById(photoSplitResult[1])
 
-		if (!photo) return new ReturnContract(null, ErrorEnum.NOT_FOUND)
-		if (photo.userId !== command.userId)
-			return new ReturnContract(null, ErrorEnum.FORBIDDEN)
+		if (!photo) return ErrorEnum.NOT_FOUND
+		if (photo.userId !== command.userId) return ErrorEnum.FORBIDDEN
 
-		await this.filesFirebaseAdapter.deleteUserPhoto(photo.path)
+		await this.filesFirebaseAdapter.deleteUserPhoto(photo.uploadPath)
 		await this.userPhotosRepository.deleteUserPhoto(photo.id)
-		return new ReturnContract(true, null)
+		return true
 	}
 
 

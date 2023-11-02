@@ -1,8 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { UsersRepository } from '../../rep/users.repository'
-import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
-import { PhotoNormalTypes } from '../../../../infrastructure/utils/constants'
 import { UserPhotosRepository } from '../../rep/user-photos.repository'
 import { FilesFirebaseAdapter } from '../../../../infrastructure/adapters/files.firebase.adapter'
 import { PrismaClient } from '@prisma/client'
@@ -11,26 +9,16 @@ import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { randomUUID } from 'crypto'
 import { Base64Service } from '../../../../infrastructure/services/base64.service'
+import { PhotoNormalTypes } from '../../../../infrastructure/utils/constants'
+import sharp from 'sharp'
 
 export class UploadPhotoCommand {
 	constructor(
 		public userId: string,
-		public originalname: string,
-		public buffer: Buffer,
-		public mimetype: PhotoNormalTypes
+		public file: Express.Multer.File
 	) {
 	}
 }
-
-
-interface ICreateUserPhotoPathToken {
-	userId: string
-	photoId: string
-	originalname: string
-	tokensService: TokensService
-	configService: ConfigService<ConfigType, true>
-}
-
 
 @CommandHandler(UploadPhotoCommand)
 export class UploadPhotoUseCase
@@ -48,31 +36,36 @@ export class UploadPhotoUseCase
 
 	async execute(command: UploadPhotoCommand) {
 		const user = await this.usersRepository.findUserById(command.userId)
-		if (user === null)
-			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
+		if (user === null) return ErrorEnum.NOT_FOUND
+
+		const metadata = await sharp(command.file.buffer).metadata()
 
 		const photoId = randomUUID()
 
-		const photoPath = await this.base64Service.encodeUserPhoto({
+		const photoPath = await this.base64Service.encodeUserPhotoPath({
 			userId: command.userId,
 			photoId: photoId,
-			originalname: command.originalname
+			originalname: command.file.originalname
 		})
 
 		await this.userPhotosRepository.uploadUserPhoto({
 			id: photoId,
 			userId: command.userId,
 			path: photoPath,
-			contentType: command.mimetype
+			contentType: command.file.mimetype as PhotoNormalTypes
 		})
 
-		const uploadFileUrl = await this.filesFirebaseAdapter
-			.uploadUserPhoto(photoPath, command.buffer)
+		const uploadUrl = await this.filesFirebaseAdapter
+			.uploadUserPhoto(photoPath, command.file.buffer)
 
-		return new ReturnContract(
-			{ url: uploadFileUrl, photoToken: photoPath },
-			null
-		)
+		return {
+			id: photoId,
+			url: uploadUrl,
+			width: metadata.width,
+			height: metadata.height,
+			size: command.file.size
+		}
+
 	}
 
 

@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL_NEON")
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -24,6 +24,8 @@ model User {
   confirmationCodes     ConfirmationCode[]
   passwordRecoveryCodes PasswordRecoveryCode[]
   userPhotos            UserPhoto[]
+  posts                 Post[]
+  postImages            PostImage[]
 }
 
 model Device {
@@ -57,10 +59,40 @@ model PasswordRecoveryCode {
 
 model UserPhoto {
   id          String   @id @map("user_photo_id")
-  path        String   @unique
+  uploadPath  String   @unique @map("upload_path")
   contentType String   @map("content_type")
+  width       Int
+  height      Int
+  size        Int
   createdAt   DateTime @default(now()) @map("created_at")
   userId      String   @map("user_id")
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model Post {
+  id          String   @id @map("post_id")
+  description String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @map("updated_at")
+  userId      String   @map("user_id")
+
+  user User @relation(fields: [userId], references: [id])
+
+  postImages PostImage[]
+}
+
+model PostImage {
+  id          String   @id @map("post_image_id")
+  uploadPath  String   @unique @map("upload_path")
+  contentType String   @map("content_type")
+  width       Int
+  height      Int
+  size        Int
+  createdAt   DateTime @default(now()) @map("created_at")
+  userId      String   @map("user_id")
+  postId      String   @map("post_id")
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
 }
