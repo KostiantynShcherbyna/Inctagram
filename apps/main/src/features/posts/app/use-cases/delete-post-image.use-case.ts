@@ -11,7 +11,7 @@ export class DeletePostImageCommand {
 
 
 @CommandHandler(DeletePostImageCommand)
-export class DeletePhotoUseCase implements ICommandHandler<DeletePostImageCommand> {
+export class DeletePostImageUseCase implements ICommandHandler<DeletePostImageCommand> {
 	constructor(
 		protected filesFirebaseAdapter: FilesFirebaseAdapter,
 		protected base64Service: Base64Service,

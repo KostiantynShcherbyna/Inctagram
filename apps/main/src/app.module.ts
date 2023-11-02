@@ -36,6 +36,9 @@ import { FilesFirebaseAdapter } from './infrastructure/adapters/files.firebase.a
 import { HashService } from './infrastructure/services/hash.service'
 import { Base64Service } from './infrastructure/services/base64.service'
 import { CreatePostUseCase } from './features/posts/app/use-cases/create-post.use.case'
+import { UpdatePostUseCase } from './features/posts/app/use-cases/update-post.use.case'
+import { DeletePostImageUseCase } from './features/posts/app/use-cases/delete-post-image.use-case'
+import { UploadPostImageUseCase } from './features/posts/app/use-cases/upload-post-image.use.case'
 
 const services = [
 	PrismaClient,
@@ -70,7 +73,10 @@ const useCases = [
 	DeleteAvatarUseCase,
 	UpdateProfileUseCase,
 	FillProfileUseCase,
-	CreatePostUseCase
+	CreatePostUseCase,
+	UpdatePostUseCase,
+	DeletePostImageUseCase,
+	UploadPostImageUseCase
 ]
 const repository = [
 	UsersRepository,
