@@ -35,6 +35,7 @@ import { FillProfileUseCase } from './features/users/app/use-cases/fill-profile.
 import { FilesFirebaseAdapter } from './infrastructure/adapters/files.firebase.adapter'
 import { HashService } from './infrastructure/services/hash.service'
 import { Base64Service } from './infrastructure/services/base64.service'
+import { CreatePostUseCase } from './features/posts/app/use-cases/create-post.use.case'
 
 const services = [
 	PrismaClient,
@@ -68,7 +69,8 @@ const useCases = [
 	UploadAvatarUseCase,
 	DeleteAvatarUseCase,
 	UpdateProfileUseCase,
-	FillProfileUseCase
+	FillProfileUseCase,
+	CreatePostUseCase
 ]
 const repository = [
 	UsersRepository,

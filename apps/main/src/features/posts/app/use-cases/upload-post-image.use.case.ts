@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { FilesFirebaseAdapter } from '../../../../infrastructure/adapters/files.firebase.adapter'
 import { PrismaClient } from '@prisma/client'
@@ -29,8 +28,7 @@ export class UploadPostImageUseCase
 
 	async execute(command: UploadPostImageCommand) {
 		const user = await this.usersRepository.findUserById(command.userId)
-		if (user === null)
-			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
+		if (user === null) return ErrorEnum.NOT_FOUND
 
 		const metadata = await sharp(command.file.buffer).metadata()
 
@@ -59,14 +57,14 @@ export class UploadPostImageUseCase
 		const uploadUrl = await this.filesFirebaseAdapter
 			.uploadAvatar(photoPath, command.file.buffer)
 
-		return new ReturnContract({
-				id: imageId,
-				url: uploadUrl,
-				width: metadata.width,
-				height: metadata.height,
-				size: command.file.size
-			}, null
-		)
+		return {
+			id: imageId,
+			url: uploadUrl,
+			width: metadata.width,
+			height: metadata.height,
+			size: command.file.size
+		}
+
 	}
 
 

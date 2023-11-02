@@ -20,7 +20,7 @@ export enum ValidResponse {
 	REGISTRATION_CONFIRMATION = 'Email was verified. Account was activated'
 }
 
-export const USER_PHOTO_NORMAL_SIZE = 10000 * (2 ** 10) // 10 000 KB (10МB)
+export const AVATAR_NORMAL_SIZE = 10000 * (2 ** 10) // 10 000 KB (10МB)
 export const POST_IMAGE_NORMAL_SIZE = 20000 * (2 ** 10) // 20 000 KB (20МB)
 export enum WallpaperNormalDimensions {
 	Width = 1028,
