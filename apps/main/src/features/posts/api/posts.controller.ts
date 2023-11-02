@@ -8,6 +8,7 @@ import {
 	HttpStatus,
 	Param,
 	Post,
+	Put,
 	UnauthorizedException,
 	UploadedFile,
 	UseGuards,
@@ -26,6 +27,8 @@ import { DeletePostImageUriInputModel } from '../utils/models/input/delete-post-
 import { UploadPostImagePipe } from '../../../infrastructure/middlewares/users/upload-post-image.pipe'
 import { CreatePostBodyInputModel } from '../utils/models/input/create-post.body.input-model'
 import { CreatePostCommand } from '../app/use-cases/create-post.use.case'
+import { UpdatePostUriInputModel } from '../utils/models/input/update-post.uri.input-model'
+import { UpdatePostCommand } from '../app/use-cases/update-post.use.case'
 
 @Controller('posts')
 export class PostsController {
@@ -42,7 +45,24 @@ export class PostsController {
 			.execute(new CreatePostCommand(deviceSession.userId, body.description))
 
 		if (createResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
-		return createResult.data
+		return createResult
+	}
+
+	@UseGuards(AccessGuard)
+	@Put(':id')
+	async updatePost(
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
+		@Body() body: CreatePostBodyInputModel,
+		@Param() param: UpdatePostUriInputModel
+	) {
+		const updateResult = await this.commandBus
+			.execute(new UpdatePostCommand(deviceSession.userId, param.id, body.description))
+
+		if (updateResult === ErrorEnum.USER_NOT_FOUND) throw new UnauthorizedException()
+		if (updateResult === ErrorEnum.NOT_FOUND) throw new BadRequestException(
+			outputMessageException(ErrorEnum.NOT_FOUND, 'id'))
+		if (updateResult === ErrorEnum.FORBIDDEN) throw new ForbiddenException()
+		return updateResult
 	}
 
 	@UseGuards(AccessGuard)
@@ -57,7 +77,7 @@ export class PostsController {
 			.execute(new UploadPostImageCommand(deviceSession.userId, file))
 
 		if (uploadResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
-		return uploadResult.data
+		return uploadResult
 	}
 
 	@UseGuards(AccessGuard)
@@ -70,6 +90,7 @@ export class PostsController {
 		const deleteResult = await this.commandBus
 			.execute(new DeletePostImageCommand(deviceSession.userId, param.id))
 
+		if (deleteResult === ErrorEnum.USER_NOT_FOUND) throw new UnauthorizedException()
 		if (deleteResult === ErrorEnum.NOT_FOUND) throw new BadRequestException(
 			outputMessageException(ErrorEnum.NOT_FOUND, 'id'))
 		if (deleteResult === ErrorEnum.FORBIDDEN) throw new ForbiddenException()

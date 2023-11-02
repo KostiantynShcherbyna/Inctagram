@@ -20,9 +20,13 @@ export class DeletePhotoUseCase implements ICommandHandler<DeletePostImageComman
 	}
 
 	async execute(command: DeletePostImageCommand) {
+		const user = await this.prismaClient.user
+			.findUnique({ where: { id: command.userId } })
+		if (!user) return ErrorEnum.USER_NOT_FOUND
 
 		const postImage = await this.prismaClient.postImage
 			.findUnique({ where: { id: command.imageId } })
+		if (!postImage) return ErrorEnum.NOT_FOUND
 
 		const checkResult = await this.checkCredentials(command.userId, postImage)
 		if (checkResult === ErrorEnum.FORBIDDEN) return ErrorEnum.FORBIDDEN
