@@ -4,7 +4,7 @@ import { outputMessageException } from '../../utils/output-message-exception'
 import { ErrorEnum } from '../../utils/error-enum'
 
 @Injectable()
-export class UserPhotoUploadPipe implements PipeTransform {
+export class UploadAvatarPipe implements PipeTransform {
 	async transform(file: Express.Multer.File) {
 		if (!file) throw new BadRequestException(outputMessageException(
 			ErrorEnum.FILE_IS_REQUIRED, 'file'))

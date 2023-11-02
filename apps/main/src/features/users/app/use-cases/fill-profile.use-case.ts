@@ -5,13 +5,13 @@ import { PrismaClient, User } from '@prisma/client'
 import { randomUUID } from 'crypto'
 import { FilesFirebaseAdapter } from '../../../../infrastructure/adapters/files.firebase.adapter'
 import { Base64Service } from '../../../../infrastructure/services/base64.service'
-import { FillProfileBodyInputModel } from '../../utils/models/input/fill-profile.body.input-model'
+import { UpdateProfileBodyInputModel } from '../../utils/models/input/update-profile.body.input-model'
 import sharp from 'sharp'
 
 export class FillProfileCommand {
 	constructor(
 		public userId: string,
-		public profile: FillProfileBodyInputModel,
+		public profile: UpdateProfileBodyInputModel,
 		public file: Express.Multer.File
 	) {
 	}
@@ -36,17 +36,17 @@ export class FillProfileUseCase
 
 		const photoId = randomUUID()
 
-		const photoPath = await this.base64Service.encodeUserPhotoPath({
+		const photoPath = await this.base64Service.encodeAvatarPath({
 			userId: command.userId,
-			photoId: photoId,
+			avatarId: photoId,
 			originalname: command.file.originalname
 		})
 
 		await this.filesFirebaseAdapter
-			.uploadUserPhoto(photoPath, command.file.buffer)
+			.uploadAvatar(photoPath, command.file.buffer)
 
 		const [userPhoto, updatedUser] = await this.prismaClient.$transaction([
-			this.prismaClient.userPhoto.create({
+			this.prismaClient.avatar.create({
 				data: {
 					id: photoId,
 					userId: command.userId,

@@ -57,7 +57,7 @@ export class UploadPostImageUseCase
 		})
 
 		const uploadUrl = await this.filesFirebaseAdapter
-			.uploadUserPhoto(photoPath, command.file.buffer)
+			.uploadAvatar(photoPath, command.file.buffer)
 
 		return new ReturnContract({
 				id: imageId,

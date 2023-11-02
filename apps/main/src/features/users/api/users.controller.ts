@@ -3,7 +3,6 @@ import {
 	Body,
 	Controller,
 	Delete,
-	ForbiddenException,
 	HttpCode,
 	HttpStatus,
 	Injectable,
@@ -19,16 +18,13 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { DeviceSessionGuard } from '../../../infrastructure/middlewares/auth/guards/device-session.guard'
 import { DeviceSessionHeaderInputModel } from '../utils/models/input/device-session.header.input.model'
 import { AccessGuard } from '../../../infrastructure/middlewares/auth/guards/access.guard'
-import { UserPhotoUploadPipe } from '../../../infrastructure/middlewares/users/user-photo-upload.pipe'
-import { UploadPhotoCommand } from '../app/use-cases/upload-photo.use.case'
-import { FillProfileCommand } from '../app/use-cases/fill-profile.use-case'
+import { UploadAvatarPipe } from '../../../infrastructure/middlewares/users/upload-avatar.pipe'
+import { UploadAvatarCommand } from '../app/use-cases/upload-avatar.use-case'
 import { ErrorEnum } from '../../../infrastructure/utils/error-enum'
-import { FillProfileBodyInputModel } from '../utils/models/input/fill-profile.body.input-model'
-import { DeletePhotoBodyInputModel } from '../utils/models/input/delete-photo.body.input-model'
-import { DeletePhotoCommand } from '../app/use-cases/delete-photo.use-case'
+import { UpdateProfileBodyInputModel } from '../utils/models/input/update-profile.body.input-model'
+import { DeleteAvatarCommand } from '../app/use-cases/delete-avatar.use-case'
 import { outputMessageException } from '../../../infrastructure/utils/output-message-exception'
-import { EditProfileBodyInputModel } from '../utils/models/input/edit-profile.body.input-model'
-import { EditProfileCommand } from '../app/use-cases/edit-profile.use-case'
+import { UpdateProfileCommand } from '../app/use-cases/update-profile.use-case'
 
 @Injectable()
 @Controller('users')
@@ -37,61 +33,43 @@ export class UsersController {
 	}
 
 	@UseGuards(AccessGuard)
-	@Post('fill-profile')
-	@UseInterceptors(FileInterceptor('file'))
-	async fillProfile(
+	@Put('profile')
+	async updateProfile(
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
-		@UploadedFile(UserPhotoUploadPipe) file: Express.Multer.File,
-		@Body() body: FillProfileBodyInputModel
+		@Body() body: UpdateProfileBodyInputModel
 	) {
-		console.log('file', file)
-		const fillResult = await this.commandBus
-			.execute(new FillProfileCommand(deviceSession.userId, body, file))
+		const updateResult = await this.commandBus
+			.execute(new UpdateProfileCommand(deviceSession.userId, body))
 
-		if (fillResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
-		return fillResult
+		if (updateResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
+		return updateResult
 	}
 
 	@UseGuards(AccessGuard)
-	@Put('edit-profile')
-	async editProfile(
-		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
-		@Body() body: EditProfileBodyInputModel
-	) {
-		const editResult = await this.commandBus
-			.execute(new EditProfileCommand(deviceSession.userId, body))
-
-		if (editResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
-		return editResult
-	}
-
-	@UseGuards(AccessGuard)
-	@Post('images/photo')
+	@Post('profile/avatar')
 	@UseInterceptors(FileInterceptor('file'))
-	async uploadPhoto(
+	async uploadAvatar(
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
-		@UploadedFile(UserPhotoUploadPipe) file: Express.Multer.File
+		@UploadedFile(UploadAvatarPipe) file: Express.Multer.File
 	) {
 		const uploadResult = await this.commandBus
-			.execute(new UploadPhotoCommand(deviceSession.userId, file))
+			.execute(new UploadAvatarCommand(deviceSession.userId, file))
 
 		if (uploadResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
 		return uploadResult
 	}
 
 	@UseGuards(AccessGuard)
-	@Delete('images')
+	@Delete('profile/avatar')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async deletePhoto(
-		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
-		@Body() body: DeletePhotoBodyInputModel
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel
 	) {
 		const deleteResult = await this.commandBus
-			.execute(new DeletePhotoCommand(deviceSession.userId, body.photoToken))
+			.execute(new DeleteAvatarCommand(deviceSession.userId))
 
 		if (deleteResult === ErrorEnum.NOT_FOUND) throw new BadRequestException(
 			outputMessageException(ErrorEnum.PHOTO_NOT_FOUND, 'photoId'))
-		if (deleteResult === ErrorEnum.FORBIDDEN) throw new ForbiddenException()
 	}
 
 

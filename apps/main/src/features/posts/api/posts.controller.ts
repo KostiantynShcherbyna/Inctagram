@@ -15,7 +15,7 @@ import {
 import { AccessGuard } from '../../../infrastructure/middlewares/auth/guards/access.guard'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { DeviceSessionGuard } from '../../../infrastructure/middlewares/auth/guards/device-session.guard'
-import { UserPhotoUploadPipe } from '../../../infrastructure/middlewares/users/user-photo-upload.pipe'
+import { UploadAvatarPipe } from '../../../infrastructure/middlewares/users/upload-avatar.pipe'
 import { ErrorEnum } from '../../../infrastructure/utils/error-enum'
 import { DeviceSessionHeaderInputModel } from '../utils/models/input/device-session.header.input.model'
 import { CommandBus } from '@nestjs/cqrs'
@@ -34,7 +34,7 @@ export class PostsController {
 	@UseInterceptors(FileInterceptor('file'))
 	async uploadPhoto(
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
-		@UploadedFile(UserPhotoUploadPipe) file: Express.Multer.File
+		@UploadedFile(UploadAvatarPipe) file: Express.Multer.File
 	) {
 		console.log('file', file)
 		const uploadResult = await this.commandBus

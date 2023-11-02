@@ -26,12 +26,11 @@ import { PassportModule } from '@nestjs/passport'
 import { GitHubLoginUseCase } from './features/auth/app/use-cases/github-login.use-case'
 import { GithubAuthStrategy } from './infrastructure/strategies/github-auth.strategy'
 import { GithubAuthValidator } from './infrastructure/middlewares/auth/validators/github-auth.validator'
-import { UserPhotoUploadPipe } from './infrastructure/middlewares/users/user-photo-upload.pipe'
+import { UploadAvatarPipe } from './infrastructure/middlewares/users/upload-avatar.pipe'
 import { UsersController } from './features/users/api/users.controller'
-import { UploadPhotoUseCase } from './features/users/app/use-cases/upload-photo.use.case'
-import { UserPhotosRepository } from './features/users/rep/user-photos.repository'
-import { DeletePhotoUseCase } from './features/users/app/use-cases/delete-photo.use-case'
-import { EditProfileUseCase } from './features/users/app/use-cases/edit-profile.use-case'
+import { UploadAvatarUseCase } from './features/users/app/use-cases/upload-avatar.use-case'
+import { DeleteAvatarUseCase } from './features/users/app/use-cases/delete-avatar.use-case'
+import { UpdateProfileUseCase } from './features/users/app/use-cases/update-profile.use-case'
 import { FillProfileUseCase } from './features/users/app/use-cases/fill-profile.use-case'
 import { FilesFirebaseAdapter } from './infrastructure/adapters/files.firebase.adapter'
 import { HashService } from './infrastructure/services/hash.service'
@@ -45,7 +44,7 @@ const services = [
 	PrismaService,
 	EmailAdapter,
 	SessionSerializer,
-	UserPhotoUploadPipe,
+	UploadAvatarPipe,
 	FilesFirebaseAdapter,
 	HashService,
 	Base64Service
@@ -66,15 +65,14 @@ const useCases = [
 	PasswordRecoveryUseCase,
 	GoogleLoginUseCase,
 	GitHubLoginUseCase,
-	UploadPhotoUseCase,
-	DeletePhotoUseCase,
-	EditProfileUseCase,
+	UploadAvatarUseCase,
+	DeleteAvatarUseCase,
+	UpdateProfileUseCase,
 	FillProfileUseCase
 ]
 const repository = [
 	UsersRepository,
-	DevicesRepository,
-	UserPhotosRepository
+	DevicesRepository
 ]
 const strategies = [
 	GoogleAuthStrategy,

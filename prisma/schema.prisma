@@ -23,7 +23,7 @@ model User {
   devices               Device[]
   confirmationCodes     ConfirmationCode[]
   passwordRecoveryCodes PasswordRecoveryCode[]
-  userPhotos            UserPhoto[]
+  avatars               Avatar[]
   posts                 Post[]
   postImages            PostImage[]
 }
@@ -57,7 +57,7 @@ model PasswordRecoveryCode {
   user User @relation(fields: [email], references: [email])
 }
 
-model UserPhoto {
+model Avatar {
   id          String   @id @map("user_photo_id")
   uploadPath  String   @unique @map("upload_path")
   contentType String   @map("content_type")
@@ -66,6 +66,7 @@ model UserPhoto {
   size        Int
   createdAt   DateTime @default(now()) @map("created_at")
   userId      String   @map("user_id")
+  active      Boolean  @default(true)
 
   user User @relation(fields: [userId], references: [id])
 }

@@ -36,7 +36,6 @@ import { PasswordRecoveryCommand } from '../app/use-cases/password-recovery.use-
 import { NewPasswordBodyInputModel } from '../utils/models/input/new-password.body.input-model'
 import { NewPasswordCommand } from '../app/use-cases/new-password.use-case'
 import { GoogleAuthGuard } from '../../../infrastructure/middlewares/auth/guards/google-auth.guard'
-import { UserDetails } from '../../../infrastructure/types/user-details.type'
 import { GitHubAuthGuard } from '../../../infrastructure/middlewares/auth/guards/github-auth.guard'
 import { GitHubLoginCommand } from '../app/use-cases/github-login.use-case'
 import { ApiBadRequestResponse, ApiOperation, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger'
@@ -44,6 +43,7 @@ import { BadResponse, ValidResponse } from '../../../infrastructure/utils/consta
 import { GoogleLoginCommand } from '../app/use-cases/google-login.use-case'
 import { RefreshTokenCommand } from '../app/use-cases/refresh-token.use-case'
 import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
+import { UserDetails } from '../../../infrastructure/types/auth.types'
 
 @Injectable()
 @Controller('auth')

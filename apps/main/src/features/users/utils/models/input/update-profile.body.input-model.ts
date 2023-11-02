@@ -15,7 +15,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { BirthDateValidator } from '../../../../../infrastructure/middlewares/users/birth-date.validator'
 import { CityValidator } from '../../../../../infrastructure/middlewares/users/city.validator'
 
-export class FillProfileBodyInputModel {
+export class UpdateProfileBodyInputModel {
 	@ApiProperty({
 		maxLength: LOGIN_MAX_LENGTH,
 		minLength: LOGIN_MIN_LENGTH,

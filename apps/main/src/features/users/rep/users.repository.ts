@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { ConfirmationCode, Device, PasswordRecoveryCode, PrismaClient, User } from '@prisma/client'
-import { UserDetails } from '../../../infrastructure/types/user-details.type'
+import { UserDetails } from '../../../infrastructure/types/auth.types'
 
 interface ICreatePasswordRecoveryCode {
 	email: string
@@ -131,7 +131,7 @@ export class UsersRepository {
 	}
 
 
-	async editUserInfo(id: string, data: EditProfile): Promise<User> {
+	async updateUserInfo(id: string, data: EditProfile): Promise<User> {
 		return this.prismaClient.user.update({ where: { id }, data: data })
 	}
 
