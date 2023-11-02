@@ -32,9 +32,9 @@ export class DeletePostImageUseCase implements ICommandHandler<DeletePostImageCo
 		if (checkResult === ErrorEnum.FORBIDDEN) return ErrorEnum.FORBIDDEN
 		if (checkResult === ErrorEnum.NOT_FOUND) return ErrorEnum.NOT_FOUND
 
-		await this.filesFirebaseAdapter.deleteAvatar(postImage.uploadPath)
-		await this.prismaClient.postImage
-			.delete({ where: { id: postImage.id } })
+		// await this.filesFirebaseAdapter.deleteAvatar(postImage.uploadPath)
+		// await this.prismaClient.postImage
+		// 	.delete({ where: { id: postImage.id } })
 		return true
 	}
 
