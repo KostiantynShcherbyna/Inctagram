@@ -11,6 +11,9 @@ import { firebaseConfig } from './firebase.settings'
 
 export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
+	app.enableCors({
+		origin: false
+	})
 	// app.enableCors({
 	// 	origin: ['http://localhost:3000', 'http://localhost:3000/api', 'https://visualvoyage.ru', 'https://visualvoyage.ru/api']
 	// })
