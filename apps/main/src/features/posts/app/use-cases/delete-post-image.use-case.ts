@@ -35,6 +35,9 @@ export class DeletePostImageUseCase implements ICommandHandler<DeletePostImageCo
 		// await this.filesFirebaseAdapter.deleteAvatar(postImage.uploadPath)
 		// await this.prismaClient.postImage
 		// 	.delete({ where: { id: postImage.id } })
+		await this.filesFirebaseAdapter.deleteAvatar(postImage.uploadPath)
+		await this.prismaClient.postImage
+			.delete({ where: { id: postImage.id } })
 		return true
 	}
 
