@@ -11,11 +11,7 @@ import { firebaseConfig } from './firebase.settings'
 
 export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
-	// app.enableCors({
-	// 	allowedHeaders: '*',
-	// 	origin: '*'
-	// })
-	app.enableCors()
+	app.enableCors({ origin: false })
 	app.useGlobalPipes(
 		new ValidationPipe({
 			transform: true,
