@@ -11,12 +11,13 @@ import { firebaseConfig } from './firebase.settings'
 
 export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
-	app.use((req, res, next) => {
-		res.header('Access-Control-Allow-Origin', '*');
-		res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-		res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
-		next();
-	});
+	app.enableCors({
+		origin: ['http://localhost:3000/'],
+		methods: ['GET', 'PUT', 'POST', 'DELETE'],
+		allowedHeaders: ['Content-Type', 'Authorization'],
+		exposedHeaders: ['Content-Range', 'X-Content-Range'],
+		credentials: true
+	})
 	app.useGlobalPipes(
 		new ValidationPipe({
 			transform: true,
