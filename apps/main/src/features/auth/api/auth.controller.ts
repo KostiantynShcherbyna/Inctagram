@@ -63,7 +63,8 @@ export class AuthController {
 			new RegistrationCommand(
 				bodyRegistration.login,
 				bodyRegistration.email,
-				bodyRegistration.password))
+				bodyRegistration.password)
+		)
 
 		if (registrationContract.error === ErrorEnum.USER_EMAIL_EXIST)
 			throw new BadRequestException(outputMessageException(
@@ -86,8 +87,8 @@ export class AuthController {
 		{ description: BadResponse.REGISTRATION_CONFIRMATION })
 	async emailConfirmation(
 		@Body() bodyConfirmation: ConfirmationBodyInputModel) {
-		const confirmationContract = await this.commandBus.execute(
-			new EmailConfirmationCommand(bodyConfirmation.code))
+		const confirmationContract = await this.commandBus
+			.execute(new EmailConfirmationCommand(bodyConfirmation.code))
 
 		if (confirmationContract.error === ErrorEnum.CONFIRMATION_CODE_NOT_FOUND)
 			throw new BadRequestException(outputMessageException(
@@ -110,8 +111,8 @@ export class AuthController {
 	@ApiBadRequestResponse()
 	async emailConfirmationResend(
 		@Body() bodyConfirmationResend: EmailConfirmationResendBodyInputModel) {
-		const confirmationResendContract = await this.commandBus.execute(
-			new EmailConfirmationResendCommand(bodyConfirmationResend.email))
+		const confirmationResendContract = await this.commandBus
+			.execute(new EmailConfirmationResendCommand(bodyConfirmationResend.email))
 
 		if (confirmationResendContract.error === ErrorEnum.USER_NOT_FOUND)
 			throw new BadRequestException(outputMessageException(
@@ -139,8 +140,8 @@ export class AuthController {
 		@Body() bodyAuth: LoginBodyInputModel,
 		@Res({ passthrough: true }) res: Response
 	) {
-		const loginContract = await this.commandBus.execute(
-			new LoginCommand(bodyAuth, ip, userAgent))
+		const loginContract = await this.commandBus
+			.execute(new LoginCommand(bodyAuth, ip, userAgent))
 
 		if (loginContract.error === ErrorEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
@@ -177,7 +178,9 @@ export class AuthController {
 				deviceSession.ip,
 				deviceSession.iat,
 				deviceSession.title,
-				deviceSession.userId))
+				deviceSession.userId
+			)
+		)
 
 		if (logoutContract.error === ErrorEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
@@ -204,8 +207,8 @@ export class AuthController {
 	async passwordRecovery(
 		@Body() bodyPasswordRecovery: PasswordRecoveryBodyInputModel
 	) {
-		const isRecoveryContract = await this.commandBus.execute(
-			new PasswordRecoveryCommand(bodyPasswordRecovery.email))
+		const isRecoveryContract = await this.commandBus
+			.execute(new PasswordRecoveryCommand(bodyPasswordRecovery.email))
 
 		if (isRecoveryContract.error === ErrorEnum.EMAIL_NOT_SENT)
 			throw new InternalServerErrorException()
@@ -224,7 +227,9 @@ export class AuthController {
 		const newPasswordContract = await this.commandBus.execute(
 			new NewPasswordCommand(
 				bodyNewPassword.newPassword,
-				bodyNewPassword.recoveryCode))
+				bodyNewPassword.recoveryCode
+			)
+		)
 
 		if (newPasswordContract.error === ErrorEnum.TOKEN_NOT_VERIFY)
 			throw new BadRequestException(outputMessageException(
@@ -250,8 +255,8 @@ export class AuthController {
 		@Ip() ip: string,
 		@Res({ passthrough: true }) res: Response
 	) {
-		const refreshTokenContract = await this.commandBus.execute(
-			new RefreshTokenCommand(deviceSession, ip, userAgent))
+		const refreshTokenContract = await this.commandBus
+			.execute(new RefreshTokenCommand(deviceSession, ip, userAgent))
 
 		if (refreshTokenContract.error === ErrorEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
@@ -295,7 +300,9 @@ export class AuthController {
 
 		const loginContract = await this.commandBus.execute(
 			new GoogleLoginCommand(
-				{ email: user.email, username: user.username }))
+				{ email: user.email, username: user.username }
+			)
+		)
 
 		if (loginContract.error === ErrorEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()
@@ -333,7 +340,9 @@ export class AuthController {
 
 		const loginContract = await this.commandBus.execute(
 			new GitHubLoginCommand(
-				{ email: user.email, username: user.username }))
+				{ email: user.email, username: user.username }
+			)
+		)
 
 		if (loginContract.error === ErrorEnum.USER_NOT_FOUND)
 			throw new UnauthorizedException()

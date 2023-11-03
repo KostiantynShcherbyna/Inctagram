@@ -12,10 +12,9 @@ import { firebaseConfig } from './firebase.settings'
 export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
 	app.enableCors({
-		origin: ['http://localhost:3000/'],
+		origin: ['http://localhost:3000'],
 		methods: ['GET', 'PUT', 'POST', 'DELETE'],
 		allowedHeaders: ['Content-Type', 'Authorization'],
-		exposedHeaders: ['Content-Range', 'X-Content-Range'],
 		credentials: true
 	})
 	app.useGlobalPipes(
