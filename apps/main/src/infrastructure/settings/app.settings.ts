@@ -13,8 +13,8 @@ export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
 	app.enableCors({
 		origin: 'http://localhost:3000', // Замените это на URL вашего клиентского приложения
-		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-		credentials: true,
+		methods: ['GET', 'PUT', 'POST', 'DELETE', 'HEAD', 'PATCH'],
+		credentials: true
 	})
 	// app.enableCors({
 	// 	origin: ['http://localhost:3000'],
