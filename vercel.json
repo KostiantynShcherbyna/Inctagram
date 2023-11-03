@@ -8,7 +8,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "src/main.ts" }],
+    { "source": "/(.*)", "destination": "apps/main/src/main.ts" }],
   "headers": [
     {
       "source": "/(.*)",
