@@ -144,9 +144,7 @@ export class AuthController {
 			.execute(new LoginCommand(bodyAuth, ip, userAgent))
 
 		if (loginContract.error === ErrorEnum.USER_NOT_FOUND)
-			throw new UnauthorizedException()
-		if (loginContract.error === ErrorEnum.USER_IS_BANNED)
-			throw new UnauthorizedException()
+			throw new BadRequestException()
 		if (loginContract.error === ErrorEnum.USER_EMAIL_NOT_CONFIRMED)
 			throw new UnauthorizedException()
 		if (loginContract.error === ErrorEnum.PASSWORD_NOT_COMPARED)
