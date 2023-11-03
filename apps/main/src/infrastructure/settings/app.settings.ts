@@ -12,11 +12,16 @@ import { firebaseConfig } from './firebase.settings'
 export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
 	app.enableCors({
-		origin: ['http://localhost:3000'],
-		methods: ['GET', 'PUT', 'POST', 'DELETE'],
-		allowedHeaders: ['Content-Type', 'Authorization'],
-		credentials: true
+		origin: 'http://localhost:3000', // Замените это на URL вашего клиентского приложения
+		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+		credentials: true,
 	})
+	// app.enableCors({
+	// 	origin: ['http://localhost:3000'],
+	// 	methods: ['GET', 'PUT', 'POST', 'DELETE'],
+	// 	allowedHeaders: ['Content-Type', 'Authorization'],
+	// 	credentials: true
+	// })
 	app.useGlobalPipes(
 		new ValidationPipe({
 			transform: true,
