@@ -41,14 +41,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
 		// 		? response.status(status).send({ errorsMessages })
 		// 		: response.sendStatus(status)
 		// }
-		// // ↓↓↓ NOT_FOUND
-		// if (status === HttpStatus.NOT_FOUND) {
-		// 	const errorsMessages = this.messagesModify(exceptionResponse)
-		//
-		// 	return errorsMessages
-		// 		? response.status(status).send({ errorsMessages })
-		// 		: response.sendStatus(status)
-		// }
+
+		// ↓↓↓ NOT_FOUND
+		if (status === HttpStatus.NOT_FOUND) {
+			const errorsMessages = this.messagesModify(exceptionResponse)
+
+			return errorsMessages
+				? response.status(status).send({ errorsMessages })
+				: response.sendStatus(status)
+		}
 
 		return response.status(status).send(exceptionResponse)
 	}
