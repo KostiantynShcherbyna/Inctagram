@@ -46,7 +46,6 @@ import { UserDetails } from '../../../infrastructure/types/auth.types'
 export class AuthController {
 	constructor(protected commandBus: CommandBus) {
 	}
-
 	@Post('registration')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@ApiResponse({
