@@ -34,7 +34,7 @@ export class EmailConfirmationUseCase
 		if (user === null)
 			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
 		if (user.isConfirmed === true)
-			return new ReturnContract(null, ErrorEnum.USER_EMAIL_CONFIRMED)
+			return new ReturnContract(null, ErrorEnum.EMAIL_CONFIRMED)
 
 		const confirmationCodeSecret = this.configService
 			.get(Secrets.EMAIL_CONFIRMATION_CODE_SECRET, { infer: true })
@@ -43,7 +43,7 @@ export class EmailConfirmationUseCase
 			.verifyToken(command.code, confirmationCodeSecret)
 
 		if (confirmationCodeDto === null)
-			return new ReturnContract(null, ErrorEnum.TOKEN_NOT_VERIFY)
+			return new ReturnContract(null, ErrorEnum.INVALID_TOKEN)
 
 		const updateResult = await this.usersRepository
 			.updateConfirmation(user.id, true)

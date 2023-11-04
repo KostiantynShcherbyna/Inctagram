@@ -1,7 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ConfigService } from '@nestjs/config'
 import { DeviceSessionHeaderInputModel } from '../../utils/models/input/device-session.header.input-model'
-import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
@@ -30,15 +29,13 @@ export class RefreshTokenUseCase
 	async execute(command: RefreshTokenCommand) {
 		const user = await this.usersRepository
 			.findUserById(command.deviceSession.userId)
-		if (user === null)
-			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
+		if (user === null) return ErrorEnum.USER_NOT_FOUND
 
 		const device = await this.usersRepository
 			.findDeviceById(command.deviceSession.id)
-		if (device === null)
-			return new ReturnContract(null, ErrorEnum.DEVICE_NOT_FOUND)
+		if (device === null) return ErrorEnum.DEVICE_NOT_FOUND
 		if (command.deviceSession.iat !== device.lastActiveDate)
-			return new ReturnContract(null, ErrorEnum.TOKEN_NOT_VERIFY)
+			return ErrorEnum.INVALID_TOKEN
 
 		const accessJwtSecret = this.configService
 			.get(Secrets.ACCESS_JWT_SECRET, { infer: true })
@@ -63,7 +60,6 @@ export class RefreshTokenUseCase
 		await this.usersRepository
 			.updateActiveDate(tokenPayload.deviceId, timeStamp)
 
-		return new ReturnContract(
-			{ accessJwt: { accessToken }, refreshToken }, null)
+		return { accessJwt: { accessToken }, refreshToken }
 	}
 }

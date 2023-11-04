@@ -1,24 +1,20 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Get,
 	Headers,
 	HttpCode,
+	HttpException,
 	HttpStatus,
 	Injectable,
-	InternalServerErrorException,
 	Ip,
 	Post,
 	Req,
 	Res,
-	ServiceUnavailableException,
-	UnauthorizedException,
 	UseGuards
 } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 import { Request, Response } from 'express'
-import { outputMessageException } from '../../../infrastructure/utils/output-message-exception'
 import { ErrorEnum } from '../../../infrastructure/utils/error-enum'
 import { RegistrationCommand } from '../app/use-cases/registration.use-case'
 import { EmailConfirmationResendBodyInputModel } from '../utils/models/input/email-confirmation-resend.body.input-model'
@@ -59,21 +55,18 @@ export class AuthController {
 	})
 	@ApiBadRequestResponse({ description: BadResponse.REGISTRATION })
 	async registration(@Body() bodyRegistration: RegistrationBodyInputModel) {
-		const registrationContract = await this.commandBus.execute(
+		const registrationResult = await this.commandBus.execute(
 			new RegistrationCommand(
 				bodyRegistration.login,
 				bodyRegistration.email,
-				bodyRegistration.password)
+				bodyRegistration.password
+			)
 		)
 
-		if (registrationContract.error === ErrorEnum.USER_EMAIL_EXIST)
-			throw new BadRequestException(outputMessageException(
-				ErrorEnum.USER_EMAIL_EXIST, 'email'))
-		if (registrationContract.error === ErrorEnum.USER_LOGIN_EXIST)
-			throw new BadRequestException(outputMessageException(
-				ErrorEnum.USER_LOGIN_EXIST, 'login'))
-		if (registrationContract.error === ErrorEnum.EXCEPTION)
-			throw new ServiceUnavailableException()
+		if (registrationResult === ErrorEnum.LOGIN_EXIST)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		if (registrationResult === ErrorEnum.EMAIL_EXIST)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 412)
 	}
 
 
@@ -87,21 +80,17 @@ export class AuthController {
 		{ description: BadResponse.REGISTRATION_CONFIRMATION })
 	async emailConfirmation(
 		@Body() bodyConfirmation: ConfirmationBodyInputModel) {
-		const confirmationContract = await this.commandBus
+		const confirmationResult = await this.commandBus
 			.execute(new EmailConfirmationCommand(bodyConfirmation.code))
 
-		if (confirmationContract.error === ErrorEnum.CONFIRMATION_CODE_NOT_FOUND)
-			throw new BadRequestException(outputMessageException(
-				ErrorEnum.CONFIRMATION_CODE_NOT_FOUND, 'code'))
-		if (confirmationContract.error === ErrorEnum.USER_NOT_FOUND)
-			throw new BadRequestException(outputMessageException(
-				ErrorEnum.USER_NOT_FOUND, 'code'))
-		if (confirmationContract.error === ErrorEnum.USER_EMAIL_CONFIRMED)
-			throw new BadRequestException(outputMessageException(
-				ErrorEnum.USER_EMAIL_CONFIRMED, 'code'))
-		if (confirmationContract.error === ErrorEnum.TOKEN_NOT_VERIFY)
-			throw new BadRequestException(outputMessageException(
-				ErrorEnum.TOKEN_NOT_VERIFY, 'code'))
+		if (confirmationResult === ErrorEnum.CONFIRMATION_CODE_NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		if (confirmationResult === ErrorEnum.USER_NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 412)
+		if (confirmationResult === ErrorEnum.EMAIL_CONFIRMED)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 413)
+		if (confirmationResult === ErrorEnum.INVALID_TOKEN)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 414)
 	}
 
 
@@ -111,19 +100,13 @@ export class AuthController {
 	@ApiBadRequestResponse()
 	async emailConfirmationResend(
 		@Body() bodyConfirmationResend: EmailConfirmationResendBodyInputModel) {
-		const confirmationResendContract = await this.commandBus
+		const resendResult = await this.commandBus
 			.execute(new EmailConfirmationResendCommand(bodyConfirmationResend.email))
 
-		if (confirmationResendContract.error === ErrorEnum.USER_NOT_FOUND)
-			throw new BadRequestException(outputMessageException(
-				ErrorEnum.USER_NOT_FOUND, 'email'))
-		if (confirmationResendContract.error === ErrorEnum.USER_EMAIL_CONFIRMED)
-			throw new BadRequestException(outputMessageException(
-				ErrorEnum.USER_EMAIL_CONFIRMED, 'email'))
-		if (confirmationResendContract.error === ErrorEnum.USER_NOT_DELETED)
-			throw new InternalServerErrorException()
-		if (confirmationResendContract.error === ErrorEnum.EMAIL_NOT_SENT)
-			throw new InternalServerErrorException()
+		if (resendResult === ErrorEnum.USER_NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		if (resendResult === ErrorEnum.EMAIL_CONFIRMED)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 412)
 	}
 
 
@@ -140,21 +123,21 @@ export class AuthController {
 		@Body() bodyAuth: LoginBodyInputModel,
 		@Res({ passthrough: true }) res: Response
 	) {
-		const loginContract = await this.commandBus
+		const loginResult = await this.commandBus
 			.execute(new LoginCommand(bodyAuth, ip, userAgent))
 
-		if (loginContract.error === ErrorEnum.USER_NOT_FOUND)
-			throw new BadRequestException()
-		if (loginContract.error === ErrorEnum.USER_EMAIL_NOT_CONFIRMED)
-			throw new UnauthorizedException()
-		if (loginContract.error === ErrorEnum.PASSWORD_NOT_COMPARED)
-			throw new UnauthorizedException()
+		if (loginResult === ErrorEnum.USER_NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		if (loginResult === ErrorEnum.EMAIL_NOT_CONFIRMED)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 412)
+		if (loginResult === ErrorEnum.INVALID_PASSWORD)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 413)
 
-		res.cookie('refreshToken', loginContract.data?.refreshToken, {
+		res.cookie('refreshToken', loginResult.refreshToken, {
 			httpOnly: true,
 			secure: true
 		})
-		return loginContract.data?.accessJwt
+		return loginResult.accessJwt
 	}
 
 
@@ -169,7 +152,7 @@ export class AuthController {
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
 		@Res({ passthrough: true }) res: Response
 	) {
-		const logoutContract = await this.commandBus.execute(
+		const logoutResult = await this.commandBus.execute(
 			new LogoutCommand(
 				deviceSession.id,
 				deviceSession.exp,
@@ -180,14 +163,12 @@ export class AuthController {
 			)
 		)
 
-		if (logoutContract.error === ErrorEnum.USER_NOT_FOUND)
-			throw new UnauthorizedException()
-		if (logoutContract.error === ErrorEnum.DEVICE_NOT_FOUND)
-			throw new UnauthorizedException()
-		if (logoutContract.error === ErrorEnum.DEVICE_NOT_DELETE)
-			throw new UnauthorizedException()
-		if (logoutContract.error === ErrorEnum.TOKEN_NOT_VERIFY)
-			throw new UnauthorizedException()
+		if (logoutResult === ErrorEnum.USER_NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		if (logoutResult === ErrorEnum.DEVICE_NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 412)
+		if (logoutResult === ErrorEnum.INVALID_TOKEN)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 413)
 
 		res.clearCookie('refreshToken') // TODO todo not delete device
 	}
@@ -205,13 +186,8 @@ export class AuthController {
 	async passwordRecovery(
 		@Body() bodyPasswordRecovery: PasswordRecoveryBodyInputModel
 	) {
-		const isRecoveryContract = await this.commandBus
+		await this.commandBus
 			.execute(new PasswordRecoveryCommand(bodyPasswordRecovery.email))
-
-		if (isRecoveryContract.error === ErrorEnum.EMAIL_NOT_SENT)
-			throw new InternalServerErrorException()
-		if (isRecoveryContract.error === ErrorEnum.RECOVERY_CODE_NOT_DELETE)
-			throw new InternalServerErrorException()
 	}
 
 
@@ -222,25 +198,21 @@ export class AuthController {
 		description: 'If the inputModel has incorrect value (for incorrect password length) or RecoveryCode is incorrect or expired'
 	})
 	async newPassword(@Body() bodyNewPassword: NewPasswordBodyInputModel) {
-		const newPasswordContract = await this.commandBus.execute(
+		const newPasswordResponse = await this.commandBus.execute(
 			new NewPasswordCommand(
 				bodyNewPassword.newPassword,
 				bodyNewPassword.recoveryCode
 			)
 		)
 
-		if (newPasswordContract.error === ErrorEnum.TOKEN_NOT_VERIFY)
-			throw new BadRequestException(outputMessageException(
-				ErrorEnum.TOKEN_NOT_VERIFY, 'recoveryCode'))
-		if (newPasswordContract.error === ErrorEnum.RECOVERY_CODE_NOT_FOUND)
-			throw new BadRequestException(outputMessageException(
-				ErrorEnum.RECOVERY_CODE_NOT_FOUND, 'recoveryCode'))
-		if (newPasswordContract.error === ErrorEnum.RECOVERY_CODE_INVALID)
-			throw new BadRequestException(outputMessageException(
-				ErrorEnum.RECOVERY_CODE_INVALID, 'recoveryCode'))
-		if (newPasswordContract.error === ErrorEnum.USER_NOT_FOUND)
-			throw new BadRequestException(outputMessageException(
-				ErrorEnum.RECOVERY_CODE_INVALID, 'recoveryCode'))
+		if (newPasswordResponse === ErrorEnum.USER_NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		if (newPasswordResponse === ErrorEnum.INVALID_TOKEN)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 412)
+		if (newPasswordResponse === ErrorEnum.RECOVERY_CODE_NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 413)
+		if (newPasswordResponse === ErrorEnum.INVALID_RECOVERY_CODE)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 414)
 	}
 
 
@@ -253,19 +225,19 @@ export class AuthController {
 		@Ip() ip: string,
 		@Res({ passthrough: true }) res: Response
 	) {
-		const refreshTokenContract = await this.commandBus
+		const refreshTokenResult = await this.commandBus
 			.execute(new RefreshTokenCommand(deviceSession, ip, userAgent))
 
-		if (refreshTokenContract.error === ErrorEnum.USER_NOT_FOUND)
-			throw new UnauthorizedException()
-		if (refreshTokenContract.error === ErrorEnum.DEVICE_NOT_FOUND)
-			throw new UnauthorizedException()
-		if (refreshTokenContract.error === ErrorEnum.TOKEN_NOT_VERIFY)
-			throw new UnauthorizedException()
+		if (refreshTokenResult === ErrorEnum.USER_NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		if (refreshTokenResult === ErrorEnum.DEVICE_NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 412)
+		if (refreshTokenResult === ErrorEnum.INVALID_TOKEN)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 413)
 
-		res.cookie('refreshToken', refreshTokenContract.data?.refreshToken,
+		res.cookie('refreshToken', refreshTokenResult.refreshToken,
 			{ httpOnly: true, secure: true })
-		return refreshTokenContract.data?.accessJwt
+		return refreshTokenResult.accessJwt
 	}
 
 
@@ -296,26 +268,23 @@ export class AuthController {
 	) {
 		const user: Partial<UserDetails> = request.user
 
-		const loginContract = await this.commandBus.execute(
+		const loginResult = await this.commandBus.execute(
 			new GoogleLoginCommand(
-				{ email: user.email, username: user.username }
-			)
+				{ email: user.email, username: user.username })
 		)
 
-		if (loginContract.error === ErrorEnum.USER_NOT_FOUND)
-			throw new UnauthorizedException()
-		if (loginContract.error === ErrorEnum.USER_IS_BANNED)
-			throw new UnauthorizedException()
-		if (loginContract.error === ErrorEnum.USER_EMAIL_NOT_CONFIRMED)
-			throw new UnauthorizedException()
-		if (loginContract.error === ErrorEnum.PASSWORD_NOT_COMPARED)
-			throw new UnauthorizedException()
+		if (loginResult === ErrorEnum.USER_NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		if (loginResult === ErrorEnum.EMAIL_NOT_CONFIRMED)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 412)
+		if (loginResult === ErrorEnum.INVALID_PASSWORD)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 413)
 
-		res.cookie('refreshToken', loginContract.data?.refreshToken, {
+		res.cookie('refreshToken', loginResult.refreshToken, {
 			httpOnly: true,
 			secure: true
 		})
-		return loginContract.data.accessJwt
+		return loginResult.accessJwt
 	}
 
 
@@ -336,26 +305,23 @@ export class AuthController {
 	) {
 		const user: Partial<UserDetails> = request.user
 
-		const loginContract = await this.commandBus.execute(
+		const loginResult = await this.commandBus.execute(
 			new GitHubLoginCommand(
-				{ email: user.email, username: user.username }
-			)
+				{ email: user.email, username: user.username })
 		)
 
-		if (loginContract.error === ErrorEnum.USER_NOT_FOUND)
-			throw new UnauthorizedException()
-		if (loginContract.error === ErrorEnum.USER_IS_BANNED)
-			throw new UnauthorizedException()
-		if (loginContract.error === ErrorEnum.USER_EMAIL_NOT_CONFIRMED)
-			throw new UnauthorizedException()
-		if (loginContract.error === ErrorEnum.PASSWORD_NOT_COMPARED)
-			throw new UnauthorizedException()
+		if (loginResult === ErrorEnum.USER_NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		if (loginResult === ErrorEnum.EMAIL_NOT_CONFIRMED)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 412)
+		if (loginResult === ErrorEnum.INVALID_PASSWORD)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 413)
 
-		res.cookie('refreshToken', loginContract.data?.refreshToken, {
+		res.cookie('refreshToken', loginResult.refreshToken, {
 			httpOnly: true,
 			secure: true
 		})
-		return loginContract.data.accessJwt
+		return loginResult.accessJwt
 	}
 
 

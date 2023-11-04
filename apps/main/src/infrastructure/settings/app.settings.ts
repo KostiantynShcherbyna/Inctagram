@@ -1,6 +1,6 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { useContainer } from 'class-validator'
-import { ErrorExceptionFilter, HttpExceptionFilter } from '../utils/exeption-filter'
+import { ErrorExceptionFilter, HttpExceptionFilter } from '../utils/exception-filter'
 import { AppModule } from '../../app.module'
 import { errorMessagesAdapter } from '../adapters/error-messages.adapter'
 import cookieParser from 'cookie-parser'
@@ -11,12 +11,13 @@ import { firebaseConfig } from './firebase.settings'
 
 export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
-	app.enableCors({
-		origin: 'http://localhost:3000',
-		methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-		allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
-		credentials: true
-	})
+	app.enableCors({ origin: 'http://localhost:3000' })
+	// app.enableCors({
+	// 	origin: 'http://localhost:3000',
+	// 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+	// 	allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
+	// 	credentials: true
+	// })
 	app.useGlobalPipes(
 		new ValidationPipe({
 			transform: true,

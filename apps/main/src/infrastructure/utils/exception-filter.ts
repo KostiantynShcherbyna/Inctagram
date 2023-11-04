@@ -31,29 +31,31 @@ export class HttpExceptionFilter implements ExceptionFilter {
 				? response.status(status).send({ errorsMessages })
 				: response.sendStatus(status)
 		}
+
+
 		// ↓↓↓ UNAUTHORIZED
-		if (status === HttpStatus.UNAUTHORIZED) {
-			const errorsMessages = this.messagesModify(exceptionResponse)
+		// if (status === HttpStatus.UNAUTHORIZED) {
+		// 	const errorsMessages = this.messagesModify(exceptionResponse)
+		//
+		// 	return errorsMessages
+		// 		? response.status(status).send({ errorsMessages })
+		// 		: response.sendStatus(status)
+		// }
+		// // ↓↓↓ NOT_FOUND
+		// if (status === HttpStatus.NOT_FOUND) {
+		// 	const errorsMessages = this.messagesModify(exceptionResponse)
+		//
+		// 	return errorsMessages
+		// 		? response.status(status).send({ errorsMessages })
+		// 		: response.sendStatus(status)
+		// }
 
-			return errorsMessages
-				? response.status(status).send({ errorsMessages })
-				: response.sendStatus(status)
-		}
-		// ↓↓↓ NOT_FOUND
-		if (status === HttpStatus.NOT_FOUND) {
-			const errorsMessages = this.messagesModify(exceptionResponse)
-
-			return errorsMessages
-				? response.status(status).send({ errorsMessages })
-				: response.sendStatus(status)
-		}
-
-		return response.sendStatus(status)
+		return response.status(status).send(exceptionResponse)
 	}
 
 
 	private messagesModify(exceptionResponse: any) {
-		console.log('exceptionResponse - ' + JSON.stringify(exceptionResponse))
+		console.log('exceptionResponse' + JSON.stringify(exceptionResponse))
 
 		if (Array.isArray(exceptionResponse.message)) {
 			return exceptionResponse.message.map(err => {
@@ -67,6 +69,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
 		if (
 			exceptionResponse instanceof Object
 			&& exceptionResponse.field
+		) return [exceptionResponse]
+		if (
+			exceptionResponse instanceof Object
+			&& exceptionResponse.message
 		) return [exceptionResponse]
 
 		return null

@@ -1,7 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { LoginBodyInputModel } from '../../utils/models/input/login.body.input-model'
 import { randomUUID } from 'crypto'
-import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { ConfigService } from '@nestjs/config'
@@ -35,17 +34,13 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 			command.loginBody.loginOrEmail,
 			command.loginBody.loginOrEmail
 		)
-		if (user === null)
-			return new ReturnContract(null, ErrorEnum.USER_NOT_FOUND)
+		if (user === null) return ErrorEnum.USER_NOT_FOUND
 
-		if (user.isConfirmed === false)
-			return new ReturnContract(
-				null, ErrorEnum.USER_EMAIL_NOT_CONFIRMED)
+		if (user.isConfirmed === false) return ErrorEnum.EMAIL_NOT_CONFIRMED
 
 		if ((await this.hashService.comparison(
 			user.passwordHash, command.loginBody.password)) === false)
-			return new ReturnContract(
-				null, ErrorEnum.PASSWORD_NOT_COMPARED)
+			return ErrorEnum.INVALID_PASSWORD
 		// ↑↑↑
 
 		const accessJwtSecret = this.configService
@@ -79,7 +74,6 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 			lastActiveDate: new Date(refreshTokenVerify.iat),
 			expireAt: new Date(refreshTokenVerify.exp)
 		})
-		return new ReturnContract(
-			{ accessJwt: { accessToken }, refreshToken }, null)
+		return { accessJwt: { accessToken }, refreshToken }
 	}
 }

@@ -6,7 +6,6 @@ import { OAuthLoginBodyInputModel } from '../../utils/models/input/oAuth-login.i
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
-import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 
 export class GoogleLoginCommand {
 	constructor(public loginBody: OAuthLoginBodyInputModel) {
@@ -52,9 +51,6 @@ export class GoogleLoginUseCase implements ICommandHandler<GoogleLoginCommand> {
 			ExpiresTime.REFRESH_EXPIRES_TIME
 		)
 
-		return new ReturnContract(
-			{ accessJwt: { accessToken }, refreshToken },
-			null
-		)
+		return { accessJwt: { accessToken }, refreshToken }
 	}
 }

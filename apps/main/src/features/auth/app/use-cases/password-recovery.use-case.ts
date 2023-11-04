@@ -5,7 +5,6 @@ import { TokensService } from '../../../../infrastructure/services/tokens.servic
 import { UsersRepository } from '../../../users/rep/users.repository'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { EmailAdapter } from '../../../../infrastructure/adapters/email.adapter'
-import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 
 export class PasswordRecoveryCommand {
 	constructor(public email: string) {
@@ -48,6 +47,6 @@ export class PasswordRecoveryUseCase
 		console.log('newPasswordRecoveryCode', newPasswordRecoveryCode)
 		await this.emailAdapter.sendPasswordRecovery(newPasswordRecoveryCodeResult.email, newPasswordRecoveryCodeResult.recoveryCode)
 
-		return new ReturnContract(true, null)
+		return
 	}
 }

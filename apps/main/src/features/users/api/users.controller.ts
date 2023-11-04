@@ -1,14 +1,13 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Delete,
 	HttpCode,
+	HttpException,
 	HttpStatus,
 	Injectable,
 	Post,
 	Put,
-	UnauthorizedException,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors
@@ -23,7 +22,6 @@ import { UploadAvatarCommand } from '../app/use-cases/upload-avatar.use-case'
 import { ErrorEnum } from '../../../infrastructure/utils/error-enum'
 import { UpdateProfileBodyInputModel } from '../utils/models/input/update-profile.body.input-model'
 import { DeleteAvatarCommand } from '../app/use-cases/delete-avatar.use-case'
-import { outputMessageException } from '../../../infrastructure/utils/output-message-exception'
 import { UpdateProfileCommand } from '../app/use-cases/update-profile.use-case'
 
 @Injectable()
@@ -41,7 +39,8 @@ export class UsersController {
 		const updateResult = await this.commandBus
 			.execute(new UpdateProfileCommand(deviceSession.userId, body))
 
-		if (updateResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
+		if (updateResult === ErrorEnum.NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
 		return updateResult
 	}
 
@@ -55,7 +54,8 @@ export class UsersController {
 		const uploadResult = await this.commandBus
 			.execute(new UploadAvatarCommand(deviceSession.userId, file))
 
-		if (uploadResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
+		if (uploadResult === ErrorEnum.NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
 		return uploadResult
 	}
 
@@ -68,8 +68,8 @@ export class UsersController {
 		const deleteResult = await this.commandBus
 			.execute(new DeleteAvatarCommand(deviceSession.userId))
 
-		if (deleteResult === ErrorEnum.NOT_FOUND) throw new BadRequestException(
-			outputMessageException(ErrorEnum.PHOTO_NOT_FOUND, 'photoId'))
+		if (deleteResult === ErrorEnum.NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
 	}
 
 

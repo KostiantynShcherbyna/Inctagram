@@ -1,7 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { PrismaClient } from '@prisma/client'
-import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { EmailAdapter } from '../../../../infrastructure/adapters/email.adapter'
 import { ConfigService } from '@nestjs/config'
 import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
@@ -37,10 +36,8 @@ export class RegistrationUseCase
 			command.login,
 			command.email
 		)
-		if (user?.username === command.login)
-			return new ReturnContract(null, ErrorEnum.USER_LOGIN_EXIST)
-		if (user?.email === command.email)
-			return new ReturnContract(null, ErrorEnum.USER_EMAIL_EXIST)
+		if (user?.username === command.login) return ErrorEnum.LOGIN_EXIST
+		if (user?.email === command.email) return ErrorEnum.EMAIL_EXIST
 
 		const passwordHash = await this.hashService.encryption(command.password)
 
@@ -62,13 +59,10 @@ export class RegistrationUseCase
 				return { user, newConfirmationCode }
 			})
 
-		if (!registrationResult)
-			return new ReturnContract(false, ErrorEnum.EXCEPTION)
-
 		await this.emailAdapter.sendConfirmationCode(
 			registrationResult.user.email,
 			registrationResult.newConfirmationCode.confirmationCode)
-		return new ReturnContract(true, null)
+		return
 	}
 
 
