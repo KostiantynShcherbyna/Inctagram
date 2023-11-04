@@ -34,13 +34,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
 
 		// ↓↓↓ UNAUTHORIZED
-		// if (status === HttpStatus.UNAUTHORIZED) {
-		// 	const errorsMessages = this.messagesModify(exceptionResponse)
-		//
-		// 	return errorsMessages
-		// 		? response.status(status).send({ errorsMessages })
-		// 		: response.sendStatus(status)
-		// }
+		if (status === HttpStatus.UNAUTHORIZED) {
+			const errorsMessages = this.messagesModify(exceptionResponse)
+
+			return errorsMessages
+				? response.status(status).send({ errorsMessages })
+				: response.sendStatus(status)
+		}
 
 		// ↓↓↓ NOT_FOUND
 		if (status === HttpStatus.NOT_FOUND) {
@@ -70,10 +70,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
 		if (
 			exceptionResponse instanceof Object
 			&& exceptionResponse.field
-		) return [exceptionResponse]
-		if (
-			exceptionResponse instanceof Object
-			&& exceptionResponse.message
 		) return [exceptionResponse]
 
 		return null
