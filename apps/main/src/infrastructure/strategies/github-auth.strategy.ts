@@ -13,9 +13,9 @@ export class GithubAuthStrategy
 		private readonly authValidator: GithubAuthValidator
 	) {
 		super({
-			clientID: process.env.GITHUB_CLIENT_ID,
-			clientSecret: process.env.GITHUB_CLIENT_SECRET,
-			callbackURL: process.env.GITHUB_OAUTH_REDIRECT_URL_VERCEL,
+			clientID: process.env.GITHUB_CLIENT_ID_FRONT,
+			clientSecret: process.env.GITHUB_CLIENT_SECRET_FRONT,
+			callbackURL: process.env.GITHUB_OAUTH_REDIRECT_URL_STG,
 			scope: ['user'] // fetches non-public emails as well
 		})
 	}

@@ -29,7 +29,6 @@ export const appSettings = (app: INestApplication) => {
 		new ErrorExceptionFilter(),
 		new HttpExceptionFilter()
 	)
-	// app.setGlobalPrefix('api')
 	app.use(
 		session({
 			secret: 'dhwye08u4w90ri0w94ur09wi3-0',
