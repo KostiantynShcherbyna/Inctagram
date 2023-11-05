@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
-import * as process from 'process'
 import { GithubAuthValidator } from '../middlewares/auth/validators/github-auth.validator'
 import { Profile, Strategy } from 'passport-github2'
+import { ConfigService } from '@nestjs/config'
 
 
 @Injectable()
@@ -10,12 +10,13 @@ export class GithubAuthStrategy
 	extends PassportStrategy(Strategy, 'github') {
 	constructor(
 		@Inject('GITHUB_AUTH_VALIDATOR')
-		private readonly authValidator: GithubAuthValidator
+		private readonly authValidator: GithubAuthValidator,
+		private configService: ConfigService
 	) {
 		super({
-			clientID: process.env.GITHUB_CLIENT_ID,
-			clientSecret: process.env.GITHUB_CLIENT_SECRET,
-			callbackURL: process.env.GITHUB_OAUTH_REDIRECT_URL,
+			clientID: configService.get<string>('GITHUB_CLIENT_ID'),
+			clientSecret: configService.get<string>('GITHUB_CLIENT_SECRET'),
+			callbackURL: configService.get<string>('GITHUB_OAUTH_REDIRECT_URL'),
 			scope: ['user'] // fetches non-public emails as well
 		})
 	}
