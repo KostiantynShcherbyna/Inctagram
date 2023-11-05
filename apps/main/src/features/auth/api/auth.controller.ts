@@ -11,6 +11,7 @@ import {
 	Post,
 	Req,
 	Res,
+	UnauthorizedException,
 	UseGuards
 } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
@@ -40,12 +41,18 @@ import { GoogleLoginCommand } from '../app/use-cases/google-login.use-case'
 import { RefreshTokenCommand } from '../app/use-cases/refresh-token.use-case'
 import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
 import { UserDetails } from '../../../infrastructure/types/auth.types'
+import { AccessGuard } from '../../../infrastructure/middlewares/auth/guards/access.guard'
+import { UsersQueryRepository } from '../../users/rep/users.query.repository'
 
 @Injectable()
 @Controller('auth')
 export class AuthController {
-	constructor(protected commandBus: CommandBus) {
+	constructor(
+		protected commandBus: CommandBus,
+		protected usersQueryRepository: UsersQueryRepository
+	) {
 	}
+
 	@Post('registration')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@ApiResponse({
@@ -237,6 +244,16 @@ export class AuthController {
 		res.cookie('refreshToken', refreshTokenResult.refreshToken,
 			{ httpOnly: true, secure: true })
 		return refreshTokenResult.accessJwt
+	}
+
+	@UseGuards(AccessGuard)
+	@Get('me')
+	async getMe(
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel
+	) {
+		const userView = await this.usersQueryRepository.findMe(deviceSession.userId)
+		if (userView === null) throw new UnauthorizedException()
+		return userView
 	}
 
 
