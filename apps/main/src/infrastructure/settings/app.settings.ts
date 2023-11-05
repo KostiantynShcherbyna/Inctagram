@@ -13,12 +13,6 @@ export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
 	app.enableCors()
 	app.setGlobalPrefix('api/v1')
-	// app.enableCors({
-	// 	origin: 'http://localhost:3000',
-	// 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-	// 	allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
-	// 	credentials: true
-	// })
 	app.useGlobalPipes(
 		new ValidationPipe({
 			transform: true,
@@ -44,3 +38,10 @@ export const appSettings = (app: INestApplication) => {
 	useContainer(app.select(AppModule), { fallbackOnErrors: true })
 	return app
 }
+
+// app.enableCors({
+// 	origin: 'http://localhost:3000',
+// 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+// 	allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
+// 	credentials: true
+// })
