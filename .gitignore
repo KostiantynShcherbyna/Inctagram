@@ -1,7 +1,7 @@
 # compiled output
 /dist
 /node_modules
-#.env
+.env
 /apps/main/test/infrastructure/testing.controller.ts
 # Logs
 logs

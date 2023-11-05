@@ -12,12 +12,7 @@ import { firebaseConfig } from './firebase.settings'
 export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
 	app.enableCors()
-	// app.enableCors({
-	// 	origin: 'http://localhost:3000',
-	// 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-	// 	allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
-	// 	credentials: true
-	// })
+	app.setGlobalPrefix('api/v1')
 	app.useGlobalPipes(
 		new ValidationPipe({
 			transform: true,
@@ -29,7 +24,6 @@ export const appSettings = (app: INestApplication) => {
 		new ErrorExceptionFilter(),
 		new HttpExceptionFilter()
 	)
-	// app.setGlobalPrefix('api')
 	app.use(
 		session({
 			secret: 'dhwye08u4w90ri0w94ur09wi3-0',
@@ -44,3 +38,10 @@ export const appSettings = (app: INestApplication) => {
 	useContainer(app.select(AppModule), { fallbackOnErrors: true })
 	return app
 }
+
+// app.enableCors({
+// 	origin: 'http://localhost:3000',
+// 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+// 	allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
+// 	credentials: true
+// })
