@@ -40,6 +40,7 @@ import { UpdatePostUseCase } from './features/posts/app/use-cases/update-post.us
 import { DeletePostImageUseCase } from './features/posts/app/use-cases/delete-post-image.use-case'
 import { UploadPostImageUseCase } from './features/posts/app/use-cases/upload-post-image.use.case'
 import envSettings from './infrastructure/settings/env.settings'
+import { UsersQueryRepository } from './features/users/rep/users.query.repository'
 
 const services = [
 	PrismaClient,
@@ -81,7 +82,8 @@ const useCases = [
 ]
 const repository = [
 	UsersRepository,
-	DevicesRepository
+	DevicesRepository,
+	UsersQueryRepository
 ]
 const strategies = [
 	GoogleAuthStrategy,
@@ -95,11 +97,7 @@ const providers = [
 @Module({
 	imports: [
 		CqrsModule,
-		ConfigModule.forRoot({
-			load: [envSettings],
-			isGlobal: true,
-			cache: true
-		}),
+		ConfigModule.forRoot({ load: [envSettings] }),
 		PassportModule.register({ session: true })
 	],
 	controllers: [...controllers],
