@@ -1,11 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { randomUUID } from 'crypto'
 import { ConfigService } from '@nestjs/config'
-
 import { OAuthLoginBodyInputModel } from '../../utils/models/input/oAuth-login.input-model'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
-import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
-import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
+import { ExpiresTime } from '../../../../infrastructure/utils/constants'
+import { IEnvConfig } from '../../../../infrastructure/settings/env.settings'
 
 export class GoogleLoginCommand {
 	constructor(public loginBody: OAuthLoginBodyInputModel) {
@@ -15,17 +14,13 @@ export class GoogleLoginCommand {
 @CommandHandler(GoogleLoginCommand)
 export class GoogleLoginUseCase implements ICommandHandler<GoogleLoginCommand> {
 	constructor(
-		protected configService: ConfigService<ConfigType, true>,
+		protected configService: ConfigService,
 		protected tokensService: TokensService
 	) {
 	}
 
 	async execute(command: GoogleLoginCommand) {
-		const accessJwtSecret = this.configService.get(
-			Secrets.ACCESS_JWT_SECRET, { infer: true })
-
-		const refreshJwtSecret = this.configService.get(
-			Secrets.REFRESH_JWT_SECRET, { infer: true })
+		const env = this.configService.get<IEnvConfig>('env')
 
 		const issueAt = new Date(Date.now())
 
@@ -41,13 +36,13 @@ export class GoogleLoginUseCase implements ICommandHandler<GoogleLoginCommand> {
 
 		const accessToken = await this.tokensService.createToken(
 			tokensPayload,
-			accessJwtSecret,
+			env.ACCESS_JWT_SECRET,
 			ExpiresTime.ACCESS_EXPIRES_TIME
 		)
 
 		const refreshToken = await this.tokensService.createToken(
 			tokensPayload,
-			refreshJwtSecret,
+			env.REFRESH_JWT_SECRET,
 			ExpiresTime.REFRESH_EXPIRES_TIME
 		)
 

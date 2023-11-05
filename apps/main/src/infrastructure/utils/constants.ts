@@ -33,6 +33,22 @@ export enum PhotoNormalTypes {
 	Jpeg = 'image/jpeg',
 }
 
+export enum EnvConfigEnum {
+	PORT = 3001,
+	DATABASE_URL = 'postgresql://kstntn.sch:2425@localhost:5432/inctagram',
+	DATABASE_URL_NEON = 'postgres://kstntn.sch:l41eCMbNpPzE@ep-lively-grass-37577731.eu-central-1.aws.neon.tech/inctagram',
+	ACCESS_JWT_SECRET = 'ACCESSJWTSECRET',
+	REFRESH_JWT_SECRET = 'REFRESHJWTSECRET',
+	GOOGLE_CLIENT_ID = '742750804533-hc4t5pt5l7glcm2tqopjhi139q3kalg0.apps.googleusercontent.com',
+	GOOGLE_CLIENT_SECRET = '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',
+	GOOGLE_OAUTH_REDIRECT_URL = 'http://localhost:3000/api/v1/auth/google/redirect',
+	GITHUB_CLIENT_ID = 'c7d6b6fdee01d44d60fa',
+	GITHUB_CLIENT_SECRET = 'c0af6c13bda37d0f4cedcfb2d5b5bf78431beb88',
+	GITHUB_OAUTH_REDIRECT_URL = 'http://localhost:3000/api/v1/auth/github/redirect',
+	EMAIL_CONFIRMATION_CODE_SECRET = 'EMAILCONFIRMATIONCODESECRET',
+	PASSWORD_RECOVERY_CODE_SECRET = 'PASSWORDRECOVERYCODESECRET'
+}
+
 
 export enum ExpiresTime {
 	EMAIL_CONFIRMATION_CODE_EXP_TIME = '300s',

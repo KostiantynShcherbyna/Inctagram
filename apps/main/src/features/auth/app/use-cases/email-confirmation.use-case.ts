@@ -3,9 +3,8 @@ import { UsersRepository } from '../../../users/rep/users.repository'
 import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
-import { Secrets } from '../../../../infrastructure/utils/constants'
 import { ConfigService } from '@nestjs/config'
-import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
+import { IEnvConfig } from '../../../../infrastructure/settings/env.settings'
 
 export class EmailConfirmationCommand {
 	constructor(public code: string) {
@@ -18,11 +17,13 @@ export class EmailConfirmationUseCase
 	constructor(
 		protected usersRepository: UsersRepository,
 		protected tokensService: TokensService,
-		protected configService: ConfigService<ConfigType, true>
+		protected configService: ConfigService
 	) {
 	}
 
 	async execute(command: EmailConfirmationCommand) {
+		const env = this.configService.get<IEnvConfig>('env')
+
 		const confirmationCode = await this.usersRepository
 			.findConfirmationCode(command.code)
 
@@ -36,11 +37,8 @@ export class EmailConfirmationUseCase
 		if (user.isConfirmed === true)
 			return new ReturnContract(null, ErrorEnum.EMAIL_CONFIRMED)
 
-		const confirmationCodeSecret = this.configService
-			.get(Secrets.EMAIL_CONFIRMATION_CODE_SECRET, { infer: true })
-
 		const confirmationCodeDto = await this.tokensService
-			.verifyToken(command.code, confirmationCodeSecret)
+			.verifyToken(command.code, env.EMAIL_CONFIRMATION_CODE_SECRET)
 
 		if (confirmationCodeDto === null)
 			return new ReturnContract(null, ErrorEnum.INVALID_TOKEN)

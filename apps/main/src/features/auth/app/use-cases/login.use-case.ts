@@ -2,12 +2,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { LoginBodyInputModel } from '../../utils/models/input/login.body.input-model'
 import { randomUUID } from 'crypto'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
-import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { ConfigService } from '@nestjs/config'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { UsersRepository } from '../../../users/rep/users.repository'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { HashService } from '../../../../infrastructure/services/hash.service'
+import { IEnvConfig } from '../../../../infrastructure/settings/env.settings'
 
 export class LoginCommand {
 	constructor(
@@ -21,7 +21,7 @@ export class LoginCommand {
 @CommandHandler(LoginCommand)
 export class LoginUseCase implements ICommandHandler<LoginCommand> {
 	constructor(
-		protected configService: ConfigService<ConfigType, true>,
+		protected configService: ConfigService,
 		protected tokensService: TokensService,
 		protected usersRepository: UsersRepository,
 		protected hashService: HashService
@@ -29,6 +29,8 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 	}
 
 	async execute(command: LoginCommand) {
+		const env = this.configService.get<IEnvConfig>('env')
+
 		// ↓↓↓ CHECK IN LOGIN-LOCAL-STRATEGY
 		const user = await this.usersRepository.findUserByUserNameOrEmail(
 			command.loginBody.loginOrEmail,
@@ -43,12 +45,6 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 			return ErrorEnum.INVALID_PASSWORD
 		// ↑↑↑
 
-		const accessJwtSecret = this.configService
-			.get(Secrets.ACCESS_JWT_SECRET, { infer: true })
-		const refreshJwtSecret = this.configService
-			.get(Secrets.REFRESH_JWT_SECRET, { infer: true })
-
-
 		const tokensPayload = {
 			userId: user.id,
 			id: randomUUID(),
@@ -57,17 +53,17 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 		}
 		const accessToken = await this.tokensService.createToken(
 			tokensPayload,
-			accessJwtSecret,
+			env.ACCESS_JWT_SECRET,
 			ExpiresTime.ACCESS_EXPIRES_TIME
 		)
 		const refreshToken = await this.tokensService.createToken(
 			tokensPayload,
-			refreshJwtSecret,
+			env.REFRESH_JWT_SECRET,
 			ExpiresTime.REFRESH_EXPIRES_TIME
 		)
 
 		const refreshTokenVerify = await this.tokensService
-			.verifyToken(refreshToken, refreshJwtSecret)
+			.verifyToken(refreshToken, env.REFRESH_JWT_SECRET)
 
 		await this.usersRepository.createDevice({
 			...tokensPayload,

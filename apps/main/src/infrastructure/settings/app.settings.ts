@@ -39,6 +39,7 @@ export const appSettings = (app: INestApplication) => {
 	return app
 }
 
+
 // app.enableCors({
 // 	origin: 'http://localhost:3000',
 // 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
