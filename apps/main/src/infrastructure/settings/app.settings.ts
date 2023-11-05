@@ -12,6 +12,7 @@ import { firebaseConfig } from './firebase.settings'
 export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
 	app.enableCors()
+	app.setGlobalPrefix('api/v1')
 	// app.enableCors({
 	// 	origin: 'http://localhost:3000',
 	// 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
