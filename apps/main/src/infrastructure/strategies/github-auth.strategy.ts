@@ -10,8 +10,8 @@ export class GithubAuthStrategy
 	extends PassportStrategy(Strategy, 'github') {
 	constructor(
 		@Inject('GITHUB_AUTH_VALIDATOR')
-		private readonly authValidator: GithubAuthValidator,
-		private configService: ConfigService
+		protected readonly authValidator: GithubAuthValidator,
+		protected configService: ConfigService
 	) {
 		super({
 			clientID: configService.get<string>('GITHUB_CLIENT_ID'),

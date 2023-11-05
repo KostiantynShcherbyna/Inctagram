@@ -8,8 +8,8 @@ import { ConfigService } from '@nestjs/config'
 export class GoogleAuthStrategy extends PassportStrategy(Strategy) {
 	constructor(
 		@Inject('G00GLE_AUTH_VALIDATOR')
-		private readonly authValidator: GoogleAuthValidator,
-		private configService: ConfigService
+		protected readonly authValidator: GoogleAuthValidator,
+		protected configService: ConfigService
 	) {
 		super({
 			clientID: configService.get<string>('GOOGLE_CLIENT_ID'),

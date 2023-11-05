@@ -36,7 +36,7 @@ export default () => ({
 		PASSWORD_RECOVERY_CODE_SECRET: process.env.PASSWORD_RECOVERY_CODE_SECRET || EnvConfigEnum.PASSWORD_RECOVERY_CODE_SECRET,
 		EMAIL_CONFIRMATION_CODE_SECRET: process.env.EMAIL_CONFIRMATION_CODE_SECRET || EnvConfigEnum.EMAIL_CONFIRMATION_CODE_SECRET
 	}
-});
+})
 
 // export const getEnvConfig = () => {
 // 	return {
