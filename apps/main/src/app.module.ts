@@ -95,7 +95,11 @@ const providers = [
 @Module({
 	imports: [
 		CqrsModule,
-		ConfigModule.forRoot({ load: [envSettings] }),
+		ConfigModule.forRoot({
+			load: [envSettings],
+			isGlobal: true,
+			cache: true
+		}),
 		PassportModule.register({ session: true })
 	],
 	controllers: [...controllers],
