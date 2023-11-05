@@ -1,12 +1,12 @@
-const authController = `/auth`
-const bloggerController = `/blogger`
-const blogsController = `/blogs`
-const commentsController = `/comments`
-const devicesController = `/security/devices`
-const postsController = `/posts`
-const saController = `/sa`
-const testingController = `/testing`
-const quizController = `/pair-game-quiz`
+const authController = `/api/v1/auth`
+const bloggerController = `/api/v1/blogger`
+const blogsController = `/api/v1/blogs`
+const commentsController = `/api/v1/comments`
+const devicesController = `/api/v1/security/devices`
+const postsController = `/api/v1/posts`
+const saController = `/api/v1/sa`
+const testingController = `/api/v1/testing`
+const quizController = `/api/v1/pair-game-quiz`
 
 
 export const endpoints = {

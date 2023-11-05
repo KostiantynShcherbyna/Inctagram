@@ -42,12 +42,12 @@ describe
 		publicHelper = new PublicTestingHelper(server)
 		userRepository = app.get(UsersRepository)
 
-		await request(server).delete(`/api/testing/all-data`)
+		await request(server).delete(`/api/v1/testing/all-data`)
 	})
 
 	afterAll
 	(async () => {
-		await request(server).delete(`/api/testing/all-data`)
+		await request(server).delete(`/api/v1/testing/all-data`)
 		await app.close()
 	})
 
