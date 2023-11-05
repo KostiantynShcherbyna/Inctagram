@@ -11,7 +11,12 @@ import { firebaseConfig } from './firebase.settings'
 
 export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
-	app.enableCors()
+	app.enableCors({
+		origin: '*',
+		methods: '*',
+		allowedHeaders: '*',
+		credentials: true
+	})
 	app.setGlobalPrefix('api/v1')
 	app.useGlobalPipes(
 		new ValidationPipe({
@@ -38,6 +43,7 @@ export const appSettings = (app: INestApplication) => {
 	useContainer(app.select(AppModule), { fallbackOnErrors: true })
 	return app
 }
+
 
 // app.enableCors({
 // 	origin: 'http://localhost:3000',

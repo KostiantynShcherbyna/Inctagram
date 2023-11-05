@@ -39,6 +39,7 @@ import { CreatePostUseCase } from './features/posts/app/use-cases/create-post.us
 import { UpdatePostUseCase } from './features/posts/app/use-cases/update-post.use.case'
 import { DeletePostImageUseCase } from './features/posts/app/use-cases/delete-post-image.use-case'
 import { UploadPostImageUseCase } from './features/posts/app/use-cases/upload-post-image.use.case'
+import envSettings from './infrastructure/settings/env.settings'
 
 const services = [
 	PrismaClient,
@@ -95,8 +96,9 @@ const providers = [
 	imports: [
 		CqrsModule,
 		ConfigModule.forRoot({
-			envFilePath: '.env',
-			isGlobal: true
+			load: [envSettings],
+			isGlobal: true,
+			cache: true
 		}),
 		PassportModule.register({ session: true })
 	],

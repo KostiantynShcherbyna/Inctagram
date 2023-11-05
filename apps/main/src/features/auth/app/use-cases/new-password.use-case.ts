@@ -1,11 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ConfigService } from '@nestjs/config'
-import { Secrets } from '../../../../infrastructure/utils/constants'
-import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { UsersRepository } from '../../../users/rep/users.repository'
 import { HashService } from '../../../../infrastructure/services/hash.service'
+import { IEnvConfig } from '../../../../infrastructure/settings/env.settings'
 
 export class NewPasswordCommand {
 	constructor(public newPassword: string, public recoveryCode: string) {
@@ -16,7 +15,7 @@ export class NewPasswordCommand {
 export class NewPasswordUseCase
 	implements ICommandHandler<NewPasswordCommand> {
 	constructor(
-		protected configService: ConfigService<ConfigType, true>,
+		protected configService: ConfigService,
 		protected tokensService: TokensService,
 		protected usersRepository: UsersRepository,
 		protected hashService: HashService
@@ -24,12 +23,10 @@ export class NewPasswordUseCase
 	}
 
 	async execute(command: NewPasswordCommand) {
-
-		const passwordRecoveryCodeSecret = this.configService.get(
-			Secrets.PASSWORD_RECOVERY_CODE_SECRET, { infer: true })
+		const env = this.configService.get<IEnvConfig>('env')
 
 		const verifiedEmailDto = await this.tokensService.verifyToken(
-			command.recoveryCode, passwordRecoveryCodeSecret)
+			command.recoveryCode, env.PASSWORD_RECOVERY_CODE_SECRET)
 
 		if (verifiedEmailDto === null) return ErrorEnum.INVALID_TOKEN
 

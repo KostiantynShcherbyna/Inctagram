@@ -1,22 +1,26 @@
 import { PassportStrategy } from '@nestjs/passport'
 import { Profile, Strategy } from 'passport-google-oauth20'
-import * as process from 'process'
 import { Inject, Injectable } from '@nestjs/common'
-import * as dotenv from 'dotenv'
 import { GoogleAuthValidator } from '../middlewares/auth/validators/google-auth.validator'
-
-dotenv.config()
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class GoogleAuthStrategy extends PassportStrategy(Strategy) {
 	constructor(
 		@Inject('G00GLE_AUTH_VALIDATOR')
-		private readonly authValidator: GoogleAuthValidator
+		protected readonly authValidator: GoogleAuthValidator,
+		protected configService: ConfigService
 	) {
+		// super({
+		// 	clientID: "742750804533-hc4t5pt5l7glcm2tqopjhi139q3kalg0.apps.googleusercontent.com",
+		// 	clientSecret: "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",
+		// 	callbackURL: "https://visualvoyage.ru/api/v1/auth/google/redirect",
+		// 	scope: ['profile', 'email']
+		// })
 		super({
-			clientID: process.env.GOOGLE_CLIENT_ID,
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-			callbackURL: process.env.GOOGLE_OAUTH_REDIRECT_URL,
+			clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
+			clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET'),
+			callbackURL: configService.get<string>('GOOGLE_OAUTH_REDIRECT_URL'),
 			scope: ['profile', 'email']
 		})
 	}

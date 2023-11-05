@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ConfigService } from '@nestjs/config'
-import { ConfigType } from '../../../../infrastructure/settings/custom-settings'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { UsersRepository } from '../../../users/rep/users.repository'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { EmailAdapter } from '../../../../infrastructure/adapters/email.adapter'
+import { IEnvConfig } from '../../../../infrastructure/settings/env.settings'
 
 export class PasswordRecoveryCommand {
 	constructor(public email: string) {
@@ -15,7 +15,7 @@ export class PasswordRecoveryCommand {
 export class PasswordRecoveryUseCase
 	implements ICommandHandler<PasswordRecoveryCommand> {
 	constructor(
-		protected configService: ConfigService<ConfigType, true>,
+		protected configService: ConfigService,
 		protected tokensService: TokensService,
 		protected usersRepository: UsersRepository,
 		protected emailAdapter: EmailAdapter
@@ -23,8 +23,7 @@ export class PasswordRecoveryUseCase
 	}
 
 	async execute(command: PasswordRecoveryCommand) {
-		const passwordRecoveryCodeSecret = this.configService
-			.get(Secrets.PASSWORD_RECOVERY_CODE_SECRET, { infer: true })
+		const env = this.configService.get<IEnvConfig>('env')
 
 		const passwordRecoveryCode = await this.usersRepository
 			.findActivePasswordRecoveryCodeByEmail(command.email)
@@ -34,7 +33,7 @@ export class PasswordRecoveryUseCase
 		const newPasswordRecoveryCode = await this.tokensService
 			.createToken(
 				{ email: command.email },
-				passwordRecoveryCodeSecret,
+				env.PASSWORD_RECOVERY_CODE_SECRET,
 				ExpiresTime.PASSWORD_HASH_EXPIRES_TIME
 			)
 
@@ -45,7 +44,10 @@ export class PasswordRecoveryUseCase
 				active: true
 			})
 		console.log('newPasswordRecoveryCode', newPasswordRecoveryCode)
-		await this.emailAdapter.sendPasswordRecovery(newPasswordRecoveryCodeResult.email, newPasswordRecoveryCodeResult.recoveryCode)
+		await this.emailAdapter.sendPasswordRecovery(
+			newPasswordRecoveryCodeResult.email,
+			newPasswordRecoveryCodeResult.recoveryCode
+		)
 
 		return
 	}
