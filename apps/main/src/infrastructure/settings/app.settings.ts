@@ -12,9 +12,9 @@ import { firebaseConfig } from './firebase.settings'
 export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
 	app.enableCors({
-		origin: '*',
-		methods: '*',
-		allowedHeaders: '*',
+		origin: ['http://localhost:3000', 'https://visualvoyage.ru', 'https://inctagram-tau.vercel.app'],
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+		allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
 		credentials: true
 	})
 	app.setGlobalPrefix('api/v1')
