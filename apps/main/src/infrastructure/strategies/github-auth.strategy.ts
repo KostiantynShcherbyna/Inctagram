@@ -14,11 +14,17 @@ export class GithubAuthStrategy
 		protected configService: ConfigService
 	) {
 		super({
-			clientID: configService.get<string>('GITHUB_CLIENT_ID'),
-			clientSecret: configService.get<string>('GITHUB_CLIENT_SECRET'),
-			callbackURL: configService.get<string>('GITHUB_OAUTH_REDIRECT_URL'),
+			clientID: "57cdf9cc736107073a85",
+			clientSecret: "454a2e3efdd7a15b71ffa4662c08a6d74a66e670",
+			callbackURL: "https://visualvoyage.ru/api/v1/auth/github/redirect",
 			scope: ['user'] // fetches non-public emails as well
 		})
+		// super({
+		// 	clientID: configService.get<string>('GITHUB_CLIENT_ID'),
+		// 	clientSecret: configService.get<string>('GITHUB_CLIENT_SECRET'),
+		// 	callbackURL: configService.get<string>('GITHUB_OAUTH_REDIRECT_URL'),
+		// 	scope: ['user'] // fetches non-public emails as well
+		// })
 	}
 
 	async validate(accessToken: string, refreshToken: string, profile: Profile) {

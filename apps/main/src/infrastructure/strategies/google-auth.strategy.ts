@@ -12,11 +12,17 @@ export class GoogleAuthStrategy extends PassportStrategy(Strategy) {
 		protected configService: ConfigService
 	) {
 		super({
-			clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
-			clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET'),
-			callbackURL: configService.get<string>('GOOGLE_OAUTH_REDIRECT_URL'),
+			clientID: "742750804533-hc4t5pt5l7glcm2tqopjhi139q3kalg0.apps.googleusercontent.com",
+			clientSecret: "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",
+			callbackURL: "https://visualvoyage.ru/api/v1/auth/google/redirect",
 			scope: ['profile', 'email']
 		})
+		// super({
+		// 	clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
+		// 	clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET'),
+		// 	callbackURL: configService.get<string>('GOOGLE_OAUTH_REDIRECT_URL'),
+		// 	scope: ['profile', 'email']
+		// })
 	}
 
 	async validate(accessToken: string, refreshToken: string, profile: Profile) {
