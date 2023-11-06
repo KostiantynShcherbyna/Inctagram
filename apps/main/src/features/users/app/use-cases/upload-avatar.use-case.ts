@@ -79,11 +79,11 @@ export class UploadAvatarUseCase
 
 
 // await this.prismaClient.$transaction([
-// 	this.prismaClient.avatar.updateMany({
+// 	this.prismaClient.media.updateMany({
 // 		where: { userId: user.id, isAvatar: true },
 // 		data: { isAvatar: false }
 // 	}),
-// 	this.prismaClient.avatar.create({
+// 	this.prismaClient.media.create({
 // 		data: {
 // 			id: avatarId,
 // 			userId: command.userId,

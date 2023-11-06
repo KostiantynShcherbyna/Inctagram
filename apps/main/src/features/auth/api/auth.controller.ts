@@ -206,7 +206,7 @@ export class AuthController {
 	async newPassword(@Body() bodyNewPassword: NewPasswordBodyInputModel) {
 		const newPasswordResponse = await this.commandBus.execute(
 			new NewPasswordCommand(
-				bodyNewPassword.newPassword,
+				bodyNewPassword.password,
 				bodyNewPassword.recoveryCode
 			)
 		)
