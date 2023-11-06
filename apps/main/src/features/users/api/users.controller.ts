@@ -45,7 +45,7 @@ export class UsersController {
 	}
 
 	@UseGuards(AccessGuard)
-	@Post('profile/avatar')
+	@Post('profile/media')
 	@UseInterceptors(FileInterceptor('file'))
 	async uploadAvatar(
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
@@ -60,7 +60,7 @@ export class UsersController {
 	}
 
 	@UseGuards(AccessGuard)
-	@Delete('profile/avatar')
+	@Delete('profile/media')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async deletePhoto(
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel

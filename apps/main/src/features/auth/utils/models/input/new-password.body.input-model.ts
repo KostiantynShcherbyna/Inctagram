@@ -9,10 +9,10 @@ export class NewPasswordBodyInputModel {
 		maxLength: PASSWORD_MAX_LENGTH,
 		minLength: PASSWORD_MIN_LENGTH
 	})
-	@Transform(({ value }) => trimTransformer(value, 'newPassword'))
+	@Transform(({ value }) => trimTransformer(value, 'password'))
 	@IsString()
 	@Length(PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH)
-	newPassword: string
+	password: string
 
 	@ApiProperty()
 	@Transform(({ value }) => trimTransformer(value, 'recoveryCode'))
