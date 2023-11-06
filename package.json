@@ -22,7 +22,8 @@
     "test:e2e": "jest --config apps/main/test/jest-e2e.json",
     "build:main": "nest build main",
     "start:main": "node dist/apps/inctagram/main",
-    "start:main:dev": "nest start main --watch"
+    "start:main:dev": "nest start main --watch",
+    "start:main:debug": "nest start main --debug --watch"
   },
   "dependencies": {
     "@faker-js/faker": "^8.2.0",
