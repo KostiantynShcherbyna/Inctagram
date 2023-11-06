@@ -34,7 +34,7 @@ export class EmailAdapter {
 			subject: 'recovery password',
 			message: `<h1>Password Recovery</h1>
             <p>To finish to recovery password follow the link below:
-            <a href='${domain}/password-recovery/${passwordRecoveryCode}'
+            <a href='${domain}/newPassword/${passwordRecoveryCode}'
             >link</a> 
             </p>`
 		}
