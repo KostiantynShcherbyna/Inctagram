@@ -49,7 +49,7 @@ export class UsersController {
 	}
 
 	// @UseGuards(AccessGuard)
-	// @Post('profile/media')
+	// @Post('profile/avatar')
 	// @UseInterceptors(FileInterceptor('file'))
 	// async uploadAvatar(
 	// 	@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
@@ -86,7 +86,7 @@ export class UsersController {
 	) {
 		const resp = this.clientProxy.send<string>(
 			{ cmd: 'uploadAvatar' },
-			{ userId: deviceSession.userId }
+			{ userId: deviceSession.userId, file }
 		)
 		return resp
 		// if (uploadResult === ErrorEnum.NOT_FOUND)

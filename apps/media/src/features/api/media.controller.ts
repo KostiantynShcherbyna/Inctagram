@@ -1,9 +1,9 @@
-import { Body, Controller, UnauthorizedException, UseInterceptors } from '@nestjs/common'
-import { Ctx, MessagePattern, NatsContext } from '@nestjs/microservices'
+import { Body, Controller, HttpException, UnauthorizedException } from '@nestjs/common'
+import { MessagePattern } from '@nestjs/microservices'
 import { CommandBus } from '@nestjs/cqrs'
 import { UploadPostImageCommand } from '../../../../main/src/features/posts/app/use-cases/upload-post-image.use.case'
 import { ErrorEnum } from '../../../../main/src/infrastructure/utils/error-enum'
-import { FileInterceptor } from '@nestjs/platform-express'
+import { UploadAvatarCommand } from '../app/use-cases/upload-avatar.use-case'
 
 @Controller()
 export class MediaController {
@@ -22,18 +22,14 @@ export class MediaController {
 	}
 
 	@MessagePattern({ cmd: 'uploadAvatar' })
-	// @UseInterceptors(FileInterceptor('file'))
-	async uploadAvatar(
-		@Ctx() context: NatsContext
-	) {
-		console.log('context', context)
-		// const uploadResult = await this.commandBus
-		// 	.execute(new UploadAvatarCommand(body.userId, body.file))
-		//
-		// if (uploadResult === ErrorEnum.NOT_FOUND)
-		// 	throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
-		// return uploadResult
-		return new Date()
+	async uploadAvatar(data: any) {
+		console.log('data', data)
+		const uploadResult = await this.commandBus
+			.execute(new UploadAvatarCommand(data.userId, data.file))
+		console.log('FINISH')
+		if (uploadResult === ErrorEnum.NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		return uploadResult
 	}
 
 

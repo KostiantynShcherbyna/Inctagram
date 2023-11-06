@@ -26,12 +26,13 @@ export class UploadAvatarUseCase
 	}
 
 	async execute(command: UploadAvatarCommand) {
+		console.log('0')
 		const user = await this.prismaClient.user
 			.findUnique({ where: { id: command.userId } })
 		if (user === null) return ErrorEnum.NOT_FOUND
 
 		const metadata = await sharp(command.file.buffer).metadata()
-
+		console.log('1')
 		const avatarId = randomUUID()
 
 		const avatarPath = await this.base64Service.encodeAvatarPath({
@@ -39,7 +40,7 @@ export class UploadAvatarUseCase
 			avatarId: avatarId,
 			originalname: command.file.originalname
 		})
-
+		console.log('2')
 		const uploadUrl = await this.uploadAvatar({
 			id: avatarId,
 			userId: command.userId,
@@ -50,7 +51,7 @@ export class UploadAvatarUseCase
 			size: command.file.size
 		}, command.file.buffer)
 
-
+		console.log('3')
 		return {
 			url: uploadUrl,
 			width: metadata.width,

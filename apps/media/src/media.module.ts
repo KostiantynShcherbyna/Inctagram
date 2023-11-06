@@ -3,12 +3,28 @@ import { MediaController } from './features/api/media.controller'
 import { TokensService } from './infrastructure/services/tokens.service'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
-import { CommandBus } from '@nestjs/cqrs'
+import { CqrsModule } from '@nestjs/cqrs'
+import { UploadAvatarUseCase } from './features/app/use-cases/upload-avatar.use-case'
+import { UploadPostImageUseCase } from './features/app/use-cases/upload-post-image.use.case'
+import { FirebaseAdapter } from './infrastructure/adapters/firebase.adapter'
+import { PrismaClient } from '@prisma/client'
+import { Base64Service } from './infrastructure/services/base64.service'
+import { PrismaService } from '../../main/src/prisma.service'
 
 @Module({
-	imports: [],
+	imports: [CqrsModule],
 	controllers: [MediaController],
-	providers: [CommandBus, TokensService, JwtService, ConfigService]
+	providers: [
+		PrismaClient,
+		PrismaService,
+		TokensService,
+		JwtService,
+		ConfigService,
+		UploadAvatarUseCase,
+		UploadPostImageUseCase,
+		FirebaseAdapter,
+		Base64Service
+	]
 })
 export class MediaModule {
 }
