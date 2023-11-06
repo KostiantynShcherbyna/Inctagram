@@ -41,6 +41,7 @@ import { DeletePostImageUseCase } from './features/posts/app/use-cases/delete-po
 import { UploadPostImageUseCase } from './features/posts/app/use-cases/upload-post-image.use.case'
 import envSettings from './infrastructure/settings/env.settings'
 import { UsersQueryRepository } from './features/users/rep/users.query.repository'
+import { ClientsModule, Transport } from '@nestjs/microservices'
 
 const services = [
 	PrismaClient,
@@ -96,6 +97,9 @@ const providers = [
 
 @Module({
 	imports: [
+		ClientsModule.register([
+			{ name: 'MEDIA_MICROSERVICE', transport: Transport.TCP }
+		]),
 		CqrsModule,
 		ConfigModule.forRoot({
 			load: [envSettings],

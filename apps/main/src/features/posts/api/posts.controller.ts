@@ -6,6 +6,7 @@ import {
 	ForbiddenException,
 	HttpCode,
 	HttpStatus,
+	Inject,
 	Param,
 	Post,
 	Put,
@@ -20,19 +21,21 @@ import { DeviceSessionGuard } from '../../../infrastructure/middlewares/auth/gua
 import { ErrorEnum } from '../../../infrastructure/utils/error-enum'
 import { DeviceSessionHeaderInputModel } from '../utils/models/input/device-session.header.input-model'
 import { CommandBus } from '@nestjs/cqrs'
-import { UploadPostImageCommand } from '../app/use-cases/upload-post-image.use.case'
 import { outputMessageException } from '../../../infrastructure/utils/output-message-exception'
 import { DeletePostImageCommand } from '../app/use-cases/delete-post-image.use-case'
 import { DeletePostImageUriInputModel } from '../utils/models/input/delete-post-image.uri.input-model'
-import { UploadPostImagePipe } from '../../../infrastructure/middlewares/users/upload-post-image.pipe'
 import { CreatePostBodyInputModel } from '../utils/models/input/create-post.body.input-model'
 import { CreatePostCommand } from '../app/use-cases/create-post.use.case'
 import { UpdatePostUriInputModel } from '../utils/models/input/update-post.uri.input-model'
 import { UpdatePostCommand } from '../app/use-cases/update-post.use.case'
+import { ClientProxy } from '@nestjs/microservices'
 
 @Controller('posts')
 export class PostsController {
-	constructor(protected commandBus: CommandBus) {
+	constructor(
+		protected commandBus: CommandBus,
+		@Inject('MEDIA_MICROSERVICE') private clientProxy: ClientProxy
+	) {
 	}
 
 	@UseGuards(AccessGuard)
@@ -65,20 +68,20 @@ export class PostsController {
 		return updateResult
 	}
 
-	@UseGuards(AccessGuard)
-	@Post('image')
-	@UseInterceptors(FileInterceptor('file'))
-	async uploadPostImage(
-		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
-		@UploadedFile(UploadPostImagePipe) file: Express.Multer.File
-	) {
-		console.log('file', file)
-		const uploadResult = await this.commandBus
-			.execute(new UploadPostImageCommand(deviceSession.userId, file))
-
-		if (uploadResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
-		return uploadResult
-	}
+	// @UseGuards(AccessGuard)
+	// @Post('image')
+	// @UseInterceptors(FileInterceptor('file'))
+	// async uploadPostImage(
+	// 	@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
+	// 	@UploadedFile(UploadPostImagePipe) file: Express.Multer.File
+	// ) {
+	// 	console.log('file', file)
+	// 	const uploadResult = await this.commandBus
+	// 		.execute(new UploadPostImageCommand(deviceSession.userId, file))
+	//
+	// 	if (uploadResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
+	// 	return uploadResult
+	// }
 
 	@UseGuards(AccessGuard)
 	@Delete('image/:id')
@@ -94,6 +97,14 @@ export class PostsController {
 		if (deleteResult === ErrorEnum.NOT_FOUND) throw new BadRequestException(
 			outputMessageException(ErrorEnum.NOT_FOUND, 'id'))
 		if (deleteResult === ErrorEnum.FORBIDDEN) throw new ForbiddenException()
+	}
+
+	@Post('image')
+	@UseInterceptors(FileInterceptor('file'))
+	async uploadPostImageMicro(
+		@UploadedFile() file: Express.Multer.File
+	) {
+		return this.clientProxy.send<string>({ cmd: 'uploadPostImage' }, file )
 	}
 
 
