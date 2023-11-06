@@ -98,7 +98,14 @@ const providers = [
 @Module({
 	imports: [
 		ClientsModule.register([
-			{ name: 'MEDIA_MICROSERVICE', transport: Transport.TCP }
+			{
+				name: 'MEDIA_MICROSERVICE',
+				transport: Transport.TCP,
+				options: {
+					host: '0.0.0.0',
+					port: 3051
+				}
+			}
 		]),
 		CqrsModule,
 		ConfigModule.forRoot({

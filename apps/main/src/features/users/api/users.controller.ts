@@ -5,6 +5,7 @@ import {
 	HttpCode,
 	HttpException,
 	HttpStatus,
+	Inject,
 	Injectable,
 	Post,
 	Put,
@@ -18,16 +19,19 @@ import { DeviceSessionGuard } from '../../../infrastructure/middlewares/auth/gua
 import { DeviceSessionHeaderInputModel } from '../utils/models/input/device-session.header.input.model'
 import { AccessGuard } from '../../../infrastructure/middlewares/auth/guards/access.guard'
 import { UploadAvatarPipe } from '../../../infrastructure/middlewares/users/upload-avatar.pipe'
-import { UploadAvatarCommand } from '../app/use-cases/upload-avatar.use-case'
 import { ErrorEnum } from '../../../infrastructure/utils/error-enum'
 import { UpdateProfileBodyInputModel } from '../utils/models/input/update-profile.body.input-model'
 import { DeleteAvatarCommand } from '../app/use-cases/delete-avatar.use-case'
 import { UpdateProfileCommand } from '../app/use-cases/update-profile.use-case'
+import { ClientProxy } from '@nestjs/microservices'
 
 @Injectable()
 @Controller('users')
 export class UsersController {
-	constructor(protected commandBus: CommandBus) {
+	constructor(
+		protected commandBus: CommandBus,
+		@Inject('MEDIA_MICROSERVICE') private clientProxy: ClientProxy
+	) {
 	}
 
 	@UseGuards(AccessGuard)
@@ -44,20 +48,20 @@ export class UsersController {
 		return updateResult
 	}
 
-	@UseGuards(AccessGuard)
-	@Post('profile/media')
-	@UseInterceptors(FileInterceptor('file'))
-	async uploadAvatar(
-		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
-		@UploadedFile(UploadAvatarPipe) file: Express.Multer.File
-	) {
-		const uploadResult = await this.commandBus
-			.execute(new UploadAvatarCommand(deviceSession.userId, file))
-
-		if (uploadResult === ErrorEnum.NOT_FOUND)
-			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
-		return uploadResult
-	}
+	// @UseGuards(AccessGuard)
+	// @Post('profile/media')
+	// @UseInterceptors(FileInterceptor('file'))
+	// async uploadAvatar(
+	// 	@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
+	// 	@UploadedFile(UploadAvatarPipe) file: Express.Multer.File
+	// ) {
+	// 	const uploadResult = await this.commandBus
+	// 		.execute(new UploadAvatarCommand(deviceSession.userId, file))
+	//
+	// 	if (uploadResult === ErrorEnum.NOT_FOUND)
+	// 		throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+	// 	return uploadResult
+	// }
 
 	@UseGuards(AccessGuard)
 	@Delete('profile/media')
@@ -72,5 +76,22 @@ export class UsersController {
 			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
 	}
 
+
+	@UseGuards(AccessGuard)
+	@Post('profile/avatar')
+	@UseInterceptors(FileInterceptor('file'))
+	async uploadAvatar(
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
+		@UploadedFile(UploadAvatarPipe) file: Express.Multer.File
+	) {
+		const resp = this.clientProxy.send<string>(
+			{ cmd: 'uploadAvatar' },
+			{ userId: deviceSession.userId }
+		)
+		return resp
+		// if (uploadResult === ErrorEnum.NOT_FOUND)
+		// 	throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		// return uploadResult
+	}
 
 }

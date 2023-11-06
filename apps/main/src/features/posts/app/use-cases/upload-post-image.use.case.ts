@@ -54,9 +54,9 @@ export class UploadPostImageUseCase
 			}
 		})
 
-		const uploadUrl = await this.filesFirebaseAdapter
-			.uploadAvatar(photoPath, command.file.buffer)
-
+		// const uploadUrl = await this.filesFirebaseAdapter
+		// 	.uploadAvatar(photoPath, command.file.buffer)
+		const uploadUrl = ''
 		return {
 			id: imageId,
 			url: uploadUrl,

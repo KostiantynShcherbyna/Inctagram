@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 
 @Injectable()
-export class FilesFirebaseAdapter {
+export class FirebaseAdapter {
 
 	constructor() {
 	}

@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaClient } from '@prisma/client'
 import { randomUUID } from 'crypto'
 import sharp from 'sharp'
-import { FilesFirebaseAdapter } from '../../../infrastructure/adapters/files.firebase.adapter'
+import { FirebaseAdapter } from '../../../infrastructure/adapters/firebase.adapter'
 import { Base64Service } from '../../../infrastructure/services/base64.service'
 import { ErrorEnum } from '../../../../../main/src/infrastructure/utils/error-enum'
 
@@ -18,14 +18,15 @@ export class UploadPostImageCommand {
 export class UploadPostImageUseCase
 	implements ICommandHandler<UploadPostImageCommand> {
 	constructor(
-		protected filesFirebaseAdapter: FilesFirebaseAdapter,
+		protected firebaseAdapter: FirebaseAdapter,
 		protected prismaClient: PrismaClient,
 		protected base64Service: Base64Service
 	) {
 	}
 
 	async execute(command: UploadPostImageCommand) {
-		const user = await this.prismaClient.user.findUnique({ where: { id: command.userId } })
+		const user = await this.prismaClient.user
+			.findUnique({ where: { id: command.userId } })
 		if (user === null) return ErrorEnum.NOT_FOUND
 
 		const metadata = await sharp(command.file.buffer).metadata()
@@ -52,7 +53,7 @@ export class UploadPostImageUseCase
 			}
 		})
 
-		const uploadUrl = await this.filesFirebaseAdapter
+		const uploadUrl = await this.firebaseAdapter
 			.uploadAvatar(photoPath, command.file.buffer)
 
 		return {

@@ -29,6 +29,8 @@ import { CreatePostCommand } from '../app/use-cases/create-post.use.case'
 import { UpdatePostUriInputModel } from '../utils/models/input/update-post.uri.input-model'
 import { UpdatePostCommand } from '../app/use-cases/update-post.use.case'
 import { ClientProxy } from '@nestjs/microservices'
+import { UploadPostImagePipe } from '../../../infrastructure/middlewares/users/upload-post-image.pipe'
+import { UploadPostImageCommand } from '../app/use-cases/upload-post-image.use.case'
 
 @Controller('posts')
 export class PostsController {
@@ -68,20 +70,20 @@ export class PostsController {
 		return updateResult
 	}
 
-	// @UseGuards(AccessGuard)
-	// @Post('image')
-	// @UseInterceptors(FileInterceptor('file'))
-	// async uploadPostImage(
-	// 	@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
-	// 	@UploadedFile(UploadPostImagePipe) file: Express.Multer.File
-	// ) {
-	// 	console.log('file', file)
-	// 	const uploadResult = await this.commandBus
-	// 		.execute(new UploadPostImageCommand(deviceSession.userId, file))
-	//
-	// 	if (uploadResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
-	// 	return uploadResult
-	// }
+	@UseGuards(AccessGuard)
+	@Post('imagee')
+	@UseInterceptors(FileInterceptor('file'))
+	async uploadPostImage(
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
+		@UploadedFile(UploadPostImagePipe) file: Express.Multer.File
+	) {
+		console.log('file', file)
+		const uploadResult = await this.commandBus
+			.execute(new UploadPostImageCommand(deviceSession.userId, file))
+
+		if (uploadResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
+		return uploadResult
+	}
 
 	@UseGuards(AccessGuard)
 	@Delete('image/:id')
@@ -99,12 +101,17 @@ export class PostsController {
 		if (deleteResult === ErrorEnum.FORBIDDEN) throw new ForbiddenException()
 	}
 
+	@UseGuards(AccessGuard)
 	@Post('image')
 	@UseInterceptors(FileInterceptor('file'))
 	async uploadPostImageMicro(
-		@UploadedFile() file: Express.Multer.File
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
+		@UploadedFile(UploadPostImagePipe) file: Express.Multer.File
 	) {
-		return this.clientProxy.send<string>({ cmd: 'uploadPostImage' }, file )
+		return this.clientProxy.send<string>(
+			{ cmd: 'uploadPostImage' },
+			{ userId: deviceSession.userId, file }
+		)
 	}
 
 
