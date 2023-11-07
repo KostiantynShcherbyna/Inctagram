@@ -40,7 +40,7 @@ export class UploadAvatarUseCase
 			avatarId: avatarId,
 			originalname: command.file.originalname
 		})
-		console.log('2')
+
 		const uploadUrl = await this.uploadAvatar({
 			id: avatarId,
 			userId: command.userId,
@@ -51,7 +51,6 @@ export class UploadAvatarUseCase
 			size: command.file.size
 		}, command.file.buffer)
 
-		console.log('3')
 		return {
 			url: uploadUrl,
 			width: metadata.width,

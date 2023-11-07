@@ -23,7 +23,8 @@ import { PrismaService } from '../../main/src/prisma.service'
 		UploadAvatarUseCase,
 		UploadPostImageUseCase,
 		FirebaseAdapter,
-		Base64Service
+		Base64Service,
+
 	]
 })
 export class MediaModule {

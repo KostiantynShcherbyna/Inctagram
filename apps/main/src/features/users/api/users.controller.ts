@@ -24,7 +24,7 @@ import { UpdateProfileBodyInputModel } from '../utils/models/input/update-profil
 import { DeleteAvatarCommand } from '../app/use-cases/delete-avatar.use-case'
 import { UpdateProfileCommand } from '../app/use-cases/update-profile.use-case'
 import { ClientProxy } from '@nestjs/microservices'
-import { firstValueFrom } from 'rxjs'
+import { lastValueFrom } from 'rxjs'
 
 @Injectable()
 @Controller('users')
@@ -65,7 +65,7 @@ export class UsersController {
 	// }
 
 	@UseGuards(AccessGuard)
-	@Delete('profile/media')
+	@Delete('profile/avatar')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async deletePhoto(
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel
@@ -85,14 +85,16 @@ export class UsersController {
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
 		@UploadedFile(UploadAvatarPipe) file: Express.Multer.File
 	) {
+		try {
+			return await lastValueFrom(this.clientProxy.send<string>(
+				{ cmd: 'uploadAvatar' },
+				{ userId: deviceSession.userId, file }
+			))
+		} catch (err) {
+			if (err.message === ErrorEnum.NOT_FOUND)
+				throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		}
 
-		const uploadResult = await firstValueFrom(this.clientProxy.send<string>(
-			{ cmd: 'uploadAvatar' },
-			{ userId: deviceSession.userId, file }
-		))
-		if (uploadResult === ErrorEnum.NOT_FOUND)
-			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
-		return uploadResult
 	}
 
 }
