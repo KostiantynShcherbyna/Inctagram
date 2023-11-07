@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core'
 import { MicroserviceOptions, Transport } from '@nestjs/microservices'
 import { MediaModule } from './media.module'
+import { initializeApp } from 'firebase/app'
+import { firebaseConfig } from './infrastructure/settings/firebase.settings'
 
 async function bootstrap() {
 	const app = await NestFactory.createMicroservice<MicroserviceOptions>(
@@ -13,6 +15,7 @@ async function bootstrap() {
 			}
 		}
 	)
+	initializeApp(firebaseConfig)
 	await app.listen()
 }
 

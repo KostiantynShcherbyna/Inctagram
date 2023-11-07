@@ -24,6 +24,7 @@ import { UpdateProfileBodyInputModel } from '../utils/models/input/update-profil
 import { DeleteAvatarCommand } from '../app/use-cases/delete-avatar.use-case'
 import { UpdateProfileCommand } from '../app/use-cases/update-profile.use-case'
 import { ClientProxy } from '@nestjs/microservices'
+import { firstValueFrom } from 'rxjs'
 
 @Injectable()
 @Controller('users')
@@ -84,14 +85,14 @@ export class UsersController {
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
 		@UploadedFile(UploadAvatarPipe) file: Express.Multer.File
 	) {
-		const resp = this.clientProxy.send<string>(
+
+		const uploadResult = await firstValueFrom(this.clientProxy.send<string>(
 			{ cmd: 'uploadAvatar' },
 			{ userId: deviceSession.userId, file }
-		)
-		return resp
-		// if (uploadResult === ErrorEnum.NOT_FOUND)
-		// 	throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
-		// return uploadResult
+		))
+		if (uploadResult === ErrorEnum.NOT_FOUND)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		return uploadResult
 	}
 
 }

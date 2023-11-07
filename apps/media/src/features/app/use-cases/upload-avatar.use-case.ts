@@ -1,16 +1,16 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaClient } from '@prisma/client'
 import { randomUUID } from 'crypto'
-import sharp from 'sharp'
 import { Base64Service } from '../../../infrastructure/services/base64.service'
 import { FirebaseAdapter } from '../../../infrastructure/adapters/firebase.adapter'
 import { ErrorEnum } from '../../../../../main/src/infrastructure/utils/error-enum'
 import { ICreateAvatar } from '../../../infrastructure/types/auth.types'
+import sharp from 'sharp'
 
 export class UploadAvatarCommand {
 	constructor(
 		public userId: string,
-		public file: Express.Multer.File
+		public file: any
 	) {
 	}
 }
@@ -26,15 +26,15 @@ export class UploadAvatarUseCase
 	}
 
 	async execute(command: UploadAvatarCommand) {
-		console.log('0')
+
 		const user = await this.prismaClient.user
 			.findUnique({ where: { id: command.userId } })
 		if (user === null) return ErrorEnum.NOT_FOUND
 
-		const metadata = await sharp(command.file.buffer).metadata()
-		console.log('1')
-		const avatarId = randomUUID()
+		const imgBuffer = Buffer.from(command.file.buffer.data)
+		const metadata = await sharp(imgBuffer).metadata()
 
+		const avatarId = randomUUID()
 		const avatarPath = await this.base64Service.encodeAvatarPath({
 			userId: command.userId,
 			avatarId: avatarId,

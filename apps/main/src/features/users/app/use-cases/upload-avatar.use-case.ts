@@ -5,8 +5,8 @@ import { FilesFirebaseAdapter } from '../../../../infrastructure/adapters/files.
 import { PrismaClient } from '@prisma/client'
 import { randomUUID } from 'crypto'
 import { Base64Service } from '../../../../infrastructure/services/base64.service'
-import sharp from 'sharp'
 import { ICreateAvatar } from '../../../../infrastructure/types/auth.types'
+import sharp from 'sharp'
 
 export class UploadAvatarCommand {
 	constructor(
@@ -30,28 +30,26 @@ export class UploadAvatarUseCase
 	async execute(command: UploadAvatarCommand) {
 		const user = await this.usersRepository.findUserById(command.userId)
 		if (user === null) return ErrorEnum.NOT_FOUND
-
 		const metadata = await sharp(command.file.buffer).metadata()
-
 		const avatarId = randomUUID()
 
-		const avatarPath = await this.base64Service.encodeAvatarPath({
-			userId: command.userId,
-			avatarId: avatarId,
-			originalname: command.file.originalname
-		})
+		// const avatarPath = await this.base64Service.encodeAvatarPath({
+		// 	userId: command.userId,
+		// 	avatarId: avatarId,
+		// 	originalname: command.file.originalname
+		// })
+		//
+		// const uploadUrl = await this.uploadAvatar({
+		// 	id: avatarId,
+		// 	userId: command.userId,
+		// 	uploadPath: avatarPath,
+		// 	contentType: command.file.mimetype,
+		// 	height: metadata.height,
+		// 	width: metadata.width,
+		// 	size: command.file.size
+		// }, command.file.buffer)
 
-		const uploadUrl = await this.uploadAvatar({
-			id: avatarId,
-			userId: command.userId,
-			uploadPath: avatarPath,
-			contentType: command.file.mimetype,
-			height: metadata.height,
-			width: metadata.width,
-			size: command.file.size
-		}, command.file.buffer)
-
-
+const uploadUrl = ''
 		return {
 			url: uploadUrl,
 			width: metadata.width,
