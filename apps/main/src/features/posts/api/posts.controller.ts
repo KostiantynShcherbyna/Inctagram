@@ -5,6 +5,7 @@ import {
 	Delete,
 	ForbiddenException,
 	HttpCode,
+	HttpException,
 	HttpStatus,
 	Inject,
 	Param,
@@ -30,7 +31,6 @@ import { UpdatePostUriInputModel } from '../utils/models/input/update-post.uri.i
 import { UpdatePostCommand } from '../app/use-cases/update-post.use.case'
 import { ClientProxy } from '@nestjs/microservices'
 import { UploadPostImagePipe } from '../../../infrastructure/middlewares/users/upload-post-image.pipe'
-import { UploadPostImageCommand } from '../app/use-cases/upload-post-image.use.case'
 
 @Controller('posts')
 export class PostsController {
@@ -70,20 +70,20 @@ export class PostsController {
 		return updateResult
 	}
 
-	@UseGuards(AccessGuard)
-	@Post('imagee')
-	@UseInterceptors(FileInterceptor('file'))
-	async uploadPostImage(
-		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
-		@UploadedFile(UploadPostImagePipe) file: Express.Multer.File
-	) {
-		console.log('file', file)
-		const uploadResult = await this.commandBus
-			.execute(new UploadPostImageCommand(deviceSession.userId, file))
-
-		if (uploadResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
-		return uploadResult
-	}
+	// @UseGuards(AccessGuard)
+	// @Post('image')
+	// @UseInterceptors(FileInterceptor('file'))
+	// async uploadPostImage(
+	// 	@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
+	// 	@UploadedFile(UploadPostImagePipe) file: Express.Multer.File
+	// ) {
+	// 	console.log('file', file)
+	// 	const uploadResult = await this.commandBus
+	// 		.execute(new UploadPostImageCommand(deviceSession.userId, file))
+	//
+	// 	if (uploadResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
+	// 	return uploadResult
+	// }
 
 	@UseGuards(AccessGuard)
 	@Delete('image/:id')
@@ -104,14 +104,19 @@ export class PostsController {
 	@UseGuards(AccessGuard)
 	@Post('image')
 	@UseInterceptors(FileInterceptor('file'))
-	async uploadPostImageMicro(
+	async uploadPostImage(
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
 		@UploadedFile(UploadPostImagePipe) file: Express.Multer.File
 	) {
-		return this.clientProxy.send<string>(
-			{ cmd: 'uploadPostImage' },
-			{ userId: deviceSession.userId, file }
-		)
+		try {
+			return this.clientProxy.send<any>(
+				{ cmd: 'uploadPostImage' },
+				{ userId: deviceSession.userId, file }
+			)
+		} catch (err) {
+			if (err.message === ErrorEnum.NOT_FOUND)
+				throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		}
 	}
 
 

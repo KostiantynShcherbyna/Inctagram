@@ -86,7 +86,7 @@ export class UsersController {
 		@UploadedFile(UploadAvatarPipe) file: Express.Multer.File
 	) {
 		try {
-			return await lastValueFrom(this.clientProxy.send<string>(
+			return await lastValueFrom(this.clientProxy.send<any>(
 				{ cmd: 'uploadAvatar' },
 				{ userId: deviceSession.userId, file }
 			))
