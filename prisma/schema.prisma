@@ -22,10 +22,10 @@ model User {
 
   devices               Device[]
   confirmationCodes     ConfirmationCode[]
-  passwordRecoveryCodes PasswordRecoveryCode[]
   avatars               Avatar[]
   posts                 Post[]
   postImages            PostImage[]
+  passwordRecoveryCodes PasswordRecoveryCode[]
 }
 
 model Device {

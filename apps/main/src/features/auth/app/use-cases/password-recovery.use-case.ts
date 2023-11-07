@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ConfigService } from '@nestjs/config'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { UsersRepository } from '../../../users/rep/users.repository'
-import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
+import { ExpiresTime } from '../../../../infrastructure/utils/constants'
 import { EmailAdapter } from '../../../../infrastructure/adapters/email.adapter'
 import { IEnvConfig } from '../../../../infrastructure/settings/env.settings'
 
@@ -24,6 +24,10 @@ export class PasswordRecoveryUseCase
 
 	async execute(command: PasswordRecoveryCommand) {
 		const env = this.configService.get<IEnvConfig>('env')
+
+		const user = await this.usersRepository
+			.findUserByEmail(command.email)
+		if (user === null) return
 
 		const passwordRecoveryCode = await this.usersRepository
 			.findActivePasswordRecoveryCodeByEmail(command.email)
