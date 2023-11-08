@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common'
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices'
 import { CommandBus } from '@nestjs/cqrs'
-import { ErrorEnum } from '../../infrastructure/utils/error-enum'
+import { ErrorEnum } from '../../../infrastructure/utils/error-enum'
 import { UploadAvatarCommand } from '../app/use-cases/upload-avatar.use-case'
 import { UploadPostImageCommand } from '../app/use-cases/upload-post-image.use.case'
 

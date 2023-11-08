@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaClient } from '@prisma/client'
 import { randomUUID } from 'crypto'
-import { Base64Service } from '../../../infrastructure/services/base64.service'
-import { FirebaseAdapter } from '../../../infrastructure/adapters/firebase.adapter'
-import { ErrorEnum } from '../../../../../main/src/infrastructure/utils/error-enum'
-import { ICreateAvatar } from '../../../infrastructure/types/auth.types'
+import { Base64Service } from '../../../../infrastructure/services/base64.service'
+import { FirebaseAdapter } from '../../../../infrastructure/adapters/firebase.adapter'
+import { ErrorEnum } from '../../../../../../main/src/infrastructure/utils/error-enum'
+import { ICreateAvatar } from '../../../../infrastructure/types/auth.types'
 import sharp from 'sharp'
 
 export class UploadAvatarCommand {

@@ -2,9 +2,9 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaClient } from '@prisma/client'
 import { randomUUID } from 'crypto'
 import sharp from 'sharp'
-import { FirebaseAdapter } from '../../../infrastructure/adapters/firebase.adapter'
-import { Base64Service } from '../../../infrastructure/services/base64.service'
-import { ErrorEnum } from '../../../../../main/src/infrastructure/utils/error-enum'
+import { FirebaseAdapter } from '../../../../infrastructure/adapters/firebase.adapter'
+import { Base64Service } from '../../../../infrastructure/services/base64.service'
+import { ErrorEnum } from '../../../../../../main/src/infrastructure/utils/error-enum'
 
 export class UploadPostImageCommand {
 	constructor(
