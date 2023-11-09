@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { MediaModule } from './../src/media.module';
 
-describe('MediaController (e2e)', () => {
+describe('UsersController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {

@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { MediaController } from './features/users/api/media.controller'
+import { UsersController } from './modules/users/api/users.controller'
 
 describe('MediaController', () => {
-	let mediaController: MediaController
+	let mediaController: UsersController
 
 	beforeEach(async () => {
 		const app: TestingModule = await Test.createTestingModule({
-			controllers: [MediaController],
+			controllers: [UsersController],
 			providers: []
 		}).compile()
 
-		mediaController = app.get<MediaController>(MediaController)
+		mediaController = app.get<UsersController>(UsersController)
 	})
 
 	describe('root', () => {

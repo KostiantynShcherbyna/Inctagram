@@ -11,9 +11,7 @@ export class FirebaseAdapter {
 		const storage = getStorage()
 		const storageRef = ref(storage, folderPath)
 		const bytes = new Uint8Array(data.buffer)
-		const up = await uploadBytes(storageRef, bytes)
-		console.log('up', up)
-		console.log('storageRef', storageRef)
+		await uploadBytes(storageRef, bytes)
 		return await getDownloadURL(storageRef)
 	}
 
