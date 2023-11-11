@@ -5,10 +5,10 @@ import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaClient } from '@prisma/client'
 import { UsersController } from './api/users.controller'
 import { PrismaService } from '../../prisma.service'
-import { TokensService } from '../../infrastructure/services/tokens.service'
 import { UploadAvatarUseCase } from './app/use-cases/upload-avatar.use-case'
 import { FirebaseAdapter } from '../../infrastructure/adapters/firebase.adapter'
 import { Base64Service } from '../../infrastructure/services/base64.service'
+import { DeleteAvatarUseCase } from './app/use-cases/delete-avatar.use-case'
 
 
 @Module({
@@ -17,12 +17,13 @@ import { Base64Service } from '../../infrastructure/services/base64.service'
 	providers: [
 		PrismaClient,
 		PrismaService,
-		TokensService,
 		JwtService,
 		ConfigService,
 		UploadAvatarUseCase,
 		FirebaseAdapter,
 		Base64Service,
+		UploadAvatarUseCase,
+		DeleteAvatarUseCase
 	]
 })
 export class UsersModule {

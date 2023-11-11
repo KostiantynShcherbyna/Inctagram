@@ -28,8 +28,6 @@ import { GithubAuthStrategy } from './infrastructure/strategies/github-auth.stra
 import { GithubAuthValidator } from './infrastructure/middlewares/auth/validators/github-auth.validator'
 import { UploadAvatarPipe } from './infrastructure/middlewares/users/upload-avatar.pipe'
 import { UsersController } from './features/users/api/users.controller'
-import { UploadAvatarUseCase } from './features/users/app/use-cases/upload-avatar.use-case'
-import { DeleteAvatarUseCase } from './features/users/app/use-cases/delete-avatar.use-case'
 import { UpdateProfileUseCase } from './features/users/app/use-cases/update-profile.use-case'
 import { FillProfileUseCase } from './features/users/app/use-cases/fill-profile.use-case'
 import { FilesFirebaseAdapter } from './infrastructure/adapters/files.firebase.adapter'
@@ -37,8 +35,6 @@ import { HashService } from './infrastructure/services/hash.service'
 import { Base64Service } from './infrastructure/services/base64.service'
 import { CreatePostUseCase } from './features/posts/app/use-cases/create-post.use.case'
 import { UpdatePostUseCase } from './features/posts/app/use-cases/update-post.use.case'
-import { DeletePostImageUseCase } from './features/posts/app/use-cases/delete-post-image.use-case'
-import { UploadPostImageUseCase } from './features/posts/app/use-cases/upload-post-image.use.case'
 import envSettings from './infrastructure/settings/env.settings'
 import { UsersQueryRepository } from './features/users/rep/users.query.repository'
 import { ClientsModule, Transport } from '@nestjs/microservices'
@@ -72,14 +68,10 @@ const useCases = [
 	PasswordRecoveryUseCase,
 	GoogleLoginUseCase,
 	GitHubLoginUseCase,
-	UploadAvatarUseCase,
-	DeleteAvatarUseCase,
 	UpdateProfileUseCase,
 	FillProfileUseCase,
 	CreatePostUseCase,
 	UpdatePostUseCase,
-	DeletePostImageUseCase,
-	UploadPostImageUseCase
 ]
 const repository = [
 	UsersRepository,

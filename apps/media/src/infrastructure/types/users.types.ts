@@ -1,8 +1,3 @@
-export type UserDetails = {
-	email: string
-	username: string
-}
-
 export interface ICreateAvatarPath {
 	userId: string
 	avatarId: string

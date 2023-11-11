@@ -24,12 +24,16 @@ export enum ErrorEnum {
 	// ↓↓↓ USERS
 	USER_IS_BANNED = `User is banned`,
 	USER_NOT_FOUND = `User not found`,
+	AVATAR_NOT_FOUND = `Avatar not found`,
 	USER_NOT_BANNED = `User not banned`,
 	USER_NOT_DELETED = `User not deleted`,
 	EMAIL_EXIST = `User with this email is already registered`,
 	LOGIN_EXIST = `User with this login is already registered`,
 	EMAIL_CONFIRMED = `User email is confirmed`,
 	EMAIL_NOT_CONFIRMED = `User email not confirmed`,
+
+	// ↓↓↓ POSTS
+	POST_NOT_FOUND = `Post not found`,
 
 	PHOTO_NOT_FOUND = `Photo not found`,
 	FILE_IS_REQUIRED = `File is required`,

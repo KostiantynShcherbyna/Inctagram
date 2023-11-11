@@ -4,7 +4,8 @@ import { randomUUID } from 'crypto'
 import sharp from 'sharp'
 import { FirebaseAdapter } from '../../../../infrastructure/adapters/firebase.adapter'
 import { Base64Service } from '../../../../infrastructure/services/base64.service'
-import { ErrorEnum } from '../../../../../../main/src/infrastructure/utils/error-enum'
+import { RpcException } from '@nestjs/microservices'
+import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 
 export class UploadPostImageCommand {
 	constructor(
@@ -27,7 +28,7 @@ export class UploadPostImageUseCase
 	async execute(command: UploadPostImageCommand) {
 		const user = await this.prismaClient.user
 			.findUnique({ where: { id: command.userId } })
-		if (user === null) return ErrorEnum.NOT_FOUND
+		if (user === null) throw new RpcException(ErrorEnum.USER_NOT_FOUND)
 
 		const metadata = await sharp(command.file.buffer).metadata()
 
@@ -54,7 +55,7 @@ export class UploadPostImageUseCase
 		})
 
 		const uploadUrl = await this.firebaseAdapter
-			.uploadAvatar(photoPath, command.file.buffer)
+			.upload(`post-images/${photoPath}`, command.file.buffer)
 
 		return {
 			id: imageId,

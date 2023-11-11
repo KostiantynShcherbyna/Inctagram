@@ -23,7 +23,6 @@ import { ErrorEnum } from '../../../infrastructure/utils/error-enum'
 import { DeviceSessionHeaderInputModel } from '../utils/models/input/device-session.header.input-model'
 import { CommandBus } from '@nestjs/cqrs'
 import { outputMessageException } from '../../../infrastructure/utils/output-message-exception'
-import { DeletePostImageCommand } from '../app/use-cases/delete-post-image.use-case'
 import { DeletePostImageUriInputModel } from '../utils/models/input/delete-post-image.uri.input-model'
 import { CreatePostBodyInputModel } from '../utils/models/input/create-post.body.input-model'
 import { CreatePostCommand } from '../app/use-cases/create-post.use.case'
@@ -70,39 +69,9 @@ export class PostsController {
 		return updateResult
 	}
 
-	// @UseGuards(AccessGuard)
-	// @Post('image')
-	// @UseInterceptors(FileInterceptor('file'))
-	// async uploadPostImage(
-	// 	@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
-	// 	@UploadedFile(UploadPostImagePipe) file: Express.Multer.File
-	// ) {
-	// 	console.log('file', file)
-	// 	const uploadResult = await this.commandBus
-	// 		.execute(new UploadPostImageCommand(deviceSession.userId, file))
-	//
-	// 	if (uploadResult === ErrorEnum.NOT_FOUND) throw new UnauthorizedException()
-	// 	return uploadResult
-	// }
-
-	@UseGuards(AccessGuard)
-	@Delete('image/:id')
-	@HttpCode(HttpStatus.NO_CONTENT)
-	async deletePostImage(
-		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
-		@Param() param: DeletePostImageUriInputModel
-	) {
-		const deleteResult = await this.commandBus
-			.execute(new DeletePostImageCommand(deviceSession.userId, param.id))
-
-		if (deleteResult === ErrorEnum.USER_NOT_FOUND) throw new UnauthorizedException()
-		if (deleteResult === ErrorEnum.NOT_FOUND) throw new BadRequestException(
-			outputMessageException(ErrorEnum.NOT_FOUND, 'id'))
-		if (deleteResult === ErrorEnum.FORBIDDEN) throw new ForbiddenException()
-	}
-
 	@UseGuards(AccessGuard)
 	@Post('image')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseInterceptors(FileInterceptor('file'))
 	async uploadPostImage(
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
@@ -117,6 +86,29 @@ export class PostsController {
 			if (err.message === ErrorEnum.NOT_FOUND)
 				throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
 		}
+	}
+
+	@UseGuards(AccessGuard)
+	@Delete('image/:id')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	async deletePostImage(
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
+		@Param() param: DeletePostImageUriInputModel
+	) {
+		try {
+			return this.clientProxy.send<any>(
+				{ cmd: 'deletePostImage' },
+				{ userId: deviceSession.userId, imageId: param.id }
+			)
+		} catch (err) {
+			if (err.message === ErrorEnum.USER_NOT_FOUND)
+				throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+			if (err.message === ErrorEnum.POST_NOT_FOUND)
+				throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+			if (err.message === ErrorEnum.FORBIDDEN)
+				throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		}
+
 	}
 
 

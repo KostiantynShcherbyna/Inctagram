@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { ICreateAvatarPath } from '../types/auth.types'
+import { ICreateAvatarPath } from '../types/users.types'
 import { ICreatePostImagePath } from '../types/posts.types'
 
 @Injectable()

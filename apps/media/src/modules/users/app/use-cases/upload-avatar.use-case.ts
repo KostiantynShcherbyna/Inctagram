@@ -3,9 +3,10 @@ import { PrismaClient } from '@prisma/client'
 import { randomUUID } from 'crypto'
 import { Base64Service } from '../../../../infrastructure/services/base64.service'
 import { FirebaseAdapter } from '../../../../infrastructure/adapters/firebase.adapter'
-import { ErrorEnum } from '../../../../../../main/src/infrastructure/utils/error-enum'
-import { ICreateAvatar } from '../../../../infrastructure/types/auth.types'
+import { ICreateAvatar } from '../../../../infrastructure/types/users.types'
 import sharp from 'sharp'
+import { RpcException } from '@nestjs/microservices'
+import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 
 export class UploadAvatarCommand {
 	constructor(
@@ -29,7 +30,7 @@ export class UploadAvatarUseCase
 
 		const user = await this.prismaClient.user
 			.findUnique({ where: { id: command.userId } })
-		if (user === null) return ErrorEnum.NOT_FOUND
+		if (user === null) throw new RpcException(ErrorEnum.USER_NOT_FOUND)
 
 		const imgBuffer = Buffer.from(command.file.buffer.data)
 		const metadata = await sharp(imgBuffer).metadata()
@@ -69,7 +70,7 @@ export class UploadAvatarUseCase
 			})
 			await tx.avatar.create({ data })
 			return await this.firebaseAdapter
-				.uploadAvatar(data.uploadPath, buffer)
+				.upload(`avatars/${data.uploadPath}`, buffer)
 		})
 	}
 
