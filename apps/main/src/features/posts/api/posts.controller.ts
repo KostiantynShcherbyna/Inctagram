@@ -4,13 +4,14 @@ import {
 	Controller,
 	Delete,
 	ForbiddenException,
+	Get,
 	HttpCode,
 	HttpException,
 	HttpStatus,
 	Inject,
 	Param,
 	Post,
-	Put,
+	Put, Query,
 	UnauthorizedException,
 	UploadedFile,
 	UseGuards,
@@ -30,13 +31,27 @@ import { UpdatePostUriInputModel } from '../utils/models/input/update-post.uri.i
 import { UpdatePostCommand } from '../app/use-cases/update-post.use.case'
 import { ClientProxy } from '@nestjs/microservices'
 import { UploadPostImagePipe } from '../../../infrastructure/middlewares/users/upload-post-image.pipe'
+import { PostsQueryRepository } from '../rep/posts.repository'
+import { AccessMiddleware } from '../../../infrastructure/middlewares/auth/guards/access-middleware.guard'
+import { DeviceSessionOptionalHeaderInputModel } from '../utils/models/input/device-session-optional.header.input-model'
+import { GetPostsUriInputModel } from '../utils/models/input/get-posts.uri.input-model'
 
 @Controller('posts')
 export class PostsController {
 	constructor(
 		protected commandBus: CommandBus,
+		protected postsQueryRepository: PostsQueryRepository,
 		@Inject('MEDIA_MICROSERVICE') private clientProxy: ClientProxy
 	) {
+	}
+
+	@UseGuards(AccessMiddleware)
+	@Get()
+	async getPost(
+		@DeviceSessionGuard() deviceSession: DeviceSessionOptionalHeaderInputModel,
+		@Query() queryPost: GetPostsUriInputModel,
+	) {
+		return await this.postsQueryRepository.findPosts(queryPost, deviceSession.userId)
 	}
 
 	@UseGuards(AccessGuard)
@@ -108,7 +123,6 @@ export class PostsController {
 			if (err.message === ErrorEnum.FORBIDDEN)
 				throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
 		}
-
 	}
 
 

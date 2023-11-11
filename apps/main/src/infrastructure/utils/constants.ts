@@ -9,7 +9,7 @@ export const FIRSTNAME_MIN_LENGTH = 1
 export const LASTNAME_MAX_LENGTH = 50
 export const LASTNAME_MIN_LENGTH = 1
 export const ABOUT_ME_MAX_LENGTH = 200
-export const PAGE_SIZE_DEFAULT = 10
+export const PAGE_SIZE_DEFAULT = 8
 export const PAGE_NUMBER_DEFAULT = 1
 export const SORT_DIRECTION_DEFAULT = -1
 
