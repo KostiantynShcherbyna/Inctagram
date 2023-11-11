@@ -12,7 +12,7 @@ import { firebaseConfig } from './firebase.settings'
 export const appSettings = (app: INestApplication) => {
 	app.use(cookieParser())
 	app.enableCors({
-		origin: '*',
+		origin: true,
 		credentials: true
 	})
 	app.setGlobalPrefix('api/v1')
