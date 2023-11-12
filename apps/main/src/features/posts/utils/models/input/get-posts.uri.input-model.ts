@@ -1,13 +1,8 @@
-import { IsEnum, IsInt, IsOptional, IsString, MaxLength, Min } from 'class-validator'
+import { IsEnum, IsInt, IsOptional, IsString, IsUUID, MaxLength, Min } from 'class-validator'
 import { Type } from 'class-transformer'
 import { PAGE_NUMBER_DEFAULT, PAGE_SIZE_DEFAULT, SortDirection } from '../../../../../infrastructure/utils/constants'
 
 export class GetPostsUriInputModel {
-	@IsOptional()
-	@IsString()
-	@MaxLength(100)
-	searchNameTerm: string = ''
-
 	@IsOptional()
 	@IsString()
 	@MaxLength(100)
@@ -22,11 +17,9 @@ export class GetPostsUriInputModel {
 	@Type(() => Number)
 	@IsInt()
 	@Min(1)
-	pageNumber: number = PAGE_NUMBER_DEFAULT
+	pageSize: number = PAGE_SIZE_DEFAULT
 
 	@IsOptional()
-	@Type(() => Number)
-	@IsInt()
-	@Min(1)
-	pageSize: number = PAGE_SIZE_DEFAULT
+	@IsUUID()
+	cursor: string
 }

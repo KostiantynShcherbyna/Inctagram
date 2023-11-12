@@ -42,7 +42,7 @@ export class DeletePostImageUseCase implements ICommandHandler<DeletePostImageCo
 		if (postImage.userId !== userId) return ErrorEnum.FORBIDDEN
 
 		const postImagePath = await this.base64Service
-			.decodePostImagePath(postImage.uploadPath)
+			.decodePostImagePath(postImage.path)
 
 		const imageSplitResult = postImagePath.split(' ')
 		// Take a second part is postId
@@ -57,7 +57,7 @@ export class DeletePostImageUseCase implements ICommandHandler<DeletePostImageCo
 		return this.prismaClient.$transaction(async (tx) => {
 			await tx.avatar.delete({ where: { id: postImage.id } })
 			await this.firebaseAdapter
-				.delete(`post-images/${postImage.uploadPath}`)
+				.delete(`post-images/${postImage.path}`)
 		})
 	}
 

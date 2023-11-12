@@ -45,7 +45,7 @@ export class UploadAvatarUseCase
 		const uploadUrl = await this.uploadAvatar({
 			id: avatarId,
 			userId: command.userId,
-			uploadPath: avatarPath,
+			path: avatarPath,
 			contentType: command.file.mimetype,
 			height: metadata.height,
 			width: metadata.width,
@@ -68,33 +68,12 @@ export class UploadAvatarUseCase
 				where: { userId: data.userId, active: true },
 				data: { active: false }
 			})
-			await tx.avatar.create({ data })
-			return await this.firebaseAdapter
-				.upload(`avatars/${data.uploadPath}`, buffer)
+			const uploadUrl = await this.firebaseAdapter
+				.upload(`avatars/${data.path}`, buffer)
+			await tx.avatar.create({ data: { ...data, url: uploadUrl } })
+			return uploadUrl
 		})
 	}
 
 
 }
-
-
-// await this.prismaClient.$transaction([
-// 	this.prismaClient.media.updateMany({
-// 		where: { userId: user.id, isAvatar: true },
-// 		data: { isAvatar: false }
-// 	}),
-// 	this.prismaClient.media.create({
-// 		data: {
-// 			id: avatarId,
-// 			userId: command.userId,
-// 			uploadPath: avatarPath,
-// 			contentType: command.file.mimetype,
-// 			height: metadata.height,
-// 			width: metadata.width,
-// 			size: command.file.size
-// 		}
-// 	})
-// ])
-
-// const uploadUrl = await this.filesFirebaseAdapter
-// 	.uploadAvatar(avatarPath, command.file.buffer)

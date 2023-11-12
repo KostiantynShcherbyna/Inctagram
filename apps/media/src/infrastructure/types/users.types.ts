@@ -7,7 +7,7 @@ export interface ICreateAvatarPath {
 export interface ICreateAvatar {
 	id: string
 	userId: string
-	uploadPath: string
+	path: string
 	contentType: string
 	height: number
 	width: number

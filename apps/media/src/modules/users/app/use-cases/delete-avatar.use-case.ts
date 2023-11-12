@@ -29,7 +29,7 @@ export class DeleteAvatarUseCase implements ICommandHandler<DeleteAvatarCommand>
 	private async deleteAvatar(avatar: Avatar) {
 		return this.prismaClient.$transaction(async (tx) => {
 			await tx.avatar.delete({ where: { id: avatar.id } })
-			await this.firebaseAdapter.delete(`avatars/${avatar.uploadPath}`)
+			await this.firebaseAdapter.delete(`avatars/${avatar.path}`)
 		})
 	}
 

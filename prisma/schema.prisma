@@ -59,7 +59,8 @@ model PasswordRecoveryCode {
 
 model Avatar {
   id          String   @id @map("user_photo_id")
-  uploadPath  String   @unique @map("upload_path")
+  path        String   @unique
+  url         String   @unique
   contentType String   @map("content_type")
   width       Int
   height      Int
@@ -85,7 +86,8 @@ model Post {
 
 model PostImage {
   id          String   @id @map("post_image_id")
-  uploadPath  String   @unique @map("upload_path")
+  path        String   @unique
+  url         String   @unique
   contentType String   @map("content_type")
   width       Int
   height      Int

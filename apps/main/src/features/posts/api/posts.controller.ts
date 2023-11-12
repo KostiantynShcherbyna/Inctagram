@@ -11,7 +11,9 @@ import {
 	Inject,
 	Param,
 	Post,
-	Put, Query,
+	Put,
+	Query,
+	Res,
 	UnauthorizedException,
 	UploadedFile,
 	UseGuards,
@@ -35,6 +37,7 @@ import { PostsQueryRepository } from '../rep/posts.repository'
 import { AccessMiddleware } from '../../../infrastructure/middlewares/auth/guards/access-middleware.guard'
 import { DeviceSessionOptionalHeaderInputModel } from '../utils/models/input/device-session-optional.header.input-model'
 import { GetPostsUriInputModel } from '../utils/models/input/get-posts.uri.input-model'
+import { Response } from 'express'
 
 @Controller('posts')
 export class PostsController {
@@ -47,11 +50,19 @@ export class PostsController {
 
 	@UseGuards(AccessMiddleware)
 	@Get()
-	async getPost(
+	async getPosts(
+		@Res() res: Response,
 		@DeviceSessionGuard() deviceSession: DeviceSessionOptionalHeaderInputModel,
-		@Query() queryPost: GetPostsUriInputModel,
+		@Query() queryPost: GetPostsUriInputModel
 	) {
-		return await this.postsQueryRepository.findPosts(queryPost, deviceSession.userId)
+		const result = await this.postsQueryRepository
+			.findPosts(queryPost, deviceSession.userId)
+		res.header('X-Cursor', result.cursor)
+		return {
+			pageSize: result.pageSize,
+			totalCount: result.totalCount,
+			items: result.items
+		}
 	}
 
 	@UseGuards(AccessGuard)
