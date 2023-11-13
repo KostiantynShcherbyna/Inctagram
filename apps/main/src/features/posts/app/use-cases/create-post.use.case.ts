@@ -50,7 +50,7 @@ export class CreatePostUseCase
 	private mapPostImages(postImages: PostImage[]) {
 		return postImages.map(image => {
 			return {
-				url: image.uploadPath,
+				// url: image.uploadPath,
 				width: image.width,
 				height: image.height,
 				size: image.size,

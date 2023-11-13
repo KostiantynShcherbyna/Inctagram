@@ -45,23 +45,23 @@ export class FillProfileUseCase
 		await this.filesFirebaseAdapter
 			.uploadAvatar(photoPath, command.file.buffer)
 
-		const [userPhoto, updatedUser] = await this.prismaClient.$transaction([
-			this.prismaClient.avatar.create({
-				data: {
-					id: photoId,
-					userId: command.userId,
-					uploadPath: photoPath,
-					contentType: command.file.mimetype,
-					size: command.file.size,
-					width: metadata.width,
-					height: metadata.height
-				}
-			}),
-			this.prismaClient.user.update(
-				{ where: { id: user.id }, data: { ...command.profile } })
-		])
-
-		return this.mapUpdatedUser(updatedUser)
+		// const [userPhoto, updatedUser] = await this.prismaClient.$transaction([
+		// 	this.prismaClient.avatar.create({
+		// 		data: {
+		// 			id: photoId,
+		// 			userId: command.userId,
+		// 			uploadPath: photoPath,
+		// 			contentType: command.file.mimetype,
+		// 			size: command.file.size,
+		// 			width: metadata.width,
+		// 			height: metadata.height
+		// 		}
+		// 	}),
+		// 	this.prismaClient.user.update(
+		// 		{ where: { id: user.id }, data: { ...command.profile } })
+		// ])
+		//
+		// return this.mapUpdatedUser(updatedUser)
 	}
 
 	private mapUpdatedUser(updatedUser: User) {
