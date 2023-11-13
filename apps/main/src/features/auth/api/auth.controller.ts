@@ -283,7 +283,7 @@ export class AuthController {
 		@Res({ passthrough: true }) res: Response
 	) {
 		const user: Partial<UserDetails> = request.user
-
+		console.log('user', user, new Date())
 		const loginResult = await this.commandBus.execute(
 			new GoogleLoginCommand(
 				{ email: user.email, username: user.username })
