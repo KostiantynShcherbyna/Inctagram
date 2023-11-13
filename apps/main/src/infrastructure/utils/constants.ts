@@ -9,6 +9,14 @@ export const FIRSTNAME_MIN_LENGTH = 1
 export const LASTNAME_MAX_LENGTH = 50
 export const LASTNAME_MIN_LENGTH = 1
 export const ABOUT_ME_MAX_LENGTH = 200
+export const PAGE_SIZE_DEFAULT = 8
+export const PAGE_NUMBER_DEFAULT = 1
+export const SORT_DIRECTION_DEFAULT = -1
+
+export enum SortDirection {
+	Asc = 'ASC',
+	Desc = 'DESC',
+}
 
 export enum BadResponse {
 	REGISTRATION = 'If the inputModel has incorrect values (in particular if the user with the given email or password already exists)',
@@ -55,6 +63,7 @@ export enum ExpiresTime {
 	ACCESS_EXPIRES_TIME = '100000000000s',
 	REFRESH_EXPIRES_TIME = '20000000000s',
 	PASSWORD_HASH_EXPIRES_TIME = '5m',
+	PASSWORD_RECOVERY_CODE_EXPIRES_TIME = '5m',
 }
 
 export enum StrategyNames {
@@ -66,5 +75,4 @@ export enum Secrets {
 	REFRESH_JWT_SECRET = 'REFRESH_JWT_SECRET',
 	PASSWORD_RECOVERY_CODE_SECRET = 'PASSWORD_RECOVERY_CODE_SECRET',
 	EMAIL_CONFIRMATION_CODE_SECRET = 'EMAIL_CONFIRMATION_CODE_SECRET',
-	USERPHOTO_SECRET = 'USERPHOTO_SECRET'
 }

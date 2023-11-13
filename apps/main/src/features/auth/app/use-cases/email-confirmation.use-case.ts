@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { UsersRepository } from '../../../users/rep/users.repository'
+import { ReturnContract } from '../../../../infrastructure/utils/return-contract'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { ConfigService } from '@nestjs/config'
@@ -26,12 +27,13 @@ export class EmailConfirmationUseCase
 		const confirmationCode = await this.usersRepository
 			.findConfirmationCode(command.code)
 
-		if (confirmationCode === null) return ErrorEnum.CONFIRMATION_CODE_NOT_FOUND
+		if (confirmationCode === null)
+			return ErrorEnum.CONFIRMATION_CODE_NOT_FOUND
 
-		const user = await this.usersRepository.findUserById(confirmationCode.userId)
+		const user = await this.usersRepository
+			.findUserById(confirmationCode.userId)
 
-		if (user === null)
-			return ErrorEnum.USER_NOT_FOUND
+		if (user === null) return ErrorEnum.USER_NOT_FOUND
 		if (user.isConfirmed === true) return ErrorEnum.EMAIL_CONFIRMED
 
 		const confirmationCodeDto = await this.tokensService

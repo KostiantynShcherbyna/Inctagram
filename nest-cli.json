@@ -8,7 +8,7 @@
     "tsConfigPath": "apps/main/tsconfig.app.json"
   },
   "monorepo": true,
-  "root": "apps/inctagram",
+  "root": "apps/main/src",
   "projects": {
     "main": {
       "type": "application",
@@ -17,6 +17,15 @@
       "sourceRoot": "apps/main/src",
       "compilerOptions": {
         "tsConfigPath": "apps/main/tsconfig.app.json"
+      }
+    },
+    "media": {
+      "type": "application",
+      "root": "apps/media",
+      "entryFile": "main",
+      "sourceRoot": "apps/media/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/media/tsconfig.app.json"
       }
     }
   }

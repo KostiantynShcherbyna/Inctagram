@@ -1,7 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ErrorEnum } from '../../../../infrastructure/utils/error-enum'
-import { FilesFirebaseAdapter } from '../../../../infrastructure/adapters/files.firebase.adapter'
 import { Avatar, PrismaClient } from '@prisma/client'
+import { FirebaseAdapter } from '../../../../infrastructure/adapters/firebase.adapter'
+import { RpcException } from '@nestjs/microservices'
 
 export class DeleteAvatarCommand {
 	constructor(public userId: string) {
@@ -12,7 +13,7 @@ export class DeleteAvatarCommand {
 @CommandHandler(DeleteAvatarCommand)
 export class DeleteAvatarUseCase implements ICommandHandler<DeleteAvatarCommand> {
 	constructor(
-		protected filesFirebaseAdapter: FilesFirebaseAdapter,
+		protected firebaseAdapter: FirebaseAdapter,
 		protected prismaClient: PrismaClient
 	) {
 	}
@@ -20,7 +21,7 @@ export class DeleteAvatarUseCase implements ICommandHandler<DeleteAvatarCommand>
 	async execute(command: DeleteAvatarCommand) {
 		const avatar = await this.prismaClient.avatar.findFirst(
 			{ where: { userId: command.userId, active: true } })
-		if (!avatar) return ErrorEnum.NOT_FOUND
+		if (!avatar) throw new RpcException(ErrorEnum.AVATAR_NOT_FOUND)
 		await this.deleteAvatar(avatar)
 		return true
 	}
@@ -28,7 +29,7 @@ export class DeleteAvatarUseCase implements ICommandHandler<DeleteAvatarCommand>
 	private async deleteAvatar(avatar: Avatar) {
 		return this.prismaClient.$transaction(async (tx) => {
 			await tx.avatar.delete({ where: { id: avatar.id } })
-			await this.filesFirebaseAdapter.deleteAvatar(avatar.uploadPath)
+			await this.firebaseAdapter.delete(`avatars/${avatar.path}`)
 		})
 	}
 

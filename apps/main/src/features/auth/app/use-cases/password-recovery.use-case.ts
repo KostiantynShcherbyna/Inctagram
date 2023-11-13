@@ -38,7 +38,7 @@ export class PasswordRecoveryUseCase
 			.createToken(
 				{ email: command.email },
 				env.PASSWORD_RECOVERY_CODE_SECRET,
-				ExpiresTime.PASSWORD_HASH_EXPIRES_TIME
+				ExpiresTime.PASSWORD_RECOVERY_CODE_EXPIRES_TIME
 			)
 
 		const newPasswordRecoveryCodeResult = await this.usersRepository

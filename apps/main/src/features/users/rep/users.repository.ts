@@ -89,9 +89,9 @@ export class UsersRepository {
 	async createPasswordRecoveryCode(
 		{ email, recoveryCode, active }: ICreatePasswordRecoveryCode)
 		: Promise<PasswordRecoveryCode> {
-		return this.prismaClient.passwordRecoveryCode.create({
-			data: { email, recoveryCode, active }
-		})
+			return this.prismaClient.passwordRecoveryCode.create({
+				data: { email, recoveryCode, active }
+			})
 	}
 
 	async deactivatePasswordRecoveryCode(id: string)
