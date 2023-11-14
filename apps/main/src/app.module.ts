@@ -82,6 +82,7 @@ const strategies = [
 	GoogleAuthStrategy,
 	GithubAuthStrategy
 ]
+
 const providers = [
 	{ provide: 'G00GLE_AUTH_VALIDATOR', useClass: GoogleAuthValidator },
 	{ provide: 'GITHUB_AUTH_VALIDATOR', useClass: GithubAuthValidator }
