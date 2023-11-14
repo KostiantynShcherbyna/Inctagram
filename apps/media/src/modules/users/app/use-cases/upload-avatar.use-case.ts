@@ -20,6 +20,7 @@ export class UploadAvatarCommand {
 export class UploadAvatarUseCase
 	implements ICommandHandler<UploadAvatarCommand> {
 	constructor(
+
 		protected firebaseAdapter: FirebaseAdapter,
 		protected prismaClient: PrismaClient,
 		protected base64Service: Base64Service
