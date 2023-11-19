@@ -60,12 +60,17 @@ export class AuthController {
 		status: HttpStatus.NO_CONTENT
 	})
 	@ApiBadRequestResponse({ description: BadResponse.REGISTRATION })
-	async registration(@Body() bodyRegistration: RegistrationBodyInputModel) {
+	async registration(
+		@Req() req: Request,
+		@Body() bodyRegistration: RegistrationBodyInputModel,
+	) {
+		console.log('REQ', req)
 		const registrationResult = await this.commandBus.execute(
 			new RegistrationCommand(
 				bodyRegistration.login,
 				bodyRegistration.email,
-				bodyRegistration.password
+				bodyRegistration.password,
+				"sdas"
 			)
 		)
 
@@ -265,6 +270,7 @@ export class AuthController {
 		@Req() req: Request,
 		@Res({ passthrough: true }) res: Response
 	) {
+		console.log('REQ', req)
 		const user: Partial<User> = req.user
 		const loginResult = await this.commandBus
 			.execute(new GoogleLoginCommand(user))

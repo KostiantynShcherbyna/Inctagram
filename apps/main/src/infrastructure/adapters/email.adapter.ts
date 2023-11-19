@@ -4,9 +4,9 @@ import { emailService } from '../services/email.service'
 export class EmailAdapter {
 	constructor(protected configService: ConfigService) {
 	}
-	async sendConfirmationCode(email: string, confirmationCode: string) {
+	async sendConfirmationCode(email: string, confirmationCode: string, domain: string) {
 		console.log('confirmationCode', confirmationCode)
-		const domain = this.configService.get<string>('DOMAIN')
+		// const domain = this.configService.get<string>('DOMAIN')
 		await emailService.sendEmail({
 			service: 'gmail',
 			user: 'kstntn.xxx@gmail.com',

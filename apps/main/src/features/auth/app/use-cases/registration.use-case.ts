@@ -13,7 +13,8 @@ export class RegistrationCommand {
 	constructor(
 		public login: string,
 		public email: string,
-		public password: string
+		public password: string,
+		public domain: string,
 	) {
 	}
 }
@@ -67,7 +68,9 @@ export class RegistrationUseCase
 
 		await this.emailAdapter.sendConfirmationCode(
 			registrationResult.user.email,
-			registrationResult.newConfirmationCode.confirmationCode)
+			registrationResult.newConfirmationCode.confirmationCode,
+			command.domain
+		)
 		return
 	}
 
