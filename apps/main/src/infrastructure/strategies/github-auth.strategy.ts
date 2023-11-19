@@ -12,9 +12,9 @@ export class GithubAuthStrategy extends PassportStrategy(Strategy, 'github') {
 		protected configService: ConfigService
 	) {
 		super({
-			clientID: configService.get<string>('GITHUB_CLIENT_ID'),
-			clientSecret: configService.get<string>('GITHUB_CLIENT_SECRET'),
-			callbackURL: configService.get<string>('GITHUB_OAUTH_CALLBACK_URL'),
+			clientID: process.env.GITHUB_CLIENT_ID,
+			clientSecret: process.env.GITHUB_CLIENT_SECRET,
+			callbackURL: process.env.GITHUB_OAUTH_CALLBACK_URL,
 			scope: ['user'] // fetches non-public emails as well
 		})
 	}
