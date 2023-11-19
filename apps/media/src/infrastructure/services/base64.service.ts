@@ -6,6 +6,7 @@ import { ICreatePostImagePath } from '../types/posts.types'
 export class Base64Service {
 
 	async encodeAvatarPath(details: ICreateAvatarPath)
+
 		: Promise<string> {
 		const path = `${details.userId} ${details.avatarId}`
 		const base64path = Buffer.from(path).toString('base64')
