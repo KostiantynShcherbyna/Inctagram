@@ -45,8 +45,8 @@ export class GoogleLoginUseCase implements ICommandHandler<GoogleLoginCommand> {
 			env.REFRESH_JWT_SECRET,
 			ExpiresTime.REFRESH_EXPIRES_TIME
 		)
-		const callbackUrl = `${env.OAUTH_REDIRECT_URL}/${command.user.id}`
 
-		return { accessJwt: { accessToken }, refreshToken, callbackUrl }
+
+		return { accessJwt: { accessToken }, refreshToken }
 	}
 }

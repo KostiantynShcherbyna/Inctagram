@@ -46,8 +46,7 @@ export class GitHubLoginUseCase implements ICommandHandler<GitHubLoginCommand> {
 			env.REFRESH_JWT_SECRET,
 			ExpiresTime.REFRESH_EXPIRES_TIME
 		)
-		const callbackUrl = `${env.GOOGLE_OAUTH_CALLBACK_URL}/${command.user.id}`
 
-		return { accessJwt: { accessToken }, refreshToken, callbackUrl }
+		return { accessJwt: { accessToken }, refreshToken }
 	}
 }

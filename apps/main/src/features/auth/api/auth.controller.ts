@@ -247,7 +247,7 @@ export class AuthController {
 		return refreshTokenResult.accessJwt
 	}
 
-	@UseGuards(RefreshGuard)
+	@UseGuards(AccessGuard)
 	@Get('me')
 	async getMe(
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel
@@ -265,11 +265,9 @@ export class AuthController {
 		@Req() req: Request,
 		@Res({ passthrough: true }) res: Response
 	) {
-		console.log('LOGIN', req)
 		const user: Partial<User> = req.user
 		const loginResult = await this.commandBus
 			.execute(new GoogleLoginCommand(user))
-		console.log('TOKEN', loginResult.refreshToken)
 
 		if (loginResult === ErrorEnum.USER_NOT_FOUND)
 			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
@@ -280,8 +278,8 @@ export class AuthController {
 		res.cookie('refreshToken', loginResult.refreshToken, {
 			httpOnly: true,
 			secure: true
-		}).redirect(loginResult.callbackUrl)
-		// return loginResult.accessJwt
+		})
+		return loginResult.accessJwt
 	}
 
 
@@ -306,7 +304,8 @@ export class AuthController {
 		res.cookie('refreshToken', loginResult.refreshToken, {
 			httpOnly: true,
 			secure: true
-		}).redirect(loginResult.callbackUrl)
+		})
+		return loginResult.accessJwt
 	}
 
 
