@@ -129,6 +129,7 @@ export class AuthController {
 		@Body() bodyAuth: LoginBodyInputModel,
 		@Res({ passthrough: true }) res: Response
 	) {
+
 		const loginResult = await this.commandBus
 			.execute(new LoginCommand(bodyAuth, ip, userAgent))
 
@@ -264,6 +265,7 @@ export class AuthController {
 		@Req() req: Request,
 		@Res({ passthrough: true }) res: Response
 	) {
+		console.log('LOGIN', req)
 		const user: Partial<User> = req.user
 		const loginResult = await this.commandBus
 			.execute(new GoogleLoginCommand(user))
