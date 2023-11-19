@@ -1,9 +1,12 @@
+import { ConfigService } from '@nestjs/config'
 import { emailService } from '../services/email.service'
 
 export class EmailAdapter {
+	constructor(protected configService: ConfigService) {
+	}
 	async sendConfirmationCode(email: string, confirmationCode: string) {
 		console.log('confirmationCode', confirmationCode)
-		const domain = `http://localhost:3000`
+		const domain = this.configService.get<string>('DOMAIN')
 		await emailService.sendEmail({
 			service: 'gmail',
 			user: 'kstntn.xxx@gmail.com',
@@ -13,7 +16,7 @@ export class EmailAdapter {
 			subject: 'registration confirmation',
 			message: `<h1>Thanks for your registration</h1>
             <p>To finish registration please follow the link below: 
-            <a href='${domain}/registration-confirmation/${confirmationCode}'
+            <a href='${domain}/signIn/registration-confirmation/${confirmationCode}'
             >link</a>
             </p>`
 		})
@@ -21,9 +24,7 @@ export class EmailAdapter {
 
 	async sendPasswordRecovery(email: string, passwordRecoveryCode: string) {
 		console.log('passwordRecoveryCode', passwordRecoveryCode)
-
-		const domain = `http://localhost:3000`
-
+		const domain = this.configService.get<string>('DOMAIN')
 		const emailDTO = {
 			service: 'gmail',
 			user: 'kstntn.xxx@gmail.com',

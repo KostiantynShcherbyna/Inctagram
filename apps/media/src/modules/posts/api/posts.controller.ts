@@ -11,8 +11,8 @@ export class PostsController {
 
 	@MessagePattern({ cmd: 'uploadPostImage' })
 	async uploadPostImage(@Payload() data: any) {
-		return await this.commandBus
-			.execute(new UploadPostImageCommand(data.userId, data.file))
+		// return await this.commandBus
+		// 	.execute(new UploadPostImageCommand(data.userId, data.file)) // TODO postId
 	}
 
 	@MessagePattern({ cmd: 'deletePostImage' })

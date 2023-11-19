@@ -71,7 +71,7 @@ const useCases = [
 	UpdateProfileUseCase,
 	FillProfileUseCase,
 	CreatePostUseCase,
-	UpdatePostUseCase,
+	UpdatePostUseCase
 ]
 const repository = [
 	UsersRepository,

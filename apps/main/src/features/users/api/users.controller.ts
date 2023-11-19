@@ -3,10 +3,10 @@ import {
 	Controller,
 	Delete,
 	HttpCode,
-	HttpException,
 	HttpStatus,
 	Inject,
 	Injectable,
+	NotFoundException,
 	Post,
 	Put,
 	UploadedFile,
@@ -43,8 +43,8 @@ export class UsersController {
 		const updateResult = await this.commandBus
 			.execute(new UpdateProfileCommand(deviceSession.userId, body))
 
-		if (updateResult === ErrorEnum.NOT_FOUND)
-			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		if (updateResult === ErrorEnum.USER_NOT_FOUND)
+			throw new NotFoundException()
 		return updateResult
 	}
 
@@ -75,7 +75,7 @@ export class UsersController {
 			))
 		} catch (err) {
 			if (err.message === ErrorEnum.AVATAR_NOT_FOUND)
-				throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+				throw new NotFoundException()
 		}
 	}
 
@@ -94,7 +94,7 @@ export class UsersController {
 			))
 		} catch (err) {
 			if (err.message === ErrorEnum.USER_NOT_FOUND)
-				throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+				throw new NotFoundException()
 		}
 
 	}

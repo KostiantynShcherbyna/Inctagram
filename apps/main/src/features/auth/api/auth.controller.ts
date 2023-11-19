@@ -40,9 +40,9 @@ import { BadResponse, ValidResponse } from '../../../infrastructure/utils/consta
 import { GoogleLoginCommand } from '../app/use-cases/google-login.use-case'
 import { RefreshTokenCommand } from '../app/use-cases/refresh-token.use-case'
 import { RegistrationBodyInputModel } from '../utils/models/input/registration.body.input-model'
-import { UserDetails } from '../../../infrastructure/types/auth.types'
 import { AccessGuard } from '../../../infrastructure/middlewares/auth/guards/access.guard'
 import { UsersQueryRepository } from '../../users/rep/users.query.repository'
+import { User } from '@prisma/client'
 
 @Injectable()
 @Controller('auth')
@@ -246,7 +246,7 @@ export class AuthController {
 		return refreshTokenResult.accessJwt
 	}
 
-	@UseGuards(AccessGuard)
+	@UseGuards(RefreshGuard)
 	@Get('me')
 	async getMe(
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel
@@ -257,37 +257,17 @@ export class AuthController {
 	}
 
 
-	@Get('status')
-	@ApiResponse({ status: HttpStatus.OK })
-	user(@Req() request: Request) {
-		console.log(request.user)
-		return request.user
-			? { msg: 'Authenticated' }
-			: { msg: 'Not Authenticated' }
-	}
-
-
 	@Get('google/login')
 	@UseGuards(GoogleAuthGuard)
 	@ApiResponse({ status: HttpStatus.OK })
-	async googleLogin() {
-		return { msg: 'Google Auth' }
-	}
-
-
-	@Get('google/redirect')
-	@UseGuards(GoogleAuthGuard)
-	@ApiResponse({ status: HttpStatus.OK })
 	async googleRedirect(
-		@Req() request: Request,
+		@Req() req: Request,
 		@Res({ passthrough: true }) res: Response
 	) {
-		const user: Partial<UserDetails> = request.user
-		console.log('user', user, new Date())
-		const loginResult = await this.commandBus.execute(
-			new GoogleLoginCommand(
-				{ email: user.email, username: user.username })
-		)
+		const user: Partial<User> = req.user
+		const loginResult = await this.commandBus
+			.execute(new GoogleLoginCommand(user))
+		console.log('TOKEN', loginResult.refreshToken)
 
 		if (loginResult === ErrorEnum.USER_NOT_FOUND)
 			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
@@ -295,36 +275,24 @@ export class AuthController {
 			throw new HttpException(ErrorEnum.UNAUTHORIZED, 412)
 		if (loginResult === ErrorEnum.INVALID_PASSWORD)
 			throw new HttpException(ErrorEnum.UNAUTHORIZED, 413)
-
 		res.cookie('refreshToken', loginResult.refreshToken, {
 			httpOnly: true,
 			secure: true
-		})
-		return loginResult.accessJwt
+		}).redirect(loginResult.callbackUrl)
+		// return loginResult.accessJwt
 	}
 
 
 	@Get('github/login')
 	@UseGuards(GitHubAuthGuard)
 	@ApiResponse({ status: HttpStatus.OK })
-	async githubLogin() {
-		return { msg: 'GitHub Auth' }
-	}
-
-
-	@Get('github/redirect')
-	@UseGuards(GitHubAuthGuard)
-	@ApiResponse({ status: HttpStatus.OK })
 	async githubRedirect(
 		@Req() request: Request,
 		@Res({ passthrough: true }) res: Response
 	) {
-		const user: Partial<UserDetails> = request.user
-
-		const loginResult = await this.commandBus.execute(
-			new GitHubLoginCommand(
-				{ email: user.email, username: user.username })
-		)
+		const user: Partial<User> = request.user
+		const loginResult = await this.commandBus
+			.execute(new GitHubLoginCommand(user))
 
 		if (loginResult === ErrorEnum.USER_NOT_FOUND)
 			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
@@ -336,8 +304,7 @@ export class AuthController {
 		res.cookie('refreshToken', loginResult.refreshToken, {
 			httpOnly: true,
 			secure: true
-		})
-		return loginResult.accessJwt
+		}).redirect(loginResult.callbackUrl)
 	}
 
 

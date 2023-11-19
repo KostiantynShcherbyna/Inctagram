@@ -5,9 +5,10 @@ import { OAuthLoginBodyInputModel } from '../../utils/models/input/oAuth-login.i
 import { TokensService } from '../../../../infrastructure/services/tokens.service'
 import { ExpiresTime } from '../../../../infrastructure/utils/constants'
 import { IEnvConfig } from '../../../../infrastructure/settings/env.settings'
+import { User } from '@prisma/client'
 
 export class GoogleLoginCommand {
-	constructor(public loginBody: OAuthLoginBodyInputModel) {
+	constructor(public user: Partial<User>) {
 	}
 }
 
@@ -21,7 +22,7 @@ export class GoogleLoginUseCase implements ICommandHandler<GoogleLoginCommand> {
 
 	async execute(command: GoogleLoginCommand) {
 		const env = this.configService.get<IEnvConfig>('env')
-
+		console.log('execute')
 		const issueAt = new Date(Date.now())
 
 		const tokensPayload = {
@@ -29,8 +30,8 @@ export class GoogleLoginUseCase implements ICommandHandler<GoogleLoginCommand> {
 			//ip: command.deviceIp,
 			//title: command.userAgent,
 			//userId: user.id,
-			email: command.loginBody.email,
-			username: command.loginBody.username,
+			email: command.user.email,
+			username: command.user.username,
 			issueAt: issueAt
 		}
 
@@ -39,13 +40,13 @@ export class GoogleLoginUseCase implements ICommandHandler<GoogleLoginCommand> {
 			env.ACCESS_JWT_SECRET,
 			ExpiresTime.ACCESS_EXPIRES_TIME
 		)
-
 		const refreshToken = await this.tokensService.createToken(
 			tokensPayload,
 			env.REFRESH_JWT_SECRET,
 			ExpiresTime.REFRESH_EXPIRES_TIME
 		)
+		const callbackUrl = `${env.OAUTH_REDIRECT_URL}/${command.user.id}`
 
-		return { accessJwt: { accessToken }, refreshToken }
+		return { accessJwt: { accessToken }, refreshToken, callbackUrl }
 	}
 }

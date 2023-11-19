@@ -21,7 +21,7 @@ export class UpdateProfileUseCase
 
 	async execute(command: UpdateProfileCommand) {
 		const user = await this.usersRepository.findUserById(command.userId)
-		if (user === null) return ErrorEnum.NOT_FOUND
+		if (user === null) return ErrorEnum.USER_NOT_FOUND
 
 		const updatedUser = await this.usersRepository
 			.updateUserInfo(user.id, { ...command.data })
