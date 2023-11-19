@@ -61,16 +61,13 @@ export class AuthController {
 	})
 	@ApiBadRequestResponse({ description: BadResponse.REGISTRATION })
 	async registration(
-		@Req() req: Request,
 		@Body() bodyRegistration: RegistrationBodyInputModel,
 	) {
-		console.log('REQ', req)
 		const registrationResult = await this.commandBus.execute(
 			new RegistrationCommand(
 				bodyRegistration.login,
 				bodyRegistration.email,
-				bodyRegistration.password,
-				"sdas"
+				bodyRegistration.password
 			)
 		)
 
@@ -134,7 +131,6 @@ export class AuthController {
 		@Body() bodyAuth: LoginBodyInputModel,
 		@Res({ passthrough: true }) res: Response
 	) {
-
 		const loginResult = await this.commandBus
 			.execute(new LoginCommand(bodyAuth, ip, userAgent))
 
