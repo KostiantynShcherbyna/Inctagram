@@ -62,6 +62,26 @@ spec:
                  secretKeyRef:
                    name: incstagram-back-production-config-secret
                    key: GITHUB_CLIENT_SECRET
+             - name: OAUTH_REDIRECT_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: incstagram-back-production-config-secret
+                   key: OAUTH_REDIRECT_URL
+             - name: DOMAIN
+               valueFrom:
+                 secretKeyRef:
+                   name: incstagram-back-production-config-secret
+                   key: DOMAIN
+             - name: GITHUB_OAUTH_CALLBACK_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: incstagram-back-production-config-secret
+                   key: GITHUB_OAUTH_CALLBACK_URL
+             - name: GOOGLE_OAUTH_CALLBACK_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: incstagram-back-production-config-secret
+                   key: GOOGLE_OAUTH_CALLBACK_URL
              - name: ACCESS_JWT_SECRET
                valueFrom:
                  secretKeyRef:

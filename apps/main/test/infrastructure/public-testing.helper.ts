@@ -196,13 +196,13 @@ export class PublicTestingHelper {
     return { status: response.status }
   }
 
-  async newPassword({ newPassword, recoveryCode }: NewPasswordBodyInputModel) {
-    const response = await request(this.server)
-      .post(endpoints.authController.newPassword())
-      .send({ newPassword, recoveryCode })
-
-    return { status: response.status }
-  }
+  // async newPassword({ newPassword, recoveryCode }: NewPasswordBodyInputModel) {
+  //   const response = await request(this.server)
+  //     .post(endpoints.authController.newPassword())
+  //     .send({ newPassword, recoveryCode })
+  //
+  //   return { status: response.status }
+  // }
 
   async me(accessToken: string) {
     const response = await request(this.server)
