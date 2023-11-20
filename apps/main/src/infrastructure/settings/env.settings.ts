@@ -1,4 +1,5 @@
 import { EnvConfigEnum } from '../utils/constants'
+import * as process from 'process'
 
 export interface IEnvConfig {
 	PORT: string
@@ -36,7 +37,9 @@ export default () => ({
 
 		PASSWORD_RECOVERY_CODE_SECRET: process.env.PASSWORD_RECOVERY_CODE_SECRET || EnvConfigEnum.PASSWORD_RECOVERY_CODE_SECRET,
 		EMAIL_CONFIRMATION_CODE_SECRET: process.env.EMAIL_CONFIRMATION_CODE_SECRET || EnvConfigEnum.EMAIL_CONFIRMATION_CODE_SECRET,
-		OAUTH_REDIRECT_URL: process.env.OAUTH_REDIRECT_URL || EnvConfigEnum.OAUTH_REDIRECT_URL
+		OAUTH_REDIRECT_URL: process.env.OAUTH_REDIRECT_URL || EnvConfigEnum.OAUTH_REDIRECT_URL,
+
+		DOMAIN: process.env.DOMAIN || EnvConfigEnum.DOMAIN
 	}
 })
 

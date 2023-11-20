@@ -57,7 +57,8 @@ export enum EnvConfigEnum {
 	GITHUB_OAUTH_CALLBACK_URL_PRD = 'https://visualvoyage.ru/api/v1/auth/github/login',
 	EMAIL_CONFIRMATION_CODE_SECRET = 'EMAILCONFIRMATIONCODESECRET',
 	PASSWORD_RECOVERY_CODE_SECRET = 'PASSWORDRECOVERYCODESECRET',
-	OAUTH_REDIRECT_URL = 'https://localhost:3000/profile'
+	OAUTH_REDIRECT_URL = 'https://localhost:3000/profile',
+	DOMAIN = 'http://localhost:3000'
 }
 
 

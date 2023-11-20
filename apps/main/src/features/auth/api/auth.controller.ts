@@ -258,8 +258,14 @@ export class AuthController {
 		return userView
 	}
 
-
 	@Get('google/login')
+	@UseGuards(GoogleAuthGuard)
+	@ApiResponse({ status: HttpStatus.OK })
+	async googleLogin() {
+		return { msg: 'Google Auth' }
+	}
+
+	@Get('google/redirect')
 	@UseGuards(GoogleAuthGuard)
 	@ApiResponse({ status: HttpStatus.OK })
 	async googleRedirect(
@@ -284,8 +290,14 @@ export class AuthController {
 		return loginResult.accessJwt
 	}
 
-
 	@Get('github/login')
+	@UseGuards(GitHubAuthGuard)
+	@ApiResponse({ status: HttpStatus.OK })
+	async githubLogin() {
+		return { msg: 'GitHub Auth' }
+	}
+
+	@Get('github/redirect')
 	@UseGuards(GitHubAuthGuard)
 	@ApiResponse({ status: HttpStatus.OK })
 	async githubRedirect(

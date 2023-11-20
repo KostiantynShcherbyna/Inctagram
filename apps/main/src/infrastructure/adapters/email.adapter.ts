@@ -1,13 +1,13 @@
-import { ConfigService } from '@nestjs/config'
 import { emailService } from '../services/email.service'
 
 export class EmailAdapter {
-	constructor(protected configService: ConfigService) {
+	constructor() {
 	}
 
 	async sendConfirmationCode(email: string, confirmationCode: string) {
 		console.log('confirmationCode', confirmationCode)
-		const domain = this.configService.get<string>('DOMAIN')
+
+		const domain = process.env.DOMAIN
 		await emailService.sendEmail({
 			service: 'gmail',
 			user: 'kstntn.xxx@gmail.com',
@@ -25,7 +25,7 @@ export class EmailAdapter {
 
 	async sendPasswordRecovery(email: string, passwordRecoveryCode: string) {
 		console.log('passwordRecoveryCode', passwordRecoveryCode)
-		const domain = this.configService.get<string>('DOMAIN')
+		const domain = process.env.DOMAIN
 		const emailDTO = {
 			service: 'gmail',
 			user: 'kstntn.xxx@gmail.com',
