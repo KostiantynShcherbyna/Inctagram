@@ -12,9 +12,9 @@ export class GithubAuthStrategy extends PassportStrategy(Strategy, 'github') {
 		protected configService: ConfigService
 	) {
 		super({
-			clientID: '52568a88855c473e46da',
-			clientSecret: '26217d8fdffb2ebe0e98cb45175e6f9505228af7',
-			callbackURL: 'https://inctagram-tau.vercel.app/api/v1/auth/github/login',
+			clientID: process.env.GITHUB_CLIENT_ID,
+			clientSecret: process.env.GITHUB_CLIENT_SECRET,
+			callbackURL: process.env.GITHUB_OAUTH_CALLBACK_URL,
 			scope: ['user'] // fetches non-public emails as well
 		})
 	}
