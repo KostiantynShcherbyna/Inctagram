@@ -12,9 +12,9 @@ export class GoogleAuthStrategy extends PassportStrategy(Strategy, 'google') {
 		protected configService: ConfigService
 	) {
 		super({
-			clientID: process.env.GOOGLE_CLIENT_ID,
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-			callbackURL: process.env.GOOGLE_OAUTH_CALLBACK_URL,
+			clientID: '742750804533-hc4t5pt5l7glcm2tqopjhi139q3kalg0.apps.googleusercontent.com',
+			clientSecret: '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',
+			callbackURL: 'https://inctagram-tau.vercel.app/api/v1/auth/google/login',
 			scope: ['profile', 'email']
 		})
 		// super({
