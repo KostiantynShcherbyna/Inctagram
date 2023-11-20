@@ -65,7 +65,7 @@ export class AuthController {
 	) {
 		const registrationResult = await this.commandBus.execute(
 			new RegistrationCommand(
-				bodyRegistration.username,
+				bodyRegistration.login,
 				bodyRegistration.email,
 				bodyRegistration.password
 			)
