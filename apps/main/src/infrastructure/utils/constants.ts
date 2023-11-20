@@ -50,9 +50,11 @@ export enum EnvConfigEnum {
 	GOOGLE_CLIENT_ID = '742750804533-hc4t5pt5l7glcm2tqopjhi139q3kalg0.apps.googleusercontent.com',
 	GOOGLE_CLIENT_SECRET = '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',
 	GOOGLE_OAUTH_CALLBACK_URL = 'http://localhost:3000/api/v1/auth/google/login',
+	GOOGLE_OAUTH_CALLBACK_URL_PRD = 'https://visualvoyage.ru/api/v1/auth/google/login',
 	GITHUB_CLIENT_ID = 'c7d6b6fdee01d44d60fa',
 	GITHUB_CLIENT_SECRET = 'c0af6c13bda37d0f4cedcfb2d5b5bf78431beb88',
 	GITHUB_OAUTH_CALLBACK_URL = 'http://localhost:3000/api/v1/auth/github/login',
+	GITHUB_OAUTH_CALLBACK_URL_PRD = 'https://visualvoyage.ru/api/v1/auth/github/login',
 	EMAIL_CONFIRMATION_CODE_SECRET = 'EMAILCONFIRMATIONCODESECRET',
 	PASSWORD_RECOVERY_CODE_SECRET = 'PASSWORDRECOVERYCODESECRET',
 	OAUTH_REDIRECT_URL = 'https://localhost:3000/profile'

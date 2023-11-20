@@ -4,6 +4,7 @@ import { emailService } from '../services/email.service'
 export class EmailAdapter {
 	constructor(protected configService: ConfigService) {
 	}
+
 	async sendConfirmationCode(email: string, confirmationCode: string) {
 		console.log('confirmationCode', confirmationCode)
 		const domain = this.configService.get<string>('DOMAIN')
