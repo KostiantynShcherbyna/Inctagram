@@ -8,7 +8,7 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
 	appSettings(app)
 	const configService = app.get(ConfigService)
-	const port = configService.get('PORT', 3002)
+	const port = configService.get<number>('PORT', 3002)
 
 	const swaggerConfig = new DocumentBuilder()
 		.setTitle('Inctagram Api')

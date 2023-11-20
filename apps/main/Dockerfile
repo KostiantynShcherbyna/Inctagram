@@ -25,7 +25,7 @@ COPY --chown=node yarn.lock ./
 RUN yarn install
 
 # Bundle app source code
-COPY --chown=node apps/main .
+COPY --chown=node . .
 
 RUN yarn build:${SERVICE}
 
