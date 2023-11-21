@@ -15,11 +15,11 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/apps/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest --testPathIgnorePatterns=\"/*.e2e.spec.ts$\"",
-    "test:e2e": "jest --testRegex=\"^.*e2e.*.spec.ts$\"",
+    "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config apps/main/test/jest-e2e.json",
     "start:main:debug": "nest start main --debug --watch",
     "start:media:dev": "nest start media --watch"
   },
@@ -104,14 +104,6 @@
     "testEnvironment": "node",
     "roots": [
       "<rootDir>/apps/"
-    ],
-    "moduleNameMapper": {
-      "^@app/main(|/.*)$": "<rootDir>/apps/main/src/$1",
-      "^@app/media(|/.*)$": "<rootDir>/apps/media/src/$1",
-      "^@app/user": "<rootDir>/libs/user/src",
-      "^@app/common": "<rootDir>/libs/common",
-      "^@app/db": "<rootDir>/libs/db/src",
-      "^@app/auth(|/.*)$": "<rootDir>/libs/auth/src/$1"
-    }
+    ]
   }
 }
