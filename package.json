@@ -106,7 +106,7 @@
       "<rootDir>/apps/"
     ],
     "moduleNameMapper": {
-      "^@app/main(|/.*)$": "<rootDir>/apps/inctagram/src/$1",
+      "^@app/main(|/.*)$": "<rootDir>/apps/main/src/$1",
       "^@app/media(|/.*)$": "<rootDir>/apps/media/src/$1",
       "^@app/user": "<rootDir>/libs/user/src",
       "^@app/common": "<rootDir>/libs/common",
