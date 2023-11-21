@@ -1,8 +1,6 @@
 import { emailService } from '../services/email.service'
 
 export class EmailAdapter {
-	constructor() {
-	}
 
 	async sendConfirmationCode(email: string, confirmationCode: string) {
 		console.log('confirmationCode', confirmationCode)
