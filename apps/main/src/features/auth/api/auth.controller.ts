@@ -17,7 +17,6 @@ import {
 import { CommandBus } from '@nestjs/cqrs'
 import { Request, Response } from 'express'
 import { ErrorEnum } from '../../../infrastructure/utils/error-enum'
-import { RegistrationCommand } from '../app/use-cases/registration.use-case'
 import { EmailConfirmationResendBodyInputModel } from '../utils/models/input/email-confirmation-resend.body.input-model'
 import { EmailConfirmationResendCommand } from '../app/use-cases/email-confirmation-resend.use-case'
 import { ConfirmationBodyInputModel } from '../utils/models/input/confirmation.body.input-model'
@@ -61,20 +60,9 @@ export class AuthController {
 	})
 	@ApiBadRequestResponse({ description: BadResponse.REGISTRATION })
 	async registration(
-		@Body() bodyRegistration: RegistrationBodyInputModel,
+		@Body() bodyRegistration: RegistrationBodyInputModel
 	) {
-		const registrationResult = await this.commandBus.execute(
-			new RegistrationCommand(
-				bodyRegistration.login,
-				bodyRegistration.email,
-				bodyRegistration.password
-			)
-		)
-
-		if (registrationResult === ErrorEnum.LOGIN_EXIST)
-			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
-		if (registrationResult === ErrorEnum.EMAIL_EXIST)
-			throw new HttpException(ErrorEnum.UNAUTHORIZED, 412)
+		console.log('bodyRegistration', bodyRegistration)
 	}
 
 

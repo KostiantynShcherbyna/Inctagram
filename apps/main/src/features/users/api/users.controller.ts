@@ -2,11 +2,13 @@ import {
 	Body,
 	Controller,
 	Delete,
+	Get,
 	HttpCode,
 	HttpStatus,
 	Inject,
 	Injectable,
 	NotFoundException,
+	Param,
 	Post,
 	Put,
 	UploadedFile,
@@ -24,14 +26,28 @@ import { UpdateProfileBodyInputModel } from '../utils/models/input/update-profil
 import { UpdateProfileCommand } from '../app/use-cases/update-profile.use-case'
 import { ClientProxy } from '@nestjs/microservices'
 import { lastValueFrom } from 'rxjs'
+import { UsersQueryRepository } from '../rep/users.query.repository'
+import { UsersRepository } from '../rep/users.repository'
+import { RefreshGuard } from '../../../infrastructure/middlewares/auth/guards/refresh.guard'
 
 @Injectable()
 @Controller('users')
 export class UsersController {
 	constructor(
 		protected commandBus: CommandBus,
-		@Inject('MEDIA_MICROSERVICE') private clientProxy: ClientProxy
+		@Inject('MEDIA_MICROSERVICE') private clientProxy: ClientProxy,
+		private usersQueryRepository: UsersQueryRepository,
+		private usersRepository: UsersRepository
 	) {
+	}
+
+	@UseGuards(AccessGuard)
+	@Get('profile')
+	async getProfile(
+		@Param() id: string,
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel
+	) {
+		return await this.usersQueryRepository.findProfile(id)
 	}
 
 	@UseGuards(AccessGuard)
@@ -48,35 +64,15 @@ export class UsersController {
 		return updateResult
 	}
 
-	// @UseGuards(AccessGuard)
-	// @Post('profile/avatar')
-	// @UseInterceptors(FileInterceptor('file'))
-	// async uploadAvatar(
-	// 	@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel,
-	// 	@UploadedFile(UploadAvatarPipe) file: Express.Multer.File
-	// ) {
-	// 	const uploadResult = await this.commandBus
-	// 		.execute(new UploadAvatarCommand(deviceSession.userId, file))
-	//
-	// 	if (uploadResult === ErrorEnum.NOT_FOUND)
-	// 		throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
-	// 	return uploadResult
-	// }
-
-	@UseGuards(AccessGuard)
-	@Delete('profile/avatar')
+	@UseGuards(RefreshGuard)
 	@HttpCode(HttpStatus.NO_CONTENT)
-	async deletePhoto(
+	@Delete('profile')
+	async deleteProfile(
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel
 	) {
-		try {
-			return await lastValueFrom(this.clientProxy.send<any>(
-				{ cmd: 'deleteAvatar' }, deviceSession.userId
-			))
-		} catch (err) {
-			if (err.message === ErrorEnum.AVATAR_NOT_FOUND)
-				throw new NotFoundException()
-		}
+		const updateResult = await this.usersRepository.deleteUser(deviceSession.userId)
+		if (!updateResult) throw new NotFoundException()
+		return updateResult
 	}
 
 
@@ -96,7 +92,23 @@ export class UsersController {
 			if (err.message === ErrorEnum.USER_NOT_FOUND)
 				throw new NotFoundException()
 		}
-
 	}
+
+	@UseGuards(AccessGuard)
+	@Delete('profile/avatar')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	async deleteAvatar(
+		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel
+	) {
+		try {
+			return await lastValueFrom(this.clientProxy.send<any>(
+				{ cmd: 'deleteAvatar' }, deviceSession.userId
+			))
+		} catch (err) {
+			if (err.message === ErrorEnum.AVATAR_NOT_FOUND)
+				throw new NotFoundException()
+		}
+	}
+
 
 }
