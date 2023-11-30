@@ -8,6 +8,7 @@ import { UsersRepository } from '../../../users/rep/users.repository'
 import { ExpiresTime, Secrets } from '../../../../infrastructure/utils/constants'
 import { HashService } from '../../../../infrastructure/services/hash.service'
 import { IEnvConfig } from '../../../../infrastructure/settings/env.settings'
+import { DevicesRepository } from '../../../users/rep/devices.repository'
 
 export class LoginCommand {
 	constructor(
@@ -24,7 +25,8 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 		protected configService: ConfigService,
 		protected tokensService: TokensService,
 		protected usersRepository: UsersRepository,
-		protected hashService: HashService
+		protected hashService: HashService,
+		protected devicesRepository: DevicesRepository,
 	) {
 	}
 
@@ -61,7 +63,7 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 			env.REFRESH_JWT_SECRET,
 			ExpiresTime.REFRESH_EXPIRES_TIME
 		)
-
+		console.log('tokensPayload', tokensPayload.id)
 		const refreshTokenVerify = await this.tokensService
 			.verifyToken(refreshToken, env.REFRESH_JWT_SECRET)
 

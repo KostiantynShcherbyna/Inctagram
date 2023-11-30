@@ -6,6 +6,7 @@ export class DevicesRepository {
 	constructor(protected prisma: PrismaClient) {}
 
 	async findDeviceById(id: string): Promise<Device | null> {
+		console.log('2')
 		return this.prisma.device.findUnique({ where: { id } })
 	}
 

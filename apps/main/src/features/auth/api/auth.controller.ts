@@ -42,6 +42,7 @@ import { RegistrationBodyInputModel } from '../utils/models/input/registration.b
 import { AccessGuard } from '../../../infrastructure/middlewares/auth/guards/access.guard'
 import { UsersQueryRepository } from '../../users/rep/users.query.repository'
 import { User } from '@prisma/client'
+import { RegistrationCommand } from '../app/use-cases/registration.use-case'
 
 @Injectable()
 @Controller('auth')
@@ -62,7 +63,18 @@ export class AuthController {
 	async registration(
 		@Body() bodyRegistration: RegistrationBodyInputModel
 	) {
-		console.log('bodyRegistration', bodyRegistration)
+		const registrationResult = await this.commandBus.execute(
+			new RegistrationCommand(
+				bodyRegistration.login,
+				bodyRegistration.email,
+				bodyRegistration.password
+			)
+		)
+
+		if (registrationResult === ErrorEnum.LOGIN_EXIST)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 411)
+		if (registrationResult === ErrorEnum.EMAIL_EXIST)
+			throw new HttpException(ErrorEnum.UNAUTHORIZED, 412)
 	}
 
 
@@ -109,9 +121,6 @@ export class AuthController {
 	@Post('login')
 	// @UseGuards(AuthGuard(StrategyNames.loginLocalStrategy))
 	@ApiOperation({ summary: 'Try to login user to the system' })
-	@ApiResponse({ status: HttpStatus.NO_CONTENT })
-	@ApiBadRequestResponse({ description: 'If the inputModel has incorrect values' })
-	@ApiUnauthorizedResponse({ description: 'If the password or login is wrong' })
 	@HttpCode(HttpStatus.OK)
 	async login(
 		@Headers('user-agent') userAgent: string,

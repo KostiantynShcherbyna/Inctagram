@@ -112,7 +112,7 @@ export class UsersRepository {
 		})
 	}
 
-	async updateActiveDate(id: string, lastActiveDate: Date): Promise<Device> {
+	async updateActiveDate(id: string, lastActiveDate: any): Promise<Device> {
 		return this.prismaClient.device.update({
 			where: { id },
 			data: { lastActiveDate }
