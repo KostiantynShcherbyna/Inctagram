@@ -22,6 +22,7 @@ export class UpdateProfileBodyInputModel {
 		pattern: '^[a-zA-Z0-9_-]*$'
 	})
 	@Transform(({ value }) => trimTransformer(value, 'login'))
+	@IsOptional()
 	@IsString()
 	@Length(LOGIN_MIN_LENGTH, LOGIN_MAX_LENGTH)
 	@Matches(LOGIN_REGEX)
@@ -33,6 +34,7 @@ export class UpdateProfileBodyInputModel {
 		pattern: '^[a-zA-Z0-9_-]*$'
 	})
 	@Transform(({ value }) => trimTransformer(value, 'firstname'))
+	@IsOptional()
 	@IsString()
 	@Length(FIRSTNAME_MIN_LENGTH, FIRSTNAME_MAX_LENGTH)
 	@Matches(LOGIN_REGEX)
@@ -44,6 +46,7 @@ export class UpdateProfileBodyInputModel {
 		pattern: '^[a-zA-Z0-9_-]*$'
 	})
 	@Transform(({ value }) => trimTransformer(value, 'lastname'))
+	@IsOptional()
 	@IsString()
 	@Length(LASTNAME_MIN_LENGTH, LASTNAME_MAX_LENGTH)
 	@Matches(LOGIN_REGEX)

@@ -11,6 +11,7 @@ import {
 	Param,
 	Post,
 	Put,
+	UnauthorizedException,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors
@@ -41,13 +42,15 @@ export class UsersController {
 	) {
 	}
 
-	@UseGuards(AccessGuard)
-	@Get('profile')
+	// @UseGuards(AccessGuard)
+	@Get('profile/:id')
 	async getProfile(
-		@Param() id: string,
-		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel
+		@Param() param: { id: string },
+		// @DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel
 	) {
-		return await this.usersQueryRepository.findProfile(id)
+		// if (id !== deviceSession.userId)
+		// 	throw new UnauthorizedException()
+		return await this.usersQueryRepository.findProfile(param.id)
 	}
 
 	@UseGuards(AccessGuard)

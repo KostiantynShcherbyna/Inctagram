@@ -15,6 +15,7 @@ export class UsersQueryRepository {
 	}
 
 	async findProfile(id: string) {
+		console.log("id", id)
 		const user = await this.prismaClient.user
 			.findUnique({ where: { id } })
 		if (!user)
