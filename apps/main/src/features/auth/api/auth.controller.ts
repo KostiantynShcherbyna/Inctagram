@@ -140,7 +140,8 @@ export class AuthController {
 
 		res.cookie('refreshToken', loginResult.refreshToken, {
 			httpOnly: true,
-			secure: true
+			secure: true,
+			sameSite: "none"
 		})
 		return loginResult.accessJwt
 	}
@@ -241,7 +242,7 @@ export class AuthController {
 			throw new HttpException(ErrorEnum.UNAUTHORIZED, 413)
 
 		res.cookie('refreshToken', refreshTokenResult.refreshToken,
-			{ httpOnly: true, secure: true })
+			{ httpOnly: true, secure: true, sameSite: "none" })
 		return refreshTokenResult.accessJwt
 	}
 
@@ -282,7 +283,8 @@ export class AuthController {
 			throw new HttpException(ErrorEnum.UNAUTHORIZED, 413)
 		res.cookie('refreshToken', loginResult.refreshToken, {
 			httpOnly: true,
-			secure: true
+			secure: true,
+			sameSite: "none"
 		})
 		return loginResult.accessJwt
 	}
@@ -314,7 +316,8 @@ export class AuthController {
 
 		res.cookie('refreshToken', loginResult.refreshToken, {
 			httpOnly: true,
-			secure: true
+			secure: true,
+			sameSite: "none"
 		})
 		return loginResult.accessJwt
 	}
