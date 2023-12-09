@@ -246,7 +246,7 @@ export class AuthController {
 		return refreshTokenResult.accessJwt
 	}
 
-	@UseGuards(AccessGuard)
+	@UseGuards(RefreshGuard)
 	@Get('me')
 	async getMe(
 		@DeviceSessionGuard() deviceSession: DeviceSessionHeaderInputModel

@@ -32,10 +32,10 @@ export class LogoutUseCase implements ICommandHandler<LogoutCommand> {
 		const device = await this.devicesRepository.findDeviceById(command.deviceId)
 		if (device === null)
 			return new ReturnContract(null, ErrorEnum.DEVICE_NOT_FOUND)
-		const deleteResult = await this.devicesRepository
-			.deleteDeviceById(command.deviceId)
-		if (deleteResult === null)
-			return new ReturnContract(null, ErrorEnum.DEVICE_NOT_DELETE)
+		// const deleteResult = await this.devicesRepository
+		// 	.deleteDeviceById(command.deviceId)
+		// if (deleteResult === null)
+		// 	return new ReturnContract(null, ErrorEnum.DEVICE_NOT_DELETE)
 
 		return new ReturnContract(true, null)
 	}
