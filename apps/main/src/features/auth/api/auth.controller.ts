@@ -176,7 +176,7 @@ export class AuthController {
 		if (logoutResult === ErrorEnum.INVALID_TOKEN)
 			throw new HttpException(ErrorEnum.UNAUTHORIZED, 413)
 
-		res.clearCookie('refreshToken') // TODO todo not delete device
+		res.clearCookie('refreshToken', { sameSite: "none" }) // TODO todo not delete device
 	}
 
 
