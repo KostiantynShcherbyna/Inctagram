@@ -8,7 +8,8 @@ import {
 	LASTNAME_MIN_LENGTH,
 	LOGIN_MAX_LENGTH,
 	LOGIN_MIN_LENGTH,
-	LOGIN_REGEX
+	LOGIN_REGEX,
+	latinAndSymbols
 } from '../../../../../infrastructure/utils/constants'
 import { trimTransformer } from '../../../../../infrastructure/utils/trim-transformer'
 import { ApiProperty } from '@nestjs/swagger'
@@ -73,7 +74,7 @@ export class UpdateProfileBodyInputModel {
 	@Transform(({ value }) => trimTransformer(value, 'aboutMe'))
 	@IsString()
 	@MaxLength(ABOUT_ME_MAX_LENGTH)
-	@Matches(LOGIN_REGEX)
+	@Matches(latinAndSymbols)
 	aboutMe: string
 
 }

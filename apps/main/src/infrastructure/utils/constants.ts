@@ -1,5 +1,6 @@
 export const EMAIL_REGISTRATION_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 export const LOGIN_REGEX = /^[a-zA-Z0-9_-]*$/
+export const latinAndSymbols = /^[A-Za-z][A-Za-z0-9\s'-_+=&$#@`"!?^:;%*.,|\/]*[A-Za-z0-9'-_+=&$#@`"!?^:;%*.,|\/]$/
 export const LOGIN_MAX_LENGTH = 30
 export const LOGIN_MIN_LENGTH = 6
 export const PASSWORD_MAX_LENGTH = 20
