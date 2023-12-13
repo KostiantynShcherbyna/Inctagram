@@ -33,7 +33,7 @@ export class UsersQueryRepository {
 			firstname: user.firstname,
 			lastname: user.lastname,
 			city: user.city,
-			dateOfBirth: user.birthDate,
+			birthDate: user.birthDate,
 			aboutMe: user.aboutMe,
 			avatars: avatars.length
 				? avatars.map(i => ({
