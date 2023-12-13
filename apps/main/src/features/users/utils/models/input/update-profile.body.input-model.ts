@@ -57,13 +57,13 @@ export class UpdateProfileBodyInputModel {
 	@IsOptional()
 	@IsDateString()
 	@Validate(BirthDateValidator)
-	dateOfBirth: string
+	birthDate: string
 
 	@ApiProperty()
 	@IsOptional()
-	@Transform(({ value }) => trimTransformer(value, 'city'))
+	// @Transform(({ value }) => trimTransformer(value, 'city'))
 	@IsString()
-	@Validate(CityValidator)
+	// @Validate(CityValidator)
 	city: string
 
 	@ApiProperty({
